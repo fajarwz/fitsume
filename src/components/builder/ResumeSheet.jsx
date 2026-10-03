@@ -77,72 +77,78 @@ export default function ResumeSheet({ positioned, padding, overflow = 0, sheetRe
   const scale = fit * zoom
 
   return (
-    <div ref={frame} className="flex h-full w-full overflow-auto">
-      {/* margin:auto centres the page while it fits and stops centring once it does
-          not, which is the one arrangement that both centres and scrolls. */}
-      <div
-        className="relative shrink-0"
-        style={{ width: PAGE_WIDTH * scale, height: PAGE_HEIGHT * scale, margin: 'auto' }}
-      >
+    <div ref={frame} className="relative h-full w-full">
+      {/* The box that gets measured is this outer element, and its size comes from the
+          layout above. The scroll layer is inside it and absolutely positioned, so a
+          scrollbar appearing when zoomed in cannot change what was measured — that
+          feedback loop is what let the page change size without a click. */}
+      <div className="absolute inset-0 flex overflow-auto">
+        {/* margin:auto centres the page while it fits and stops centring once it does
+            not, which is the one arrangement that both centres and scrolls. */}
         <div
-          ref={sheetRef}
-          data-page
-          className="absolute left-0 top-0 overflow-hidden rounded-sm shadow-[0_12px_40px_rgba(0,0,0,0.28)]"
-          style={{
-            width: PAGE_WIDTH,
-            height: PAGE_HEIGHT,
-            transform: `scale(${scale})`,
-            transformOrigin: 'top left',
-            background: 'var(--paper)',
-            color: 'var(--ink)',
-          }}
+          className="relative shrink-0"
+          style={{ width: PAGE_WIDTH * scale, height: PAGE_HEIGHT * scale, margin: 'auto' }}
         >
           <div
-            data-no-print
-            className="pointer-events-none absolute border border-dashed"
-            style={{ inset: padding, borderColor: 'var(--ink-rule)' }}
-          />
-
-          {positioned.map((item, index) =>
-            item.type === POSITIONED_TYPE.rule ? (
-              <div
-                key={index}
-                style={{
-                  position: 'absolute',
-                  left: padding,
-                  top: item.y,
-                  width: PAGE_WIDTH - padding * 2,
-                  height: HAIRLINE,
-                  background: 'var(--ink-rule)',
-                }}
-              />
-            ) : (
-              <div
-                key={index}
-                style={{
-                  position: 'absolute',
-                  left: item.x,
-                  top: item.y,
-                  font: item.font,
-                  lineHeight: `${item.lineHeight}px`,
-                  whiteSpace: 'pre',
-                  color: COLOR[item.color] ?? COLOR.ink,
-                }}
-              >
-                {item.text}
-              </div>
-            ),
-          )}
-
-          {overflow > 0 ? (
+            ref={sheetRef}
+            data-page
+            className="absolute left-0 top-0 overflow-hidden rounded-sm shadow-[0_12px_40px_rgba(0,0,0,0.28)]"
+            style={{
+              width: PAGE_WIDTH,
+              height: PAGE_HEIGHT,
+              transform: `scale(${scale})`,
+              transformOrigin: 'top left',
+              background: 'var(--paper)',
+              color: 'var(--ink)',
+            }}
+          >
             <div
               data-no-print
-              className="absolute inset-x-0 bottom-0 flex items-center justify-center py-1 text-[11px] font-medium"
-              style={{ background: 'rgba(185,28,28,0.12)', color: '#b91c1c' }}
-            >
-              {overflow}px past the bottom of the page
-            </div>
-          ) : null}
+              className="pointer-events-none absolute border border-dashed"
+              style={{ inset: padding, borderColor: 'var(--ink-rule)' }}
+            />
+
+            {positioned.map((item, index) =>
+              item.type === POSITIONED_TYPE.rule ? (
+                <div
+                  key={index}
+                  style={{
+                    position: 'absolute',
+                    left: padding,
+                    top: item.y,
+                    width: PAGE_WIDTH - padding * 2,
+                    height: HAIRLINE,
+                    background: 'var(--ink-rule)',
+                  }}
+                />
+              ) : (
+                <div
+                  key={index}
+                  style={{
+                    position: 'absolute',
+                    left: item.x,
+                    top: item.y,
+                    font: item.font,
+                    lineHeight: `${item.lineHeight}px`,
+                    whiteSpace: 'pre',
+                    color: COLOR[item.color] ?? COLOR.ink,
+                  }}
+                >
+                  {item.text}
+                </div>
+              ),
+            )}
+
+            {overflow > 0 ? (
+              <div
+                data-no-print
+                className="absolute inset-x-0 bottom-0 flex items-center justify-center py-1 text-[11px] font-medium"
+                style={{ background: 'rgba(185,28,28,0.12)', color: '#b91c1c' }}
+              >
+                {overflow}px past the bottom of the page
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

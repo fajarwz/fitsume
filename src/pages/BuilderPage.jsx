@@ -33,10 +33,13 @@ const TABS = [
  * Zoom multiplies the fit-to-pane scale, so 1 always means "all of it, no
  * scrolling" whatever the window is doing. Session state on purpose: a saved zoom
  * would be a stale zoom the next time you open the app at a different size.
+ *
+ * Ten percent a step, because that is the scale people read percentages in:
+ * 100, 110, 120. Quarter steps gave 125, 175 and 225, which reads like a glitch.
  */
 const ZOOM_MIN = 0.5
 const ZOOM_MAX = 3
-const ZOOM_STEP = 0.05
+const ZOOM_STEP = 0.1
 
 const clampZoom = (value) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(value * 100) / 100))
 
@@ -91,7 +94,7 @@ export default function BuilderPage() {
           the page its height, and height is the axis this page is short of. */}
       <div
         data-no-print
-        className="flex w-16 shrink-0 flex-col gap-1 text-[10px] text-[var(--muted-foreground)]"
+        className="flex w-16 shrink-0 flex-col gap-1 text-[10px] text-[var(--muted-foreground)] p-3"
       >
         {stacked ? null : (
           <Button
@@ -109,7 +112,6 @@ export default function BuilderPage() {
 
         <div className="mt-2 flex flex-col gap-1">
           <Button
-            size="sm"
             variant="ghost"
             onClick={() => setZoom((current) => clampZoom(current + ZOOM_STEP))}
             disabled={zoom >= ZOOM_MAX}
@@ -118,11 +120,10 @@ export default function BuilderPage() {
           >
             +
           </Button>
-          <span className="text-center font-mono text-[10px] tabular-nums">
+          <span className="text-center tabular-nums">
             {zoom === 1 ? 'Fit' : `${Math.round(zoom * 100)}%`}
           </span>
           <Button
-            size="sm"
             variant="ghost"
             onClick={() => setZoom((current) => clampZoom(current - ZOOM_STEP))}
             disabled={zoom <= ZOOM_MIN}
@@ -223,7 +224,7 @@ export default function BuilderPage() {
               in both directions, so the taller this column, the bigger the page —
               which is why the fit controls sit off to the right instead of under the
               editor. */}
-          <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
+          <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)]">
             {preview}
           </section>
 

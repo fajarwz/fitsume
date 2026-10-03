@@ -220,21 +220,15 @@ Aeronautical engineer with a decade in aircraft structures in Germany, twenty-tw
 May 1998 – October 1999
 - Lifted restrictions on the press and legalised new political parties
 - Held parliamentary elections in 1999, the first free elections in decades
-- Served 517 days, the shortest presidency in Indonesian history
-
-### Vice President of Indonesia
-March 1998 – May 1998
 
 ### Minister of State for Research and Technology — Jakarta
 1978 – 1998
 - Oversaw ten strategic state industries across aerospace, shipbuilding, steel, arms and energy
 - Established the Overseas Fellowship, STMDP and STAID scholarship programmes, which sent thousands of Indonesians abroad to study science, engineering and medicine
-- Argued for technological leapfrogging: investing in advanced industries rather than only labour-intensive ones
 
 ### President Director — IPTN (Indonesian Aerospace), Bandung
 1976 – 1998
-- Led the state aircraft manufacturer from its establishment in 1976
-- Built helicopters and small transports under licence, including the CN-235 with CASA of Spain
+- Led the state aircraft manufacturer from its establishment in 1976, building helicopters and small transports under licence, including the CN-235 with CASA of Spain
 - Brought the N-250 Gatotkaca to its first flight on 10 August 1995: a 50 to 70 seat regional turboprop with fly-by-wire controls, the first airliner designed in Indonesia
 
 ### Structural Engineer — Messerschmitt-Bölkow-Blohm, Hamburg
@@ -242,7 +236,6 @@ March 1998 – May 1998
 - Structural analysis of lightweight aircraft structures, including development of the Airbus A-300B
 - Developed methods for predicting fatigue crack growth under variable operational loads, still known as the Habibie Factor, Theorem and Method
 - Rose to senior management in the technology division, an unusual position for a non-German engineer at the time
-- Declined offers from Boeing and Airbus, and a professorship at Aachen
 
 ## EDUCATION
 
@@ -254,20 +247,14 @@ Dissertation on lightweight construction for supersonic and hypersonic flight, g
 1960
 Awarded cum laude
 
-### Bandung Institute of Technology — mechanical engineering
-1954
-Studies began in Delft, and moved to Aachen for political reasons between Indonesia and the Netherlands
-
 ## HONOURS
 
 - Fellow of the Royal Academy of Engineering, 1990
-- Honorary DSc, Cranfield Institute of Technology
-- Honorary doctorates from Chungbuk National University and Hankuk University of Foreign Studies
-- Honorary doctorate in technology, University of Indonesia, 2010
+- Honorary doctorates from Cranfield Institute of Technology, the University of Indonesia, Chungbuk National University and Hankuk University of Foreign Studies
 
 ## SKILLS
 
-Structural analysis · lightweight and composite aircraft structures · fatigue and crack growth · aerospace programme leadership · research and technology policy · technical education at scale`,
+Structural analysis · lightweight and composite aircraft structures · aerospace programme leadership · research and technology policy · technical education at scale`,
   },
 
   {

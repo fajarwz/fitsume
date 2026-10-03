@@ -24,17 +24,16 @@ export default function SamplesPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-[var(--background)] text-[var(--foreground)]">
-      <TopBar
-        onNew={() => navigate(`/resume/${actions.create({ name: 'New resume' }).id}`)}
-      />
+      <TopBar onNew={() => navigate(`/resume/${actions.create({ name: 'New resume' }).id}`)} />
 
       <main className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4">
         <div>
           <h1 className="text-lg font-semibold tracking-tight">Sample resumes</h1>
           <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-            Real people, built from the public record of their work - short, dense, packed, and
-            everything in between. Pick one and edit it into your own; it opens as a new resume,
-            so nothing you have already written is touched.
+            Real people, built from the public record of their work. The first card is an ordinary
+            professional career, so start there if you are not sure; the rest run from a short
+            academic CV to a packed one-pager. Pick one and edit it into your own: it opens as a new
+            resume, so nothing you have already written is touched.
           </p>
         </div>
 

@@ -34,16 +34,22 @@
  *   normal   fill the page comfortably              Salam, Abdurrahman, Fatima
  *   dense    a lot of content, still one page       Al-Khwarizmi
  *   long     the fullest one-pager                  Habibie
+ *
+ * Display order is not declaration order: SAMPLE_ORDER below puts the most ordinary
+ * career first. The first card is what a first-time visitor judges the tool by, and a
+ * job-by-job professional resume is the shape most people have — not a Nobel
+ * laureate's, and not a ninth-century scholar's.
  */
 
 export const SAMPLE_CATEGORIES = [
-  { id: 'historical', label: 'Historical' },
   { id: 'modern', label: 'Modern' },
+  { id: 'historical', label: 'Historical' },
 ]
 
-export const DEFAULT_SAMPLE_ID = 'al-khwarizmi'
+/** The one a first-time visitor is pointed at: an ordinary professional career. */
+export const DEFAULT_SAMPLE_ID = 'bj-habibie'
 
-export const SAMPLES = [
+const SAMPLE_LIBRARY = [
   {
     id: 'al-khwarizmi',
     category: 'historical',
@@ -379,6 +385,22 @@ Wolf Prize · King Faisal Prize · Albert Einstein World Award · Benjamin Frank
 Femtosecond spectroscopy · ultrafast laser science · reaction dynamics · physical biology · scientific diplomacy`,
   },
 ]
+
+/**
+ * Display order: the most ordinary resume first, then the rest of the modern set, then
+ * the historical ones. Declarations stay grouped by category above for readability;
+ * this is the one place that decides what a visitor sees in what order.
+ */
+export const SAMPLE_ORDER = [
+  'bj-habibie',
+  'abdus-salam',
+  'ahmed-zewail',
+  'al-khwarizmi',
+  'abdurrahman-bin-auf',
+  'fatima-al-fihri',
+]
+
+export const SAMPLES = SAMPLE_ORDER.map((id) => SAMPLE_LIBRARY.find((sample) => sample.id === id))
 
 export function getSample(id) {
   return SAMPLES.find((sample) => sample.id === id) ?? null

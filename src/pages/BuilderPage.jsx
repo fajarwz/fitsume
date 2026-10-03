@@ -46,7 +46,7 @@ const clampZoom = (value) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(va
 export default function BuilderPage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { resumes, actions, saveResult } = useStashContext()
+  const { resumes, actions } = useStashContext()
   const [tab, setTab] = useState('write')
   const [zoom, setZoom] = useState(1)
   const [focus, setFocus] = useState(false)
@@ -236,18 +236,6 @@ export default function BuilderPage() {
           )}
         </div>
       )}
-
-      <footer className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 pb-2 text-[11px] text-[var(--muted-foreground)]">
-        <span>
-          {resumes.length} resume{resumes.length === 1 ? '' : 's'} · stored in this browser
-        </span>
-        {saveResult.saved ? null : (
-          <span className="text-[var(--negative)]">
-            Not saved:{' '}
-            {saveResult.reason === 'quota' ? 'browser storage is full' : 'storage refused'}
-          </span>
-        )}
-      </footer>
     </div>
   )
 }

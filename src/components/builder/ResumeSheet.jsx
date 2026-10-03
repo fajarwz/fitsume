@@ -92,7 +92,7 @@ export default function ResumeSheet({ positioned, padding, overflow = 0, sheetRe
           <div
             ref={sheetRef}
             data-page
-            className="absolute left-0 top-0 overflow-hidden rounded-sm shadow-[0_12px_40px_rgba(0,0,0,0.28)]"
+            className="absolute left-0 top-0 overflow-hidden rounded-sm shadow-[2px_2px_6px_rgba(0,0,0,0.28)]"
             style={{
               width: PAGE_WIDTH,
               height: PAGE_HEIGHT,

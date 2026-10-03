@@ -1,7 +1,12 @@
+import { useMemo } from 'react'
 import { HashRouter, Route, Routes } from 'react-router-dom'
 
+import { resolveStorage } from './lib/stash.js'
 import BuilderPage from './pages/BuilderPage.jsx'
+import LibraryPage from './pages/LibraryPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
+import StashProvider from './state/StashProvider.jsx'
+import ThemeProvider from './state/ThemeProvider.jsx'
 
 /**
  * Routes and providers only. Everything else lives in pages/, components/,
@@ -10,14 +15,25 @@ import NotFoundPage from './pages/NotFoundPage.jsx'
  * HashRouter, not BrowserRouter: there is no server here, so deep links and
  * refreshes have to work on any static host (and from file://) without rewrite
  * rules.
+ *
+ * Storage is resolved once, here, and handed to both providers: the theme and the
+ * resume library share one store, and "storage is unavailable" is then decided in
+ * one place instead of being rediscovered per component.
  */
 export default function App() {
+  const { storage, persistent } = useMemo(() => resolveStorage(), [])
+
   return (
-    <HashRouter>
-      <Routes>
-        <Route path="/" element={<BuilderPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </HashRouter>
+    <ThemeProvider storage={storage}>
+      <StashProvider storage={storage} persistent={persistent}>
+        <HashRouter>
+          <Routes>
+            <Route path="/" element={<BuilderPage />} />
+            <Route path="/library" element={<LibraryPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </HashRouter>
+      </StashProvider>
+    </ThemeProvider>
   )
 }

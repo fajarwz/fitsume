@@ -67,9 +67,9 @@ const SAMPLE_LIBRARY = [
   {
     id: 'al-khwarizmi',
     category: 'historical',
-    label: 'Al-Khwarizmi — Mathematician',
+    label: 'Al-Khwarizmi, mathematician',
     length: 'dense',
-    note: 'Built from the public record of his work. Very little is known about his life, so roles and dates are approximate, and nothing here is a quotation.',
+    note: 'Little is recorded of his life, so roles and dates are approximate.',
     source: 'https://en.wikipedia.org/wiki/Al-Khwarizmi',
     markdown: `# Al-Khwarizmi
 Mathematician, astronomer and geographer
@@ -123,9 +123,9 @@ Algebra · arithmetic · astronomy · geography · trigonometry · calendrical c
   {
     id: 'abdurrahman-bin-auf',
     category: 'historical',
-    label: 'Abdurrahman bin Auf — Merchant',
+    label: 'Abdurrahman bin Auf, merchant',
     length: 'normal',
-    note: 'Built from the public record. Dates are approximate, and the descriptions follow the historical accounts rather than any document he wrote.',
+    note: 'Dates are approximate; the entries follow the historical accounts.',
     source: 'https://en.wikipedia.org/wiki/Abd_al-Rahman_ibn_Awf',
     markdown: `# Abdurrahman bin Auf
 Merchant · Companion of the Prophet ﷺ
@@ -171,9 +171,9 @@ Trade · negotiation · capital and liquidity management · honest dealing · ch
   {
     id: 'fatima-al-fihri',
     category: 'historical',
-    label: 'Fatima al-Fihri — Founder',
+    label: 'Fatima al-Fihri, founder',
     length: 'normal',
-    note: 'Built from the public record of her foundation. Very little is documented about her life, so this is drawn from the history of al-Qarawiyyin itself.',
+    note: 'Barely documented in her own right; drawn from the history of al-Qarawiyyin.',
     source: 'https://en.wikipedia.org/wiki/Fatima_al-Fihri',
     markdown: `# Fatima al-Fihri
 Founder and endower of al-Qarawiyyin
@@ -216,9 +216,9 @@ Patronage of scholarship · endowment and estate management · construction over
   {
     id: 'bj-habibie',
     category: 'modern',
-    label: 'B. J. Habibie — Aeronautical engineer and president',
+    label: 'B. J. Habibie, aeronautical engineer and president',
     length: 'long',
-    note: 'Built from the public record of his career, not from a private application.',
+    note: 'Roles and dates follow the Britannica record.',
     source: 'https://www.britannica.com/biography/B-J-Habibie',
     markdown: `# B. J. Habibie
 Aeronautical engineer and third President of Indonesia
@@ -274,9 +274,9 @@ Structural analysis · lightweight and composite aircraft structures · aerospac
   {
     id: 'abdus-salam',
     category: 'modern',
-    label: 'Abdus Salam — Theoretical physicist',
+    label: 'Abdus Salam, theoretical physicist',
     length: 'normal',
-    note: 'Built from the public record of his career, not from a private application.',
+    note: 'Roles and dates follow the Nobel Foundation biography.',
     source: 'https://www.nobelprize.org/prizes/physics/1979/salam/biographical/',
     markdown: `# Abdus Salam
 Theoretical physicist · Nobel laureate
@@ -335,9 +335,9 @@ Quantum field theory · electroweak unification · gauge theory · institution b
   {
     id: 'ahmed-zewail',
     category: 'modern',
-    label: 'Ahmed Zewail — Chemist',
+    label: 'Ahmed Zewail, chemist',
     length: 'minimal',
-    note: 'Built from the public record of his career, not from a private application.',
+    note: 'Roles and dates follow the Caltech and Nobel Foundation record.',
     source: 'https://www.caltech.edu/about/news/ahmed-zewail-1946-2016-51594',
     markdown: `# Ahmed Zewail
 Chemist · Nobel laureate

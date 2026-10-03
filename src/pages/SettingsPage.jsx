@@ -63,10 +63,8 @@ export default function SettingsPage() {
         <section className="flex flex-col gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
           <h2 className="text-xs font-semibold">Sample resumes</h2>
           <p className="text-[11px] text-[var(--muted-foreground)]">
-            Real people, built from the public record of their work, seeded into your library as
-            ordinary resumes. Rename, duplicate or delete them like any other, and bring back
-            whichever you delete from here. Restoring never adds a second copy of one you still
-            have.
+            Real people, built from the public record. Ordinary resumes once seeded: rename,
+            duplicate or delete them like any other, and restore whichever you delete.
           </p>
           <p className="text-xs">
             <span className="font-mono tabular-nums">{present}</span> of{' '}
@@ -84,18 +82,21 @@ export default function SettingsPage() {
             </Button>
           </div>
 
-          <ul className="mt-1 flex flex-col gap-1">
+          <ul className="mt-1 flex flex-col gap-1.5">
             {SAMPLES.map((sample) => (
               <li key={sample.id} className="text-[11px] text-[var(--muted-foreground)]">
-                <span className="text-[var(--foreground)]">{sample.label}</span>: {sample.note}{' '}
-                <a
-                  href={sample.source}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="underline underline-offset-2"
-                >
-                  source
-                </a>
+                <div className="flex flex-wrap items-baseline gap-x-2">
+                  <span className="text-[var(--foreground)]">{sample.label}</span>
+                  <a
+                    href={sample.source}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="underline underline-offset-2"
+                  >
+                    source
+                  </a>
+                </div>
+                <p>{sample.note}</p>
               </li>
             ))}
           </ul>

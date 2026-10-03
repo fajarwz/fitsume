@@ -1,0 +1,30 @@
+/*
+ * Print rules.
+ *
+ * The export path (lib/pdf.js) drives the important parts imperatively — it
+ * saves and restores everything it touches, because the printed page has to
+ * match the preview exactly. Keep this file to rules that are always safe.
+ */
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  html,
+  body {
+    height: auto;
+    background: #ffffff;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Anything that is chrome, never part of the printed sheet, can opt out. */
+  [data-no-print] {
+    display: none !important;
+  }
+}

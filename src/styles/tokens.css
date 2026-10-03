@@ -1,0 +1,47 @@
+/*
+ * Design tokens. Every colour in the app comes from here, so the shell, editor
+ * and settings panel cannot drift apart, and a theme change is a token swap
+ * rather than an edit in twenty components.
+ *
+ * --paper / --ink are the A4 sheet: the sheet stays paper-white in both themes,
+ * because that is what prints. The shell around it flips.
+ */
+:root {
+  color-scheme: light;
+
+  --background: #f4f4f5;
+  --foreground: #18181b;
+  --muted-foreground: #52525b;
+  --card: #ffffff;
+  --border: #d4d4d8;
+  --accent: #18181b;
+  --accent-foreground: #fafafa;
+  --positive: #047857;
+  --negative: #b91c1c;
+
+  --paper: #ffffff;
+  --ink: #111111;
+  --ink-muted: #555555;
+  --ink-faint: #999999;
+  --ink-rule: #dddddd;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --background: #171717;
+  --foreground: #fafafa;
+  --muted-foreground: #a3a3a3;
+  --card: #1f1f1f;
+  --border: #3f3f3f;
+  --accent: #fafafa;
+  --accent-foreground: #171717;
+  --positive: #34d399;
+  --negative: #f87171;
+
+  --paper: #ffffff;
+  --ink: #111111;
+  --ink-muted: #555555;
+  --ink-faint: #999999;
+  --ink-rule: #dddddd;
+}

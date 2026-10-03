@@ -1,0 +1,15 @@
+node_modules/
+dist/
+coverage/
+.vite/
+
+# Hermes workspace artifacts (plans, scratch)
+.hermes/
+
+# Local editor / OS noise
+.DS_Store
+Thumbs.db
+*.local
+.env
+.env.*
+!.env.example

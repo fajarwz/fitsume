@@ -86,53 +86,57 @@ export default function BuilderPage() {
   )
 
   const preview = (
-    <div className="flex h-full min-h-0 w-full flex-col">
+    <div className="flex h-full min-h-0 w-full gap-2">
+      {/* The controls run down the left edge rather than across the top: a toolbar costs
+          the page its height, and height is the axis this page is short of. */}
       <div
         data-no-print
-        className="flex w-full items-center justify-end gap-1 pb-2 text-[11px] text-[var(--muted-foreground)]"
+        className="flex w-16 shrink-0 flex-col gap-1 text-[10px] text-[var(--muted-foreground)]"
       >
         {stacked ? null : (
           <Button
             size="sm"
             variant="ghost"
-            className="mr-auto"
             onClick={() => setFocus((current) => !current)}
             aria-pressed={focus}
             title={
               focus ? 'Show the editor and the fit controls again' : 'Hide everything but the page'
             }
           >
-            {focus ? 'Exit full screen' : 'Full screen'}
+            {focus ? 'Exit' : 'Full'}
           </Button>
         )}
-        {zoom === 1 ? null : (
-          <Button size="sm" onClick={() => setZoom(1)} title="Fit the whole page to the pane">
-            Fit
+
+        <div className="mt-2 flex flex-col gap-1">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setZoom((current) => clampZoom(current + ZOOM_STEP))}
+            disabled={zoom >= ZOOM_MAX}
+            aria-label="Zoom in"
+            title="Zoom in"
+          >
+            +
           </Button>
-        )}
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={() => setZoom((current) => clampZoom(current - ZOOM_STEP))}
-          disabled={zoom <= ZOOM_MIN}
-          aria-label="Zoom out"
-          title="Zoom out"
-        >
-          −
-        </Button>
-        <span className="min-w-[3.5rem] text-center font-mono tabular-nums">
-          {zoom === 1 ? 'Fit' : `${Math.round(zoom * 100)}%`}
-        </span>
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={() => setZoom((current) => clampZoom(current + ZOOM_STEP))}
-          disabled={zoom >= ZOOM_MAX}
-          aria-label="Zoom in"
-          title="Zoom in"
-        >
-          +
-        </Button>
+          <span className="text-center font-mono text-[10px] tabular-nums">
+            {zoom === 1 ? 'Fit' : `${Math.round(zoom * 100)}%`}
+          </span>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setZoom((current) => clampZoom(current - ZOOM_STEP))}
+            disabled={zoom <= ZOOM_MIN}
+            aria-label="Zoom out"
+            title="Zoom out"
+          >
+            −
+          </Button>
+          {zoom === 1 ? null : (
+            <Button size="sm" onClick={() => setZoom(1)} title="Fit the whole page to the pane">
+              Fit
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="min-h-0 flex-1">
@@ -238,7 +242,8 @@ export default function BuilderPage() {
         </span>
         {saveResult.saved ? null : (
           <span className="text-[var(--negative)]">
-            Not saved: {saveResult.reason === 'quota' ? 'browser storage is full' : 'storage refused'}
+            Not saved:{' '}
+            {saveResult.reason === 'quota' ? 'browser storage is full' : 'storage refused'}
           </span>
         )}
       </footer>

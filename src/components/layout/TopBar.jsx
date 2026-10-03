@@ -58,7 +58,11 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
             id="resume-switcher"
             value={resume?.id ?? ''}
             onChange={(event) => navigate(`/resume/${event.target.value}`)}
-            className="h-8 max-w-[14rem] rounded-md border border-[var(--border)] bg-[var(--card)] px-2 text-xs"
+            /* pr-8 rather than px-2: the chevron is drawn by the forms plugin as a
+               background image 0.5rem from the right edge, and it reserves 2.5rem of
+               padding for its own space. Overriding that padding with a symmetric one
+               puts a long resume name straight through the arrow. */
+            className="h-8 max-w-[14rem] truncate rounded-md border border-[var(--border)] bg-[var(--card)] pl-2 pr-9 text-xs"
           >
             <option value="">No resume open</option>
             {resumes.map((entry) => (

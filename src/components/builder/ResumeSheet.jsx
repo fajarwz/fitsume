@@ -162,7 +162,27 @@ export default function ResumeSheet({ pages, padding, stackRef, zoom = 1 }) {
                           color: COLOR[item.color] ?? COLOR.ink,
                         }}
                       >
-                        {item.text}
+                        {/* A line with an address in it is rendered as runs instead of
+                            one string, so the address is clickable. The text is the same
+                            characters the fit engine measured, which is what keeps the
+                            rendered line and the fitted line the same line. */}
+                        {item.segments
+                          ? item.segments.map((segment, segmentIndex) =>
+                              segment.href ? (
+                                <a
+                                  key={segmentIndex}
+                                  href={segment.href}
+                                  target="_blank"
+                                  rel="noreferrer noopener"
+                                  className="text-inherit underline decoration-[var(--ink-faint)] underline-offset-2"
+                                >
+                                  {segment.text}
+                                </a>
+                              ) : (
+                                <span key={segmentIndex}>{segment.text}</span>
+                              ),
+                            )
+                          : item.text}
                       </div>
                     ),
                   )}

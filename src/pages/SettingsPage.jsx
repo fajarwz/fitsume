@@ -4,6 +4,7 @@ import TopBar from '../components/layout/TopBar.jsx'
 import Button from '../components/ui/Button.jsx'
 import { SAMPLES, sampleResumes } from '../lib/samples.js'
 import { missingSamples } from '../lib/stash.js'
+import { STARTER_MARKDOWN } from '../lib/starter.js'
 import { useStashContext } from '../state/StashProvider.jsx'
 import { useTheme } from '../state/ThemeProvider.jsx'
 
@@ -30,7 +31,13 @@ export default function SettingsPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-[var(--background)] text-[var(--foreground)]">
-      <TopBar onNew={() => navigate(`/resume/${actions.create({ name: 'New resume' }).id}`)} />
+      <TopBar
+        onNew={() =>
+          navigate(
+            `/resume/${actions.create({ name: 'New resume', markdown: STARTER_MARKDOWN }).id}`,
+          )
+        }
+      />
 
       <main className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-4">
         <div>

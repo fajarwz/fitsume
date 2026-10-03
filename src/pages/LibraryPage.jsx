@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import ResumeList from '../components/library/ResumeList.jsx'
 import TopBar from '../components/layout/TopBar.jsx'
 import Button from '../components/ui/Button.jsx'
+import { STARTER_MARKDOWN } from '../lib/starter.js'
 import {
   MERGE_MODES,
   downloadText,
@@ -34,7 +35,8 @@ export default function LibraryPage() {
   const backupInput = useRef(null)
 
   const open = (id) => navigate(`/resume/${id}`)
-  const startBlank = () => open(actions.create({ name: 'My resume', markdown: '' }).id)
+  const startBlank = () =>
+    open(actions.create({ name: 'My resume', markdown: STARTER_MARKDOWN }).id)
 
   const importMarkdown = async (event) => {
     const file = event.target.files?.[0]
@@ -95,7 +97,7 @@ export default function LibraryPage() {
     <div className="flex min-h-screen flex-col bg-[var(--background)] text-[var(--foreground)]">
       <TopBar
         resume={resumes.find((resume) => resume.id === activeId) ?? null}
-        onNew={() => open(actions.create({ name: 'New resume', markdown: '' }).id)}
+        onNew={() => open(actions.create({ name: 'New resume', markdown: STARTER_MARKDOWN }).id)}
         secondary={
           <Button size="sm" variant="primary" onClick={backup}>
             Back up library

@@ -12,6 +12,7 @@ import { useMediaQuery } from '../hooks/useMediaQuery.js'
 import { downloadText, exportResumeMarkdown, markdownFilename } from '../lib/files.js'
 import { exportToPdf } from '../lib/pdf.js'
 import { DEFAULT_RESUME_SETTINGS } from '../lib/settings.js'
+import { STARTER_MARKDOWN } from '../lib/starter.js'
 import { useStashContext } from '../state/StashProvider.jsx'
 
 /**
@@ -162,7 +163,11 @@ export default function BuilderPage() {
     <div className="flex min-h-screen flex-col bg-[var(--background)] text-[var(--foreground)]">
       <TopBar
         resume={resume}
-        onNew={() => navigate(`/resume/${actions.create({ name: 'New resume' }).id}`)}
+        onNew={() =>
+          navigate(
+            `/resume/${actions.create({ name: 'New resume', markdown: STARTER_MARKDOWN }).id}`,
+          )
+        }
         onExport={exportPdf}
         secondary={
           <Button

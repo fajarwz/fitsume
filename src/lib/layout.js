@@ -6,6 +6,7 @@ import {
   skipsMarginAfter,
   spaceBefore,
 } from './measure.js'
+import { hasLink, splitLinks } from './links.js'
 import { BLOCK_TYPE } from './markdown.js'
 import { HAIRLINE } from './page.js'
 
@@ -55,6 +56,10 @@ export function layoutBlocks(blocks, options) {
     })
 
     for (const line of lines) {
+      // Links are found here rather than in the parser, so the blocks the fit engine
+      // measures are untouched by them: the same characters, split for the renderer.
+      const segments = splitLinks(line.text)
+
       positioned.push({
         type: POSITIONED_TYPE.line,
         text: line.text,
@@ -66,6 +71,7 @@ export function layoutBlocks(blocks, options) {
         bold: block.bold,
         color: block.color,
         keepWithNext: block.keepWithNext === true,
+        segments: hasLink(segments) ? segments : undefined,
       })
 
       y += lineHeight

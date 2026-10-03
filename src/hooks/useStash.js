@@ -8,10 +8,13 @@ import {
   loadLibrary,
   removeResume,
   renameResume,
+  restoreSamples as restoreSampleResumes,
   saveLibrary,
+  seedLibrary,
   setActiveResume,
   updateResume,
 } from '../lib/stash.js'
+import { sampleResumes } from '../lib/samples.js'
 
 /**
  * The resume library, in React.
@@ -25,7 +28,15 @@ import {
 const SAVE_DELAY = 350
 
 export function useStash(storage) {
-  const [initial] = useState(() => loadLibrary(storage))
+  // Loading and seeding are one step, because the first frame should already show the
+  // sample resumes: an empty library that fills in a moment later is a worse first
+  // impression than either state on its own.
+  const [initial] = useState(() => {
+    const loaded = loadLibrary(storage)
+    const library = seedLibrary(loaded.library, sampleResumes())
+
+    return { ...loaded, library, seeded: library !== loaded.library }
+  })
   const [library, setLibrary] = useState(initial.library)
   const [status] = useState(initial.status)
   const [saveResult, setSaveResult] = useState({ saved: true })
@@ -35,7 +46,8 @@ export function useStash(storage) {
   // cleanup, where component state is not.
   const latest = useRef(initial.library)
   const dirty = useRef(false)
-  const skipFirst = useRef(true)
+  // Seeding is an unsaved change, so it must not be skipped along with the first render.
+  const skipFirst = useRef(!initial.seeded)
 
   useEffect(() => {
     latest.current = library
@@ -84,6 +96,7 @@ export function useStash(storage) {
       duplicate: (id) => setLibrary((current) => duplicateResume(current, id)),
       select: (id) => setLibrary((current) => setActiveResume(current, id)),
       replace: (next) => setLibrary(next),
+      restoreSamples: () => setLibrary((current) => restoreSampleResumes(current, sampleResumes())),
     }),
     [],
   )

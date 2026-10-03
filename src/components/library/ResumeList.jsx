@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import Button from '../ui/Button.jsx'
 import Modal from '../ui/Modal.jsx'
+import { isSampleResume } from '../../lib/samples.js'
 
 /**
  * The library list: rename, open, copy, take away, delete.
@@ -9,7 +10,15 @@ import Modal from '../ui/Modal.jsx'
  * Deleting asks first, and says what is being deleted, because there is no server
  * copy to restore from — the only backup is a file the user downloaded themselves.
  */
-export default function ResumeList({ resumes, activeId, onOpen, onRename, onDuplicate, onExport, onDelete }) {
+export default function ResumeList({
+  resumes,
+  activeId,
+  onOpen,
+  onRename,
+  onDuplicate,
+  onExport,
+  onDelete,
+}) {
   const [pendingDelete, setPendingDelete] = useState(null)
 
   if (resumes.length === 0) {
@@ -37,6 +46,15 @@ export default function ResumeList({ resumes, activeId, onOpen, onRename, onDupl
               onChange={(event) => onRename(resume.id, event.target.value)}
               className="h-8 min-w-[10rem] flex-1 rounded-md border border-transparent bg-transparent px-2 text-sm font-medium hover:border-[var(--border)] focus:border-[var(--border)]"
             />
+
+            {isSampleResume(resume) ? (
+              <span
+                className="rounded-full border border-[var(--border)] px-1.5 py-0.5 text-[10px] text-[var(--muted-foreground)]"
+                title="One of the seeded sample resumes. Delete it like any other."
+              >
+                sample
+              </span>
+            ) : null}
 
             <span className="text-[11px] text-[var(--muted-foreground)]">
               {resume.updatedAt?.slice(0, 10) ?? ''}

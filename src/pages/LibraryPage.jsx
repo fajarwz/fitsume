@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 
 import ResumeList from '../components/library/ResumeList.jsx'
 import TopBar from '../components/layout/TopBar.jsx'
-import { FirstRunChooser } from '../components/samples/SamplePicker.jsx'
 import Button from '../components/ui/Button.jsx'
 import {
   MERGE_MODES,
@@ -36,8 +35,6 @@ export default function LibraryPage() {
 
   const open = (id) => navigate(`/resume/${id}`)
   const startBlank = () => open(actions.create({ name: 'My resume', markdown: '' }).id)
-  const startFromSample = (sample) =>
-    open(actions.create({ name: sample.label, markdown: sample.markdown }).id)
 
   const importMarkdown = async (event) => {
     const file = event.target.files?.[0]
@@ -49,7 +46,10 @@ export default function LibraryPage() {
     const text = await file.text()
     const resume = resumeFromMarkdown(text, { filename: file.name })
 
-    actions.add({ ...resume, name: resume.name === 'Resume' ? file.name.replace(/\.\w+$/, '') : resume.name })
+    actions.add({
+      ...resume,
+      name: resume.name === 'Resume' ? file.name.replace(/\.\w+$/, '') : resume.name,
+    })
     setNotice({ kind: 'ok', text: `Imported ${file.name} as a new resume.` })
   }
 
@@ -167,7 +167,19 @@ export default function LibraryPage() {
         ) : null}
 
         {resumes.length === 0 ? (
-          <FirstRunChooser onStartBlank={startBlank} onUseSample={startFromSample} />
+          <div className="flex flex-col items-start gap-2 rounded-md border border-dashed border-[var(--border)] p-4">
+            <p className="text-xs text-[var(--muted-foreground)]">
+              No resumes in this browser. Write one, or bring the sample resumes back from Settings.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" variant="primary" onClick={startBlank}>
+                New resume
+              </Button>
+              <Button size="sm" onClick={() => navigate('/settings')}>
+                Restore sample resumes
+              </Button>
+            </div>
+          </div>
         ) : (
           <ResumeList
             resumes={resumes}

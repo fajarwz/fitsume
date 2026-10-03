@@ -11,10 +11,14 @@ import { deriveTitle } from './title.js'
  *
  * A library looks like:
  *
- *   { schemaVersion: 1, activeId: 'abc', resumes: [ { id, name, markdown, settings, createdAt, updatedAt } ] }
+ *   { schemaVersion: 1, activeId: 'abc', resumes: [ { id, name, markdown, settings, createdAt, updatedAt } ], samplesSeeded: true }
  *
  * The id is the identity, never the name: renaming a resume must not orphan its
  * data or break the active selection.
+ *
+ * `samplesSeeded` records that the sample resumes have already been handed out once.
+ * Without it, deleting every sample would bring them all back on the next reload,
+ * which is the difference between a starting point and a haunting.
  */
 export const SCHEMA_VERSION = 1
 export const STORAGE_KEY = 'fittyresume.library'
@@ -74,7 +78,7 @@ export function resolveStorage(candidate) {
 }
 
 export function createLibrary() {
-  return { schemaVersion: SCHEMA_VERSION, activeId: null, resumes: [] }
+  return { schemaVersion: SCHEMA_VERSION, activeId: null, resumes: [], samplesSeeded: false }
 }
 
 export function createResume({ id, name, markdown = '', settings, now } = {}) {
@@ -134,13 +138,50 @@ export function removeResume(library, id) {
 
   const resumes = library.resumes.filter((resume) => resume.id !== id)
   const activeId =
-    library.activeId === id ? (resumes[index] ?? resumes[index - 1] ?? null)?.id ?? null : library.activeId
+    library.activeId === id
+      ? ((resumes[index] ?? resumes[index - 1] ?? null)?.id ?? null)
+      : library.activeId
 
   return { ...library, resumes, activeId }
 }
 
 export function setActiveResume(library, id) {
   return findResume(library, id) ? { ...library, activeId: id } : library
+}
+
+/**
+ * The sample resumes, as resumes.
+ *
+ * They are seeded into the library rather than offered as templates: once they are
+ * here they are ordinary entries — renameable, duplicatable, deletable — which is what
+ * they are meant to demonstrate. Identity is the stable id the caller supplies, so
+ * "restore" can tell which ones are missing instead of adding a second copy of each.
+ */
+export function missingSamples(library, samples) {
+  return samples.filter((sample) => !findResume(library, sample.id))
+}
+
+function withSamples(library, samples) {
+  const added = missingSamples(library, samples).map((sample) => createResume(sample))
+
+  if (added.length === 0 && library.samplesSeeded) return library
+
+  return {
+    ...library,
+    samplesSeeded: true,
+    resumes: [...library.resumes, ...added],
+    activeId: library.activeId ?? added[0]?.id ?? null,
+  }
+}
+
+/** First run only: hands out the sample resumes once. */
+export function seedLibrary(library, samples) {
+  return library.samplesSeeded ? library : withSamples(library, samples)
+}
+
+/** Brings back whichever samples were deleted, and never duplicates the ones that were not. */
+export function restoreSamples(library, samples) {
+  return withSamples(library, samples)
 }
 
 export function uniqueResumeName(library, base) {
@@ -188,7 +229,10 @@ export function duplicateResume(library, id, { now } = {}) {
 }
 
 const isValidResume = (value) =>
-  isObject(value) && typeof value.id === 'string' && value.id.length > 0 && typeof value.markdown === 'string'
+  isObject(value) &&
+  typeof value.id === 'string' &&
+  value.id.length > 0 &&
+  typeof value.markdown === 'string'
 
 function normaliseResume(raw) {
   const at = timestamp()
@@ -217,7 +261,12 @@ export function validateLibrary(value) {
     ? value.activeId
     : (resumes[0]?.id ?? null)
 
-  return { schemaVersion: SCHEMA_VERSION, activeId, resumes }
+  // A library with resumes in it but no flag predates the flag, and its owner has
+  // already been handed their starting point: seeding is for empty libraries only.
+  const samplesSeeded =
+    typeof value.samplesSeeded === 'boolean' ? value.samplesSeeded : resumes.length > 0
+
+  return { schemaVersion: SCHEMA_VERSION, activeId, resumes, samplesSeeded }
 }
 
 /**

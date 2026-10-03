@@ -5,7 +5,7 @@ import { resolveStorage } from './lib/stash.js'
 import BuilderPage from './pages/BuilderPage.jsx'
 import LibraryPage from './pages/LibraryPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
-import SamplesPage from './pages/SamplesPage.jsx'
+import SettingsPage from './pages/SettingsPage.jsx'
 import StashProvider from './state/StashProvider.jsx'
 import ThemeProvider from './state/ThemeProvider.jsx'
 
@@ -36,8 +36,9 @@ export default function App() {
           <Routes>
             <Route path="/" element={<LibraryPage />} />
             <Route path="/resume/:id" element={<BuilderPage />} />
-            <Route path="/samples" element={<SamplesPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
             <Route path="/library" element={<Navigate to="/" replace />} />
+            <Route path="/samples" element={<Navigate to="/" replace />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </HashRouter>

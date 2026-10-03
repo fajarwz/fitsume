@@ -2,14 +2,10 @@ import { Link, useNavigate } from 'react-router-dom'
 
 import Button from '../ui/Button.jsx'
 import { useStashContext } from '../../state/StashProvider.jsx'
-import { useTheme } from '../../state/ThemeProvider.jsx'
-
-const THEME_LABEL = { light: 'Light', dark: 'Dark', system: 'System' }
-const NEXT_THEME = { light: 'dark', dark: 'system', system: 'light' }
 
 const NAV = [
   ['/', 'Library'],
-  ['/samples', 'Samples'],
+  ['/settings', 'Settings'],
 ]
 
 /**
@@ -22,7 +18,6 @@ const NAV = [
  */
 export default function TopBar({ resume = null, onNew, onExport, secondary = null }) {
   const { resumes, persistent } = useStashContext()
-  const { theme, setTheme } = useTheme()
   const navigate = useNavigate()
 
   return (
@@ -77,15 +72,6 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
             Export PDF
           </Button>
         ) : null}
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={() => setTheme(NEXT_THEME[theme] ?? 'system')}
-          aria-label={`Theme: ${THEME_LABEL[theme] ?? theme}. Switch theme.`}
-          title={`Theme: ${THEME_LABEL[theme] ?? theme}`}
-        >
-          {THEME_LABEL[theme] ?? theme}
-        </Button>
       </div>
 
       {persistent ? null : (

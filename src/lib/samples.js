@@ -46,8 +46,22 @@ export const SAMPLE_CATEGORIES = [
   { id: 'historical', label: 'Historical' },
 ]
 
-/** The one a first-time visitor is pointed at: an ordinary professional career. */
-export const DEFAULT_SAMPLE_ID = 'bj-habibie'
+/**
+ * Seeded resumes carry a stable id derived from the sample's own id.
+ *
+ * That is what makes "restore" mean restore: it can see which samples are already in
+ * the library and add only the ones that were deleted, rather than handing out a second
+ * copy of everything. It is also how a row can tell it began life as a sample.
+ */
+export const SAMPLE_RESUME_PREFIX = 'sample-'
+
+export function sampleResumeId(sample) {
+  return `${SAMPLE_RESUME_PREFIX}${sample.id}`
+}
+
+export function isSampleResume(resume) {
+  return typeof resume?.id === 'string' && resume.id.startsWith(SAMPLE_RESUME_PREFIX)
+}
 
 const SAMPLE_LIBRARY = [
   {
@@ -388,6 +402,18 @@ export const SAMPLE_ORDER = [
 ]
 
 export const SAMPLES = SAMPLE_ORDER.map((id) => SAMPLE_LIBRARY.find((sample) => sample.id === id))
+
+/** The one a first-time visitor lands on: an ordinary professional career. */
+export const DEFAULT_SAMPLE_ID = SAMPLE_ORDER[0]
+
+/**
+ * The samples as library records: a stable id, and the markdown the library derives a
+ * name and settings from. Nothing here is a template — these go straight into the
+ * library as ordinary resumes.
+ */
+export function sampleResumes() {
+  return SAMPLES.map((sample) => ({ id: sampleResumeId(sample), markdown: sample.markdown }))
+}
 
 export function getSample(id) {
   return SAMPLES.find((sample) => sample.id === id) ?? null

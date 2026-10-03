@@ -34,10 +34,13 @@ const COLOR = {
  * Fitting the pane *exactly* is what makes a scrollbar appear: the box is measured
  * in fractional pixels, the scale is a float, and the browser rounds the scaled page
  * up by a hair — which is enough for `overflow: auto` to decide there is something
- * to scroll. A few percent of headroom means the whole page is always visible, and
- * the page reads as a page rather than as a wall of text.
+ * to scroll. So a few percent of headroom means the whole page is always visible.
+ *
+ * It also pays for the shadow. The pane clips at its own edges, so a page that fills
+ * it to the last pixel has nowhere left to cast into, and the shadow disappears into
+ * the crop. This is the space that keeps the page looking like paper on a surface.
  */
-const FIT_SLACK = 0.94
+const FIT_SLACK = 0.92
 
 /** Below this, the box is not a real pane (a hidden tab measures zero). */
 const MIN_USABLE_HEIGHT = 40
@@ -90,13 +93,16 @@ export default function ResumeSheet({ pages, padding, stackRef, zoom = 1 }) {
           layout above. The scroll layer is inside it and absolutely positioned, so a
           scrollbar appearing when zoomed in cannot change what was measured — that
           feedback loop is what let the page change size without a click. */}
-      <div className="absolute inset-0 flex overflow-auto">
+      {/* The pane is the surface the page sits on, and it is one step darker than the
+          shell so the paper reads as paper. It clips, which is why the stack below
+          keeps padding: that padding is the room the shadow casts into. */}
+      <div className="absolute inset-0 flex overflow-auto bg-[var(--canvas)]">
         {/* margin:auto centres the stack while it fits and stops centring once it does
             not, which is the one arrangement that both centres and scrolls. */}
         <div
           ref={stackRef}
           data-sheet-stack
-          className="flex flex-col items-center gap-4 p-2"
+          className="flex flex-col items-center gap-4 p-6"
           style={{ margin: 'auto' }}
         >
           {pages.map((page, index) => (

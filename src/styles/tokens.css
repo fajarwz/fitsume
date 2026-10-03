@@ -18,6 +18,12 @@
   color-scheme: light;
 
   --background: #fafafa;
+  /*
+   * The preview pane, one step darker than the shell. A white page on a near-white
+   * canvas has no edge to see, whatever shadow is on it: the paper has to be the
+   * brightest thing on screen or it reads as text floating in the app.
+   */
+  --canvas: #ebebeb;
   --foreground: #171717;
   --muted-foreground: #666666;
   --muted: #f2f2f2;
@@ -39,7 +45,7 @@
    * survives.
    */
   --shadow-page:
-    0 0 0 1px rgba(0, 0, 0, 0.14), 0 1px 3px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.16);
+    0 0 0 1px rgba(0, 0, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.16), 0 16px 40px rgba(0, 0, 0, 0.24);
 
   --paper: #ffffff;
   --ink: #111111;
@@ -52,6 +58,7 @@
   color-scheme: dark;
 
   --background: #000000;
+  --canvas: #0d0d0d;
   --foreground: #ededed;
   --muted-foreground: #a1a1a1;
   --muted: #1a1a1a;
@@ -71,7 +78,7 @@
    * the sheet's edge is the ring and the shadow is only there for the sense of the page
    * sitting above the surface.
    */
-  --shadow-page: 0 0 0 1px rgba(255, 255, 255, 0.2), 0 8px 24px rgba(0, 0, 0, 0.8);
+  --shadow-page: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 16px 40px rgba(0, 0, 0, 0.9);
 
   --paper: #ffffff;
   --ink: #111111;

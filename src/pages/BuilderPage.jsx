@@ -46,6 +46,7 @@ export default function BuilderPage() {
   const { resumes, actions, saveResult } = useStashContext()
   const [tab, setTab] = useState('write')
   const [zoom, setZoom] = useState(1)
+  const [focus, setFocus] = useState(false)
   const sheet = useRef(null)
   const stacked = useMediaQuery('(max-width: 1000px)')
 
@@ -90,6 +91,20 @@ export default function BuilderPage() {
         data-no-print
         className="flex w-full items-center justify-end gap-1 pb-2 text-[11px] text-[var(--muted-foreground)]"
       >
+        {stacked ? null : (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="mr-auto"
+            onClick={() => setFocus((current) => !current)}
+            aria-pressed={focus}
+            title={
+              focus ? 'Show the editor and the fit controls again' : 'Hide everything but the page'
+            }
+          >
+            {focus ? 'Exit full screen' : 'Full screen'}
+          </Button>
+        )}
         <Button
           size="sm"
           variant="ghost"
@@ -187,18 +202,33 @@ export default function BuilderPage() {
           </section>
         </div>
       ) : (
-        <div className="grid min-h-0 flex-1 grid-cols-[minmax(20rem,1fr)_minmax(26rem,1.05fr)] gap-3 p-3">
-          <div className="flex min-h-0 flex-col gap-3">
-            <section className="flex min-h-0 flex-[1.4] flex-col rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
+        <div
+          className={
+            focus
+              ? 'flex min-h-0 flex-1 p-3'
+              : 'grid min-h-0 flex-1 grid-cols-[minmax(18rem,0.9fr)_minmax(20rem,1.5fr)_minmax(11rem,15rem)] gap-3 p-3'
+          }
+        >
+          {focus ? null : (
+            <section className="flex min-h-0 flex-col rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
               {editor}
             </section>
-            <section className="max-h-[42%] shrink-0 overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
-              {controls}
-            </section>
-          </div>
-          <section className="flex min-h-0 flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
+          )}
+
+          {/* The page takes the middle and the full height: the sheet fits the pane
+              in both directions, so the taller this column, the bigger the page —
+              which is why the fit controls sit off to the right instead of under the
+              editor. */}
+          <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
             {preview}
           </section>
+
+          {focus ? null : (
+            <section className="flex min-h-0 flex-col gap-3 overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
+              <h2 className="text-xs font-semibold">Auto-fit</h2>
+              {controls}
+            </section>
+          )}
         </div>
       )}
 

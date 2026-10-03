@@ -16,8 +16,8 @@ import { SPACING_BOUNDS } from '../../lib/settings.js'
  * Auto-fit is the default and the headline feature, so everything it overrides is
  * disabled while it is on — a slider that silently does nothing is worse than a
  * slider that is visibly unavailable. Turning it off hands the numbers back to the
- * user, and if their numbers do not fit, the readout says so instead of quietly
- * shrinking their document.
+ * user, and the document grows to as many pages as their numbers need rather than
+ * being cut off at the bottom of the first one.
  */
 export default function FitPanel({ settings, fit, onChange }) {
   const set = (patch) => onChange(patch)
@@ -100,9 +100,14 @@ export default function FitPanel({ settings, fit, onChange }) {
 }
 
 function Rollup({ fit, settings }) {
+  const pages = fit.pageCount ?? 1
+
   if (settings.autoFit) {
     return (
-      <p className="rounded-md bg-[var(--background)] p-2 text-xs text-[var(--muted-foreground)]">
+      <p
+        role="status"
+        className="rounded-md bg-[var(--background)] p-2 text-xs text-[var(--muted-foreground)]"
+      >
         Fitted at{' '}
         <span className="font-mono tabular-nums text-[var(--foreground)]">
           {fit.fontSize.toFixed(1)}px
@@ -112,26 +117,31 @@ function Rollup({ fit, settings }) {
           {fit.lineHeightMultiplier.toFixed(2)}×
         </span>{' '}
         line spacing.
+        {pages > 1
+          ? ` Even the smallest font size runs to ${pages} pages, so the page count stands.`
+          : ''}
       </p>
     )
   }
 
-  if (fit.overflow > 0) {
+  if (pages > 1) {
     return (
       <p
         role="status"
-        className="rounded-md p-2 text-xs"
-        style={{ background: 'rgba(185,28,28,0.12)', color: 'var(--negative)' }}
+        className="rounded-md bg-[var(--background)] p-2 text-xs text-[var(--muted-foreground)]"
       >
-        {fit.overflow}px past the bottom of the page at {settings.baseFontSize}px. Turn auto-fit back
-        on, lower the font size, or cut something.
+        <span className="font-mono tabular-nums text-[var(--foreground)]">{pages} pages</span> at{' '}
+        {settings.baseFontSize}px. Auto-fit would bring it back to one.
       </p>
     )
   }
 
   return (
-    <p role="status" className="rounded-md bg-[var(--background)] p-2 text-xs text-[var(--muted-foreground)]">
-      Fits with room to spare at {settings.baseFontSize}px — auto-fit would use the space.
+    <p
+      role="status"
+      className="rounded-md bg-[var(--background)] p-2 text-xs text-[var(--muted-foreground)]"
+    >
+      One page at {settings.baseFontSize}px, with room to spare — auto-fit would use the space.
     </p>
   )
 }

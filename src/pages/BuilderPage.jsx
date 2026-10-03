@@ -73,7 +73,7 @@ export default function BuilderPage() {
 
   const update = (patch) => actions.update(resume.id, patch)
 
-  const exportPdf = () => exportToPdf({ page: sheet.current, markdown })
+  const exportPdf = () => exportToPdf({ container: sheet.current, markdown })
 
   const downloadMarkdown = () =>
     downloadText({ filename: markdownFilename(resume.name), text: exportResumeMarkdown(resume) })
@@ -141,13 +141,7 @@ export default function BuilderPage() {
       </div>
 
       <div className="min-h-0 flex-1">
-        <ResumeSheet
-          positioned={fit.positioned}
-          padding={settings.padding}
-          overflow={fit.overflow}
-          sheetRef={sheet}
-          zoom={zoom}
-        />
+        <ResumeSheet pages={fit.pages} padding={settings.padding} stackRef={sheet} zoom={zoom} />
       </div>
     </div>
   )

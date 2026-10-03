@@ -14,8 +14,14 @@
  * the one under a job title is tighter than the one under the header.
  */
 const STYLES = {
-  title: { fontScale: 1.5, bold: true, marginBottom: 4, color: 'ink' },
-  subtitle: { fontScale: 1, bold: false, marginBottom: 6, color: 'inkMuted' },
+  title: { fontScale: 1.5, bold: true, marginBottom: 4, color: 'ink', keepWithNext: true },
+  subtitle: {
+    fontScale: 1,
+    bold: false,
+    marginBottom: 6,
+    color: 'inkMuted',
+    keepWithNext: true,
+  },
   meta: { fontScale: 0.8, bold: false, marginBottom: 16, color: 'inkFaint' },
   itemMeta: { fontScale: 0.8, bold: false, marginBottom: 6, color: 'inkFaint' },
   section: {
@@ -24,9 +30,23 @@ const STYLES = {
     marginBottom: 3,
     color: 'inkFaint',
     spaceBefore: 'section',
+    keepWithNext: true,
   },
-  item: { fontScale: 1, bold: true, marginBottom: 2, color: 'ink', spaceBefore: 'item' },
-  itemAfterSection: { fontScale: 1, bold: true, marginBottom: 2, color: 'ink' },
+  item: {
+    fontScale: 1,
+    bold: true,
+    marginBottom: 2,
+    color: 'ink',
+    spaceBefore: 'item',
+    keepWithNext: true,
+  },
+  itemAfterSection: {
+    fontScale: 1,
+    bold: true,
+    marginBottom: 2,
+    color: 'ink',
+    keepWithNext: true,
+  },
   bullet: { fontScale: 1, bold: false, marginBottom: 3, color: 'inkMuted' },
   body: { fontScale: 1, bold: false, marginBottom: 6, color: 'ink' },
 }
@@ -52,6 +72,9 @@ function textBlock(text, style) {
     marginBottom: style.marginBottom,
     color: style.color,
     spaceBefore: style.spaceBefore,
+    // A heading belongs with what it introduces: pagination reads this to avoid
+    // stranding "EXPERIENCE" at the foot of a page with nothing under it.
+    keepWithNext: Boolean(style.keepWithNext),
   }
 }
 

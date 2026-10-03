@@ -65,6 +65,7 @@ export function layoutBlocks(blocks, options) {
         lineHeight,
         bold: block.bold,
         color: block.color,
+        keepWithNext: block.keepWithNext === true,
       })
 
       y += lineHeight

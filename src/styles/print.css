@@ -18,6 +18,23 @@
     background: #ffffff;
   }
 
+  /* The preview's gutter and pane padding are screen affordances. In print the sheet
+     carries its own margins, and the wrapper around each sheet decides the page break. */
+  [data-sheet-stack] {
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+  }
+
+  [data-print-sheet] {
+    box-shadow: none !important;
+  }
+
+  /* Every sheet but the last is a printed page of its own. */
+  [data-page-break='after'] {
+    break-after: page;
+  }
+
   * {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;

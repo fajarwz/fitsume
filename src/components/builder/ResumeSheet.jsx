@@ -23,6 +23,20 @@ const COLOR = {
   inkFaint: 'var(--ink-faint)',
 }
 
+/**
+ * Slack left at the default scale.
+ *
+ * Fitting the pane *exactly* is what makes a scrollbar appear: the box is measured
+ * in fractional pixels, the scale is a float, and the browser rounds the scaled page
+ * up by a hair — which is enough for `overflow: auto` to decide there is something
+ * to scroll. A few percent of headroom means the whole page is always visible, and
+ * the page reads as a page rather than as a wall of text.
+ */
+const FIT_SLACK = 0.94
+
+/** Below this, the box is not a real pane (a hidden tab measures zero). */
+const MIN_USABLE_HEIGHT = 40
+
 export default function ResumeSheet({ positioned, padding, overflow = 0, sheetRef, zoom = 1 }) {
   const frame = useRef(null)
   const [fit, setFit] = useState(1)
@@ -35,10 +49,18 @@ export default function ResumeSheet({ positioned, padding, overflow = 0, sheetRe
     const measure = () => {
       const { clientWidth: width, clientHeight: height } = element
 
-      // Both axes, or the page is taller than the pane and the user scrolls.
-      if (!width || !height) return
+      // Width zero means the pane is not on screen at all (a hidden tab); leaving the
+      // last good fit alone is better than resetting to something wrong.
+      if (!width) return
 
-      setFit(Math.min(width / PAGE_WIDTH, height / PAGE_HEIGHT))
+      // A pane with width but no height is a layout the measurement cannot trust, so
+      // fall back to the window it is carved out of rather than rendering the page
+      // oversized.
+      const usableHeight =
+        height > MIN_USABLE_HEIGHT ? height : Math.max(240, window.innerHeight - 240)
+
+      // Both axes, or the page is taller than the pane and the user scrolls.
+      setFit(Math.min(width / PAGE_WIDTH, usableHeight / PAGE_HEIGHT) * FIT_SLACK)
     }
 
     measure()

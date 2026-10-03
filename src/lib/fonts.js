@@ -5,12 +5,12 @@
  * same string. When they diverge, a resume "fits" on screen and overflows in
  * print — which is the whole failure mode this app exists to prevent.
  *
- * 'Inter Variable' is registered by @fontsource-variable/inter, which is bundled
+ * 'Geist Variable' is registered by @fontsource-variable/geist, which is bundled
  * into the build. Self-hosted on purpose: a CDN font that fails to load falls
  * back to Arial or Segoe, and the fit would then be measured against metrics the
  * user never sees.
  */
-export const RESUME_FONT_FAMILY = "'Inter Variable', Inter, system-ui, sans-serif"
+export const RESUME_FONT_FAMILY = "'Geist Variable', Geist, system-ui, sans-serif"
 
 /** CSS font shorthand, identical for measurement and for rendering. */
 export function resumeFont({ bold = false, fontSize }) {

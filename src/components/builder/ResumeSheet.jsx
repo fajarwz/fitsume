@@ -107,7 +107,7 @@ export default function ResumeSheet({ pages, padding, stackRef, zoom = 1 }) {
               >
                 <div
                   data-page
-                  className="absolute left-0 top-0 overflow-hidden rounded-sm shadow-[2px_2px_6px_rgba(0,0,0,0.28)]"
+                  className="absolute left-0 top-0 overflow-hidden rounded-sm shadow-[var(--shadow)]"
                   style={{
                     width: PAGE_WIDTH,
                     height: PAGE_HEIGHT,

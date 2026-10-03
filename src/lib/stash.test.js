@@ -26,7 +26,13 @@ import {
 const NOW = '2026-01-01T00:00:00.000Z'
 
 const resume = (overrides = {}) =>
-  createResume({ id: 'r1', name: 'Ada Lovelace', markdown: '# Ada Lovelace', now: NOW, ...overrides })
+  createResume({
+    id: 'r1',
+    name: 'Ada Lovelace',
+    markdown: '# Ada Lovelace',
+    now: NOW,
+    ...overrides,
+  })
 
 const libraryWith = (...resumes) => ({
   schemaVersion: SCHEMA_VERSION,
@@ -53,9 +59,9 @@ describe('createResume', () => {
     expect(createResume({ markdown: '# X' }).settings).toEqual(DEFAULT_RESUME_SETTINGS)
 
     // 900 is out of range, so it comes back at the top of the slider, not at 900.
-    expect(createResume({ markdown: '# X', settings: { baseFontSize: 900 } }).settings.baseFontSize).toBe(
-      FONT_SIZE_MAX,
-    )
+    expect(
+      createResume({ markdown: '# X', settings: { baseFontSize: 900 } }).settings.baseFontSize,
+    ).toBe(FONT_SIZE_MAX)
   })
 })
 
@@ -94,7 +100,10 @@ describe('library operations', () => {
   })
 
   it('selects the next resume when the active one is deleted', () => {
-    const library = removeResume(libraryWith(resume(), resume({ id: 'r2' }), resume({ id: 'r3' })), 'r2')
+    const library = removeResume(
+      libraryWith(resume(), resume({ id: 'r2' }), resume({ id: 'r3' })),
+      'r2',
+    )
 
     expect(library.resumes.map((entry) => entry.id)).toEqual(['r1', 'r3'])
     expect(library.activeId).toBe('r3')
@@ -221,10 +230,7 @@ describe('loadLibrary / saveLibrary', () => {
   })
 
   it('remembers which resume was open', () => {
-    const library = setActiveResume(
-      libraryWith(resume(), resume({ id: 'r2' })),
-      'r1',
-    )
+    const library = setActiveResume(libraryWith(resume(), resume({ id: 'r2' })), 'r1')
 
     saveLibrary(storage, library)
 

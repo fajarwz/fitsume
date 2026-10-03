@@ -1,21 +1,33 @@
+/**
+ * The only button in the app, so the shell cannot drift apart piece by piece.
+ *
+ * Three variants, in Vercel's spirit: one near-black button for the single primary
+ * action on a screen, a white button with a hairline border for everything else, and a
+ * text-only one for actions that should not compete for attention. The primary one is
+ * the only place the near-black accent is used at size, which is what makes it read as
+ * the primary action.
+ */
+const SECONDARY =
+  'border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--border-strong)]'
+
 const VARIANTS = {
   primary:
-    'bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 border border-transparent',
-  subtle:
-    'bg-transparent text-[var(--foreground)] border border-[var(--border)] hover:bg-[var(--card)]',
+    'border border-transparent bg-[var(--accent)] text-[var(--accent-foreground)] hover:bg-[var(--accent-hover)]',
+  secondary: SECONDARY,
   ghost:
-    'bg-transparent text-[var(--muted-foreground)] border border-transparent hover:text-[var(--foreground)] hover:bg-[var(--card)]',
-  danger: 'bg-transparent text-[var(--negative)] border border-[var(--border)] hover:opacity-80',
+    'border border-transparent bg-transparent text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
+  danger:
+    'border border-[var(--border)] bg-transparent text-[var(--negative)] hover:border-[var(--negative)]',
 }
 
+/** 40px and 32px, rather than whatever a thumb happened to land on. */
 const SIZES = {
-  sm: 'h-7 px-2 text-xs gap-1',
-  md: 'h-9 px-3 text-sm gap-1.5',
+  sm: 'h-8 px-3 text-xs gap-1.5',
+  md: 'h-10 px-4 text-sm gap-2',
 }
 
-/** The only button in the app, so the shell cannot drift apart piece by piece. */
 export default function Button({
-  variant = 'subtle',
+  variant = 'secondary',
   size = 'md',
   type = 'button',
   className = '',
@@ -29,7 +41,7 @@ export default function Button({
         'inline-flex items-center justify-center rounded-md font-medium transition',
         'disabled:cursor-not-allowed disabled:opacity-40',
         SIZES[size] ?? SIZES.md,
-        VARIANTS[variant] ?? VARIANTS.subtle,
+        VARIANTS[variant] ?? VARIANTS.secondary,
         className,
       ].join(' ')}
       {...rest}

@@ -3,7 +3,8 @@ import { createRoot } from 'react-dom/client'
 
 // Self-hosted so the fit is measured against the font the page actually renders,
 // and so the app works offline. No Google Fonts CDN.
-import '@fontsource-variable/inter'
+import '@fontsource-variable/geist'
+import '@fontsource-variable/geist-mono'
 
 import './styles/tokens.css'
 import './styles/index.css'

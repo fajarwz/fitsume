@@ -95,7 +95,10 @@ describe('layoutBlocks', () => {
   })
 
   it('keeps colours semantic, so the renderer resolves them from tokens', () => {
-    const positioned = layoutBlocks(parseMarkdown('# Name\nRole\nJakarta\nbody'), options(createFakeMetrics()))
+    const positioned = layoutBlocks(
+      parseMarkdown('# Name\nRole\nJakarta\nbody'),
+      options(createFakeMetrics()),
+    )
 
     expect(positioned.map((item) => item.color)).toEqual(['ink', 'inkMuted', 'inkFaint', 'ink'])
   })

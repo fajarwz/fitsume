@@ -98,5 +98,8 @@ export function findOptimalFit(blocks, options) {
 export function overflowBy(blocks, options, baseFontSize, lineHeightMultiplier) {
   const { maxHeight } = options
 
-  return Math.max(0, Math.ceil(measureAt(blocks, options, baseFontSize, lineHeightMultiplier) - maxHeight))
+  return Math.max(
+    0,
+    Math.ceil(measureAt(blocks, options, baseFontSize, lineHeightMultiplier) - maxHeight),
+  )
 }

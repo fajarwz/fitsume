@@ -1,4 +1,10 @@
-import { createLibrary, createResume, newResumeId, uniqueResumeName, validateLibrary } from './stash.js'
+import {
+  createLibrary,
+  createResume,
+  newResumeId,
+  uniqueResumeName,
+  validateLibrary,
+} from './stash.js'
 
 /**
  * Getting work in and out of the browser: one resume as markdown, the whole

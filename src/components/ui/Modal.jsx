@@ -9,7 +9,14 @@ import Button from './Button.jsx'
  * Closing is explicit — the Cancel button, or Escape — rather than a click on the
  * backdrop, so there is no invisible click target and no keyboard-trap-shaped hole.
  */
-export default function Modal({ open, title, description, confirmLabel = 'Confirm', onConfirm, onCancel }) {
+export default function Modal({
+  open,
+  title,
+  description,
+  confirmLabel = 'Confirm',
+  onConfirm,
+  onCancel,
+}) {
   useEffect(() => {
     if (!open || typeof document === 'undefined') return undefined
 
@@ -30,7 +37,7 @@ export default function Modal({ open, title, description, confirmLabel = 'Confir
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="w-full max-w-sm rounded-lg border border-[var(--border)] bg-[var(--card)] p-4 shadow-xl"
+        className="w-full max-w-sm rounded-lg border border-[var(--border)] bg-[var(--card)] p-5 shadow-[var(--shadow)]"
       >
         <h2 className="text-sm font-semibold">{title}</h2>
         {description ? (

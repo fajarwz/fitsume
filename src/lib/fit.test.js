@@ -60,7 +60,9 @@ const dense = () => {
     (_, index) => `- Achievement number ${index} with enough words in it to wrap on a narrow line`,
   )
 
-  return parseMarkdown(['# Dense', 'Senior Engineer', 'Jakarta', '## EXPERIENCE', ...bullets].join('\n'))
+  return parseMarkdown(
+    ['# Dense', 'Senior Engineer', 'Jakarta', '## EXPERIENCE', ...bullets].join('\n'),
+  )
 }
 
 /** Nothing fits, not even at the floor. */

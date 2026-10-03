@@ -26,20 +26,25 @@ line. The line under a `### ` job title is its dates.
 
 ```markdown
 # Your Name
+
 Your Role
 City · you@example.com · github.com/you
 ---
+
 A short summary.
 
 ## EXPERIENCE
 
 ### Job Title — Company
+
 2020 — Present
+
 - What you did, and what it changed
 
 ## EDUCATION
 
 ### Degree — University
+
 Details
 ```
 
@@ -130,7 +135,7 @@ Two rules keep it that way, and ESLint enforces both:
   and checks the work survived, and asserts the export is named after the resume on
   screen.
 - **Every shipped sample** is fitted against the real measurement engine, and the
-  geometry that gets *rendered* is checked against the page — so the preview cannot
+  geometry that gets _rendered_ is checked against the page — so the preview cannot
   silently disagree with the fit that produced it.
 - Coverage thresholds apply to `lib/` only, on purpose: component tests exist to
   catch behaviour regressions, not to chase a number.
@@ -144,7 +149,23 @@ binary.
 
 React 19 · Vite · Tailwind CSS · [pretext](https://github.com/chenglou/pretext)
 for DOM-free text measurement · Vitest + Testing Library · ESLint + Prettier.
-Inter is bundled via `@fontsource-variable/inter`.
+Geist Sans and Geist Mono are bundled via `@fontsource-variable/geist` and
+`@fontsource-variable/geist-mono`.
+
+## Design
+
+The shell follows Vercel's system: a `#fafafa` page, hairline `#eaeaea` borders,
+near-black text, one near-black primary button, one blue for links and focus, all set
+in Geist. Every colour lives in `src/styles/tokens.css`, so the whole look is a token
+swap rather than an edit across twenty components.
+
+The A4 sheet is deliberately excluded from that: it stays paper-white with ink-black
+text in both themes, because it is a document that prints. A dark-grey resume is a
+broken resume, not a dark mode.
+
+The values were taken from the public account of Vercel's design system
+([design-bites](https://github.com/educlopez/design-bites), MIT) rather than vendored
+into this repo as a spec document.
 
 ## License
 

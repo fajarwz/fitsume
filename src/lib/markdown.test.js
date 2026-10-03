@@ -61,7 +61,11 @@ describe('parseMarkdown', () => {
   it('turns bullets into bullet blocks with a real glyph', () => {
     const blocks = parseMarkdown('- shipped it\n- and this')
 
-    expect(blocks[0]).toMatchObject({ text: '\u2022 shipped it', color: 'inkMuted', marginBottom: 3 })
+    expect(blocks[0]).toMatchObject({
+      text: '\u2022 shipped it',
+      color: 'inkMuted',
+      marginBottom: 3,
+    })
     expect(blocks[1].text).toBe('\u2022 and this')
   })
 
@@ -74,7 +78,11 @@ describe('parseMarkdown', () => {
   it('treats a paragraph as body text', () => {
     const blocks = parseMarkdown('Just a summary paragraph.')
 
-    expect(blocks[0]).toMatchObject({ text: 'Just a summary paragraph.', color: 'ink', marginBottom: 6 })
+    expect(blocks[0]).toMatchObject({
+      text: 'Just a summary paragraph.',
+      color: 'ink',
+      marginBottom: 6,
+    })
     expect(blocks[0].spaceBefore).toBeUndefined()
   })
 

@@ -47,10 +47,9 @@ describe('ResumeSheet', () => {
   it('keeps the A4 proportions while fitting', () => {
     const { container } = render(<ResumeSheet positioned={[]} padding={40} />)
 
-    expect(parseFloat(pageBox(container).width) / parseFloat(pageBox(container).height)).toBeCloseTo(
-      PAGE_WIDTH / PAGE_HEIGHT,
-      3,
-    )
+    expect(
+      parseFloat(pageBox(container).width) / parseFloat(pageBox(container).height),
+    ).toBeCloseTo(PAGE_WIDTH / PAGE_HEIGHT, 3)
   })
 
   it('multiplies the fit by the zoom, and lets it overflow the pane', () => {
@@ -64,6 +63,6 @@ describe('ResumeSheet', () => {
   it('scales below the fit when zoomed out', () => {
     const { container } = render(<ResumeSheet positioned={[]} padding={40} zoom={0.5} />)
 
-    expect(parseFloat(pageBox(container).height)).toBeCloseTo((PANE.height * 0.5), 1)
+    expect(parseFloat(pageBox(container).height)).toBeCloseTo(PANE.height * 0.5, 1)
   })
 })

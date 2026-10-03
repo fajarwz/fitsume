@@ -1,11 +1,11 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 
 import Button from '../ui/Button.jsx'
 import { useStashContext } from '../../state/StashProvider.jsx'
 
 const NAV = [
-  ['/', 'Library'],
-  ['/settings', 'Settings'],
+  ['/', 'Library', true],
+  ['/settings', 'Settings', false],
 ]
 
 /**
@@ -15,26 +15,37 @@ const NAV = [
  *
  * It navigates on its own: the switcher is a link to another resume rather than a
  * piece of hidden app state, so pages do not each have to wire the same handler.
+ *
+ * The nav shows where you are rather than being a row of boxes that all look the
+ * same: the current page is the only one with a background.
  */
 export default function TopBar({ resume = null, onNew, onExport, secondary = null }) {
   const { resumes, persistent } = useStashContext()
   const navigate = useNavigate()
 
   return (
-    <header className="flex flex-wrap items-center gap-2 border-b border-[var(--border)] bg-[var(--card)] px-3 py-2">
-      <Link to="/" className="mr-1 text-sm font-semibold tracking-tight">
+    <header className="flex min-h-16 flex-wrap items-center gap-3 border-b border-[var(--border)] bg-[var(--card)] px-4 py-2">
+      <Link to="/" className="mr-2 text-sm font-semibold tracking-tight">
         fittyresume
       </Link>
 
       <nav className="flex items-center gap-1">
-        {NAV.map(([to, label]) => (
-          <Link
+        {NAV.map(([to, label, end]) => (
+          <NavLink
             key={to}
             to={to}
-            className="inline-flex h-7 items-center rounded-md border border-[var(--border)] px-2 text-xs font-medium"
+            end={end}
+            className={({ isActive }) =>
+              [
+                'inline-flex h-8 items-center rounded-md px-3 text-sm transition',
+                isActive
+                  ? 'bg-[var(--muted)] font-medium text-[var(--foreground)]'
+                  : 'text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
+              ].join(' ')
+            }
           >
             {label}
-          </Link>
+          </NavLink>
         ))}
       </nav>
 
@@ -47,7 +58,7 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
             id="resume-switcher"
             value={resume?.id ?? ''}
             onChange={(event) => navigate(`/resume/${event.target.value}`)}
-            className="h-8 max-w-[14rem] rounded-md border border-[var(--border)] bg-[var(--background)] px-2 text-xs"
+            className="h-8 max-w-[14rem] rounded-md border border-[var(--border)] bg-[var(--card)] px-2 text-xs"
           >
             <option value="">No resume open</option>
             {resumes.map((entry) => (

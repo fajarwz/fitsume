@@ -3,7 +3,14 @@ import { describe, expect, it } from 'vitest'
 import { createFakeMetrics } from '../test/fakeMetrics.js'
 import { parseMarkdown } from './markdown.js'
 import { measureBlocks, spaceBefore, skipsMarginAfter } from './measure.js'
-import { DEFAULT_PADDING, DEFAULT_SPACING, HAIRLINE, LINE_HEIGHT_MIN, PAGE_HEIGHT, PAGE_WIDTH } from './page.js'
+import {
+  DEFAULT_PADDING,
+  DEFAULT_SPACING,
+  HAIRLINE,
+  LINE_HEIGHT_MIN,
+  PAGE_HEIGHT,
+  PAGE_WIDTH,
+} from './page.js'
 
 const pageOptions = (metrics, overrides = {}) => ({
   metrics,

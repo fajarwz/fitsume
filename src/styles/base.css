@@ -11,12 +11,19 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   font-family:
-    'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    'Geist Variable',
+    Geist,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
+/* A blue ring rather than the text colour: at these hairline borders, a black outline
+   on a black button is invisible. */
 *:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--ring);
   outline-offset: 2px;
 }

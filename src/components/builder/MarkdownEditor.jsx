@@ -46,9 +46,7 @@ function indentSelection(textarea, outdent) {
   const endOfBlock = value.indexOf('\n', end)
   const lineEnd = endOfBlock === -1 ? value.length : endOfBlock
   const lines = value.slice(lineStart, lineEnd).split('\n')
-  const next = lines
-    .map((line) => (outdent ? line.replace(/^ {1,2}/, '') : `  ${line}`))
-    .join('\n')
+  const next = lines.map((line) => (outdent ? line.replace(/^ {1,2}/, '') : `  ${line}`)).join('\n')
 
   return {
     value: `${value.slice(0, lineStart)}${next}${value.slice(lineEnd)}`,
@@ -172,7 +170,13 @@ export default function MarkdownEditor({
         </Button>
 
         <div className="ml-auto flex items-center gap-1">
-          <Button size="sm" variant="ghost" onClick={undo} disabled={!canUndo} title="Undo (Ctrl+Z)">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={undo}
+            disabled={!canUndo}
+            title="Undo (Ctrl+Z)"
+          >
             Undo
           </Button>
           <Button
@@ -199,7 +203,7 @@ export default function MarkdownEditor({
         onKeyDown={onKeyDown}
         spellCheck="true"
         placeholder={'# Your Name\nYour Title\nCity · email@example.com\n---\n## EXPERIENCE'}
-        className="min-h-[18rem] flex-1 resize-none rounded-md border border-[var(--border)] bg-[var(--background)] p-3 font-mono text-xs leading-relaxed outline-none"
+        className="min-h-[18rem] flex-1 resize-none rounded-md border border-[var(--border)] bg-[var(--muted)] p-3 font-mono text-xs leading-relaxed outline-none"
       />
       {footer}
     </div>

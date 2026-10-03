@@ -11,9 +11,9 @@ import { textMetrics } from '../lib/textMetrics.js'
  * Tracks the webfont, so a fit is never trusted when it was measured against the
  * fallback.
  *
- * The measurement engine measures whatever font the canvas has *now*, and Inter
+ * The measurement engine measures whatever font the canvas has *now*, and Geist
  * arrives after the first paint. Fitting before it lands means fitting the fallback:
- * the page then renders in Inter, the lines come out wider than they were measured,
+ * the page then renders in Geist, the lines come out wider than they were measured,
  * and the last word of a tight line crosses the margin. It shows up worst on the
  * shortest document, because auto-fit has grown that one to the largest font — a
  * proportional width error is a proportional number of pixels.

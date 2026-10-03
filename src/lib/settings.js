@@ -47,10 +47,7 @@ export function normaliseSpacing(raw) {
   const source = raw && typeof raw === 'object' ? raw : {}
 
   return {
-    section: clamp(
-      asNumber(source.section, DEFAULT_SPACING.section),
-      ...SPACING_BOUNDS.section,
-    ),
+    section: clamp(asNumber(source.section, DEFAULT_SPACING.section), ...SPACING_BOUNDS.section),
     item: clamp(asNumber(source.item, DEFAULT_SPACING.item), ...SPACING_BOUNDS.item),
     separator: clamp(
       asNumber(source.separator, DEFAULT_SPACING.separator),

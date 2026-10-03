@@ -3,21 +3,35 @@
  * and settings panel cannot drift apart, and a theme change is a token swap
  * rather than an edit in twenty components.
  *
- * --paper / --ink are the A4 sheet: the sheet stays paper-white in both themes,
- * because that is what prints. The shell around it flips.
+ * The shell follows Vercel's system: a #fafafa page, hairline #eaeaea borders,
+ * near-black text, one near-black button, one blue for links and focus, all set in
+ * Geist. The values were taken from the public account of that system (design-bites'
+ * DESIGN.md for vercel.com, MIT) rather than vendored into the repo as a document: a
+ * copied spec is a file nobody here maintains, and these tokens are the part that
+ * actually decides how the app looks.
+ *
+ * --paper / --ink are the A4 sheet, and they are the one place this look must not
+ * reach: the sheet stays paper-white with ink-black text in both themes, because that
+ * is what prints. A dark-grey resume is a broken resume, not a dark mode.
  */
 :root {
   color-scheme: light;
 
-  --background: #f4f4f5;
-  --foreground: #18181b;
-  --muted-foreground: #52525b;
+  --background: #fafafa;
+  --foreground: #171717;
+  --muted-foreground: #666666;
+  --muted: #f2f2f2;
   --card: #ffffff;
-  --border: #d4d4d8;
-  --accent: #18181b;
-  --accent-foreground: #fafafa;
-  --positive: #047857;
-  --negative: #b91c1c;
+  --border: #eaeaea;
+  --border-strong: #d4d4d4;
+  --accent: #171717;
+  --accent-hover: #383838;
+  --accent-foreground: #ffffff;
+  --link: #0072f5;
+  --ring: #0072f5;
+  --positive: #0cce6b;
+  --negative: #ee0000;
+  --shadow: 0 5px 10px rgba(0, 0, 0, 0.12);
 
   --paper: #ffffff;
   --ink: #111111;
@@ -29,15 +43,21 @@
 [data-theme='dark'] {
   color-scheme: dark;
 
-  --background: #171717;
-  --foreground: #fafafa;
-  --muted-foreground: #a3a3a3;
-  --card: #1f1f1f;
-  --border: #3f3f3f;
-  --accent: #fafafa;
-  --accent-foreground: #171717;
-  --positive: #34d399;
-  --negative: #f87171;
+  --background: #000000;
+  --foreground: #ededed;
+  --muted-foreground: #a1a1a1;
+  --muted: #1a1a1a;
+  --card: #111111;
+  --border: #333333;
+  --border-strong: #444444;
+  --accent: #ffffff;
+  --accent-hover: #e5e5e5;
+  --accent-foreground: #000000;
+  --link: #3291ff;
+  --ring: #3291ff;
+  --positive: #0cce6b;
+  --negative: #ff6369;
+  --shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
 
   --paper: #ffffff;
   --ink: #111111;

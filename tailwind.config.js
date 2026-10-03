@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter Variable', 'Inter', ...defaultTheme.fontFamily.sans],
+        sans: ['Geist Variable', 'Geist', ...defaultTheme.fontFamily.sans],
+        mono: ['Geist Mono Variable', 'Geist Mono', ...defaultTheme.fontFamily.mono],
       },
     },
   },

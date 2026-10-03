@@ -106,7 +106,7 @@ function Rollup({ fit, settings }) {
     return (
       <p
         role="status"
-        className="rounded-md bg-[var(--background)] p-2 text-xs text-[var(--muted-foreground)]"
+        className="rounded-md bg-[var(--muted)] p-2 text-xs text-[var(--muted-foreground)]"
       >
         Fitted at{' '}
         <span className="font-mono tabular-nums text-[var(--foreground)]">
@@ -128,7 +128,7 @@ function Rollup({ fit, settings }) {
     return (
       <p
         role="status"
-        className="rounded-md bg-[var(--background)] p-2 text-xs text-[var(--muted-foreground)]"
+        className="rounded-md bg-[var(--muted)] p-2 text-xs text-[var(--muted-foreground)]"
       >
         <span className="font-mono tabular-nums text-[var(--foreground)]">{pages} pages</span> at{' '}
         {settings.baseFontSize}px. Auto-fit would bring it back to one.
@@ -139,7 +139,7 @@ function Rollup({ fit, settings }) {
   return (
     <p
       role="status"
-      className="rounded-md bg-[var(--background)] p-2 text-xs text-[var(--muted-foreground)]"
+      className="rounded-md bg-[var(--muted)] p-2 text-xs text-[var(--muted-foreground)]"
     >
       One page at {settings.baseFontSize}px, with room to spare — auto-fit would use the space.
     </p>

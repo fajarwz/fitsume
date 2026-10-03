@@ -8,12 +8,14 @@
  */
 export default function CheatSheet() {
   return (
-    <details className="rounded-md border border-[var(--border)] bg-[var(--background)] p-2 text-xs">
+    <details className="rounded-md border border-[var(--border)] bg-[var(--muted)] p-2 text-xs">
       <summary className="cursor-pointer font-medium">Markdown cheat sheet</summary>
 
       <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
         <dt className="font-mono"># Name</dt>
-        <dd className="text-[var(--muted-foreground)]">Your name — the one line that sets the title</dd>
+        <dd className="text-[var(--muted-foreground)]">
+          Your name — the one line that sets the title
+        </dd>
 
         <dt className="font-mono">plain line</dt>
         <dd className="text-[var(--muted-foreground)]">

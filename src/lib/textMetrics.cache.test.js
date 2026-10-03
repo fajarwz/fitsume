@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { clearCache, layout, layoutWithLines, prepare, prepareWithSegments } from '@chenglou/pretext'
+import {
+  clearCache,
+  layout,
+  layoutWithLines,
+  prepare,
+  prepareWithSegments,
+} from '@chenglou/pretext'
 
 import { createTextMetrics } from './textMetrics.js'
 
@@ -16,7 +22,11 @@ import { createTextMetrics } from './textMetrics.js'
 vi.mock('@chenglou/pretext', () => ({
   prepare: vi.fn((text, font) => ({ text, font, kind: 'plain' })),
   prepareWithSegments: vi.fn((text, font) => ({ text, font, kind: 'segments' })),
-  layout: vi.fn((prepared, maxWidth, lineHeight) => ({ height: lineHeight, lineCount: 1, prepared })),
+  layout: vi.fn((prepared, maxWidth, lineHeight) => ({
+    height: lineHeight,
+    lineCount: 1,
+    prepared,
+  })),
   layoutWithLines: vi.fn((prepared, maxWidth, lineHeight) => ({
     height: lineHeight,
     lineCount: 1,

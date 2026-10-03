@@ -1,10 +1,53 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { findOptimalFit, overflowBy } from '../lib/fit.js'
 import { layoutBlocks } from '../lib/layout.js'
 import { parseMarkdown } from '../lib/markdown.js'
 import { PAGE_HEIGHT, PAGE_WIDTH } from '../lib/page.js'
 import { textMetrics } from '../lib/textMetrics.js'
+
+/**
+ * Tracks the webfont, so a fit is never trusted when it was measured against the
+ * fallback.
+ *
+ * The measurement engine measures whatever font the canvas has *now*, and Inter
+ * arrives after the first paint. Fitting before it lands means fitting the fallback:
+ * the page then renders in Inter, the lines come out wider than they were measured,
+ * and the last word of a tight line crosses the margin. It shows up worst on the
+ * shortest document, because auto-fit has grown that one to the largest font — a
+ * proportional width error is a proportional number of pixels.
+ *
+ * A version rather than a boolean because the value is used: a change of version is
+ * what tells the fit that its cached measurements belong to another font.
+ */
+const hasFontApi = () => typeof document !== 'undefined' && Boolean(document.fonts?.ready)
+
+function useFontVersion() {
+  // Starting at 1 with no font API to wait for means the first fit is already final,
+  // instead of waiting on a promise that will never arrive.
+  const [version, setVersion] = useState(hasFontApi() ? 0 : 1)
+
+  useEffect(() => {
+    if (!hasFontApi()) return undefined
+
+    let cancelled = false
+
+    document.fonts.ready.then(() => {
+      if (cancelled) return
+
+      // Every prepared handle in the cache was measured against the fallback font, so
+      // they are dropped here — outside render, and before the fit is re-run.
+      textMetrics.clear()
+      setVersion(1)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  return version
+}
 
 /**
  * The whole pipeline for one document: parse, fit, lay out.
@@ -18,6 +61,8 @@ import { textMetrics } from '../lib/textMetrics.js'
  * deliberately should not move under them.
  */
 export function useFit(markdown, settings) {
+  const fontVersion = useFontVersion()
+
   return useMemo(() => {
     const blocks = parseMarkdown(markdown)
     const contentWidth = PAGE_WIDTH - settings.padding * 2
@@ -30,6 +75,27 @@ export function useFit(markdown, settings) {
       padding: settings.padding,
       spacing: settings.spacing,
       maxFontSize: settings.baseFontSize,
+    }
+
+    // Version 0 means the webfont has not landed yet. A fit computed now would be a fit
+    // of the fallback, and every line break in it would be wrong a frame later, so the
+    // document is laid out at the user's own size for that one frame instead and the
+    // real search runs as soon as the font is in.
+    if (fontVersion === 0) {
+      const options = {
+        ...base,
+        baseFontSize: settings.baseFontSize,
+        lineHeightMultiplier: settings.lineHeightMultiplier,
+      }
+
+      return {
+        blocks,
+        fontSize: settings.baseFontSize,
+        lineHeightMultiplier: settings.lineHeightMultiplier,
+        height: undefined,
+        overflow: 0,
+        positioned: layoutBlocks(blocks, options),
+      }
     }
 
     if (!settings.autoFit) {
@@ -62,5 +128,5 @@ export function useFit(markdown, settings) {
       overflow: 0,
       positioned: layoutBlocks(blocks, options),
     }
-  }, [markdown, settings])
+  }, [markdown, settings, fontVersion])
 }

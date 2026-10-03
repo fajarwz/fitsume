@@ -36,7 +36,7 @@ const TABS = [
  */
 const ZOOM_MIN = 0.5
 const ZOOM_MAX = 3
-const ZOOM_STEP = 0.25
+const ZOOM_STEP = 0.05
 
 const clampZoom = (value) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(value * 100) / 100))
 
@@ -105,6 +105,11 @@ export default function BuilderPage() {
             {focus ? 'Exit full screen' : 'Full screen'}
           </Button>
         )}
+        {zoom === 1 ? null : (
+          <Button size="sm" onClick={() => setZoom(1)} title="Fit the whole page to the pane">
+            Fit
+          </Button>
+        )}
         <Button
           size="sm"
           variant="ghost"
@@ -128,11 +133,6 @@ export default function BuilderPage() {
         >
           +
         </Button>
-        {zoom === 1 ? null : (
-          <Button size="sm" onClick={() => setZoom(1)} title="Fit the whole page to the pane">
-            Fit
-          </Button>
-        )}
       </div>
 
       <div className="min-h-0 flex-1">

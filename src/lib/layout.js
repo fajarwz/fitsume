@@ -1,4 +1,11 @@
-import { fontFor, fontSizeFor, lineHeightFor, skipsMarginAfter, spaceBefore } from './measure.js'
+import {
+  fontFor,
+  fontSizeFor,
+  lineBreakWidth,
+  lineHeightFor,
+  skipsMarginAfter,
+  spaceBefore,
+} from './measure.js'
 import { BLOCK_TYPE } from './markdown.js'
 import { HAIRLINE } from './page.js'
 
@@ -43,7 +50,7 @@ export function layoutBlocks(blocks, options) {
     const { lines } = metrics.lines(block.text, {
       font,
       fontSize,
-      maxWidth: options.contentWidth,
+      maxWidth: lineBreakWidth(options),
       lineHeight,
     })
 

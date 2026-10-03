@@ -32,6 +32,26 @@ export function lineHeightFor(block, baseFontSize, lineHeightMultiplier) {
 }
 
 /**
+ * The width the line breaker is given: deliberately a hair narrower than the content
+ * box.
+ *
+ * Breaking is measured on a canvas, while the page is rendered by the browser's own
+ * text engine. The two disagree by a fraction of a percent, and at the font sizes
+ * auto-fit reaches on a short document that fraction is a couple of pixels — enough
+ * to push the last word of a tight line past the margin guide. Breaking against a
+ * slightly narrower box absorbs the disagreement, and the cost is a marginally
+ * earlier wrap on lines that were already at the limit.
+ *
+ * Both walks (measureBlocks and layoutBlocks) use this, so the measurement and the
+ * rendering keep breaking in exactly the same place.
+ */
+export const LINE_BREAK_SAFETY = 8
+
+export function lineBreakWidth(options) {
+  return Math.max(1, options.contentWidth - LINE_BREAK_SAFETY)
+}
+
+/**
  * The gap above a block, driven by the user's sliders rather than by any hard
  * coded margin: section gaps and item gaps are separate controls.
  */
@@ -54,12 +74,12 @@ export function skipsMarginAfter(blocks, index) {
 }
 
 export function textMetricsArgs(block, options) {
-  const { contentWidth, baseFontSize, lineHeightMultiplier } = options
+  const { baseFontSize, lineHeightMultiplier } = options
 
   return {
     font: fontFor(block, baseFontSize),
     fontSize: fontSizeFor(block, baseFontSize),
-    maxWidth: contentWidth,
+    maxWidth: lineBreakWidth(options),
     lineHeight: lineHeightFor(block, baseFontSize, lineHeightMultiplier),
   }
 }

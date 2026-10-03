@@ -68,6 +68,21 @@ export default function SamplePicker({ onUseSample, hasContent = false, onClose 
               </span>
               <span>{sample.category}</span>
             </div>
+            {sample.note ? (
+              <p className="text-[11px] leading-relaxed text-[var(--muted-foreground)]">
+                {sample.note}{' '}
+                {sample.source ? (
+                  <a
+                    href={sample.source}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="underline underline-offset-2"
+                  >
+                    Source
+                  </a>
+                ) : null}
+              </p>
+            ) : null}
             <Button
               size="sm"
               variant="primary"

@@ -1,10 +1,11 @@
 import { useMemo } from 'react'
-import { HashRouter, Route, Routes } from 'react-router-dom'
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import { resolveStorage } from './lib/stash.js'
 import BuilderPage from './pages/BuilderPage.jsx'
 import LibraryPage from './pages/LibraryPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
+import SamplesPage from './pages/SamplesPage.jsx'
 import StashProvider from './state/StashProvider.jsx'
 import ThemeProvider from './state/ThemeProvider.jsx'
 
@@ -15,6 +16,11 @@ import ThemeProvider from './state/ThemeProvider.jsx'
  * HashRouter, not BrowserRouter: there is no server here, so deep links and
  * refreshes have to work on any static host (and from file://) without rewrite
  * rules.
+ *
+ * The URL is the state that matters: every resume has its own address, so a link
+ * to one is a link to the thing itself and the back button behaves as it does
+ * everywhere else. Dialogs are not routes — a confirmation is an overlay on the
+ * page it belongs to, not somewhere you can navigate to or bookmark.
  *
  * Storage is resolved once, here, and handed to both providers: the theme and the
  * resume library share one store, and "storage is unavailable" is then decided in
@@ -28,8 +34,10 @@ export default function App() {
       <StashProvider storage={storage} persistent={persistent}>
         <HashRouter>
           <Routes>
-            <Route path="/" element={<BuilderPage />} />
-            <Route path="/library" element={<LibraryPage />} />
+            <Route path="/" element={<LibraryPage />} />
+            <Route path="/resume/:id" element={<BuilderPage />} />
+            <Route path="/samples" element={<SamplesPage />} />
+            <Route path="/library" element={<Navigate to="/" replace />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </HashRouter>

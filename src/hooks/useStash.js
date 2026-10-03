@@ -69,8 +69,15 @@ export function useStash(storage) {
   const actions = useMemo(
     () => ({
       add: (resume) => setLibrary((current) => addResume(current, resume)),
-      create: ({ name, markdown, settings } = {}) =>
-        setLibrary((current) => addResume(current, createResume({ name, markdown, settings }))),
+      // Returns the new resume: the pages navigate to it, and reading it back out
+      // of the library would be a race against the state update.
+      create: ({ name, markdown, settings } = {}) => {
+        const resume = createResume({ name, markdown, settings })
+
+        setLibrary((current) => addResume(current, resume))
+
+        return resume
+      },
       update: (id, patch) => setLibrary((current) => updateResume(current, id, patch)),
       rename: (id, name) => setLibrary((current) => renameResume(current, id, name)),
       remove: (id) => setLibrary((current) => removeResume(current, id)),

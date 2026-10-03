@@ -4,16 +4,18 @@ import { POSITIONED_TYPE } from '../../lib/layout.js'
 import { HAIRLINE, PAGE_HEIGHT, PAGE_WIDTH } from '../../lib/page.js'
 
 /**
- * The A4 sheet.
+ * The A4 sheet, fitted to the space it is given.
  *
  * Every line is absolutely positioned at the coordinates lib/layout.js produced,
  * and the text is set to `white-space: pre` so the browser cannot re-wrap what the
  * fit engine already broke: the preview has to be the same document the
  * measurement describes, or the app lies about fitting.
  *
- * The sheet itself is always 620px wide. The preview scales it to the column with
- * a transform, and the print path scales the same element to real A4 width — so
- * there is one sheet, not a preview copy and a print copy.
+ * The sheet is always 620x877 CSS px. On screen it is scaled down to fit the pane
+ * in *both* directions, so the whole page is visible without scrolling, and `zoom`
+ * multiplies that fit: at 1 the page fills the pane, past 1 the pane scrolls
+ * instead, which is what zooming is for. The print path scales this same element
+ * to real A4 width, so there is one sheet, not a preview copy and a print copy.
  */
 const COLOR = {
   ink: 'var(--ink)',
@@ -21,9 +23,9 @@ const COLOR = {
   inkFaint: 'var(--ink-faint)',
 }
 
-export default function ResumeSheet({ positioned, padding, overflow = 0, sheetRef }) {
+export default function ResumeSheet({ positioned, padding, overflow = 0, sheetRef, zoom = 1 }) {
   const frame = useRef(null)
-  const [scale, setScale] = useState(1)
+  const [fit, setFit] = useState(1)
 
   useEffect(() => {
     const element = frame.current
@@ -31,9 +33,12 @@ export default function ResumeSheet({ positioned, padding, overflow = 0, sheetRe
     if (!element) return undefined
 
     const measure = () => {
-      if (!element.clientWidth) return
+      const { clientWidth: width, clientHeight: height } = element
 
-      setScale(Math.min(1, element.clientWidth / PAGE_WIDTH))
+      // Both axes, or the page is taller than the pane and the user scrolls.
+      if (!width || !height) return
+
+      setFit(Math.min(width / PAGE_WIDTH, height / PAGE_HEIGHT))
     }
 
     measure()
@@ -47,11 +52,15 @@ export default function ResumeSheet({ positioned, padding, overflow = 0, sheetRe
     return () => observer.disconnect()
   }, [])
 
+  const scale = fit * zoom
+
   return (
-    <div ref={frame} className="w-full">
+    <div ref={frame} className="flex h-full w-full overflow-auto">
+      {/* margin:auto centres the page while it fits and stops centring once it does
+          not, which is the one arrangement that both centres and scrolls. */}
       <div
-        className="relative mx-auto"
-        style={{ width: PAGE_WIDTH * scale, height: PAGE_HEIGHT * scale }}
+        className="relative shrink-0"
+        style={{ width: PAGE_WIDTH * scale, height: PAGE_HEIGHT * scale, margin: 'auto' }}
       >
         <div
           ref={sheetRef}

@@ -46,19 +46,29 @@ describe('samples', () => {
     expect(lengths).toContain('minimal') // font grows up to the cap
     expect(lengths).toContain('normal')
     expect(lengths).toContain('dense')
-    expect(lengths).toContain('long') // must clamp and warn, never clip
+    expect(lengths).toContain('long') // the fullest one-pager the set ships
   })
 
-  it('keeps modern samples fictional, on example.com', () => {
+  it('says what every modern sample is built from, and where', () => {
     for (const sample of samplesByCategory('modern')) {
-      expect(sample.markdown).toContain('example.com')
+      expect(sample.note, `${sample.id} has no note`).toBeTruthy()
+      expect(sample.source, `${sample.id} has no source`).toMatch(/^https:\/\//)
     }
   })
 
-  it('keeps historical samples free of an invented first-person voice', () => {
-    for (const sample of samplesByCategory('historical')) {
-      // The summary paragraph is the line after the metadata line; a historical
-      // sample must not put words in a real person's mouth.
+  it('puts no invented contact details on a real person', () => {
+    for (const sample of SAMPLES) {
+      // A fabricated email address on a real person is a different class of error
+      // from a fabricated bullet, so there are none anywhere in the set.
+      expect(sample.markdown, `${sample.id} carries contact details`).not.toMatch(
+        /@[a-z0-9.-]+\.[a-z]{2,}|example\.com|https?:\/\//i,
+      )
+    }
+  })
+
+  it('keeps every sample free of an invented first-person voice', () => {
+    for (const sample of SAMPLES) {
+      // These are real people: a sample must not put words in their mouth.
       expect(sample.markdown).not.toMatch(/\nI [a-z]/)
     }
   })

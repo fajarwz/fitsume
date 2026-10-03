@@ -1,7 +1,9 @@
 import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import ResumeList from '../components/library/ResumeList.jsx'
 import TopBar from '../components/layout/TopBar.jsx'
+import { FirstRunChooser } from '../components/samples/SamplePicker.jsx'
 import Button from '../components/ui/Button.jsx'
 import {
   MERGE_MODES,
@@ -26,10 +28,16 @@ import { useStashContext } from '../state/StashProvider.jsx'
  */
 export default function LibraryPage() {
   const { resumes, activeId, library, actions, status, persistent, saveResult } = useStashContext()
+  const navigate = useNavigate()
   const [mode, setMode] = useState(MERGE_MODES.merge)
   const [notice, setNotice] = useState(null)
   const markdownInput = useRef(null)
   const backupInput = useRef(null)
+
+  const open = (id) => navigate(`/resume/${id}`)
+  const startBlank = () => open(actions.create({ name: 'My resume', markdown: '' }).id)
+  const startFromSample = (sample) =>
+    open(actions.create({ name: sample.label, markdown: sample.markdown }).id)
 
   const importMarkdown = async (event) => {
     const file = event.target.files?.[0]
@@ -87,8 +95,7 @@ export default function LibraryPage() {
     <div className="flex min-h-screen flex-col bg-[var(--background)] text-[var(--foreground)]">
       <TopBar
         resume={resumes.find((resume) => resume.id === activeId) ?? null}
-        onChangeResume={actions.select}
-        onNew={() => actions.create({ name: 'New resume', markdown: '' })}
+        onNew={() => open(actions.create({ name: 'New resume', markdown: '' }).id)}
         secondary={
           <Button size="sm" variant="primary" onClick={backup}>
             Back up library
@@ -159,20 +166,24 @@ export default function LibraryPage() {
           </p>
         ) : null}
 
-        <ResumeList
-          resumes={resumes}
-          activeId={activeId}
-          onOpen={actions.select}
-          onRename={actions.rename}
-          onDuplicate={actions.duplicate}
-          onDelete={actions.remove}
-          onExport={(resume) =>
-            downloadText({
-              filename: markdownFilename(resume.name),
-              text: exportResumeMarkdown(resume),
-            })
-          }
-        />
+        {resumes.length === 0 ? (
+          <FirstRunChooser onStartBlank={startBlank} onUseSample={startFromSample} />
+        ) : (
+          <ResumeList
+            resumes={resumes}
+            activeId={activeId}
+            onOpen={open}
+            onRename={actions.rename}
+            onDuplicate={actions.duplicate}
+            onDelete={actions.remove}
+            onExport={(resume) =>
+              downloadText({
+                filename: markdownFilename(resume.name),
+                text: exportResumeMarkdown(resume),
+              })
+            }
+          />
+        )}
 
         <section className="flex flex-wrap items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
           <h2 className="w-full text-xs font-semibold">Move work in and out</h2>

@@ -47,5 +47,9 @@
     "tailwindcss": "^3.4.19",
     "vite": "^8.3.2",
     "vitest": "^5.0.3"
+  },
+  "optionalDependencies": {
+    "//": "A canvas implementation for jsdom, so the tests that need real glyph metrics can run. Optional on purpose: it is a native module, and a machine without a prebuilt binary must still be able to install and test the rest.",
+    "canvas": "^3.2.3"
   }
 }

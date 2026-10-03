@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import { resolveStorage } from './lib/stash.js'
 import BuilderPage from './pages/BuilderPage.jsx'
@@ -13,9 +13,15 @@ import ThemeProvider from './state/ThemeProvider.jsx'
  * Routes and providers only. Everything else lives in pages/, components/,
  * hooks/ and the pure lib/.
  *
- * HashRouter, not BrowserRouter: there is no server here, so deep links and
- * refreshes have to work on any static host (and from file://) without rewrite
- * rules.
+ * BrowserRouter, so an address is an address: /resume/sample-bj-habibie rather than
+ * /#/resume/sample-bj-habibie. The fragment version was chosen when the build had to run
+ * from file://, which paths break — a page load asks the server for the path, and a file
+ * has no server to ask. It runs from the dev server or a static host now, and both serve
+ * index.html for any path, so the cleaner address wins.
+ *
+ * The consequence to know about: this app relies on that fallback. A host that returns
+ * 404 for an unknown path will break a refresh on a deep link until it is told to serve
+ * index.html for everything. `npm run preview` does it. A bare file:// open does not.
  *
  * The URL is the state that matters: every resume has its own address, so a link
  * to one is a link to the thing itself and the back button behaves as it does
@@ -32,7 +38,7 @@ export default function App() {
   return (
     <ThemeProvider storage={storage}>
       <StashProvider storage={storage} persistent={persistent}>
-        <HashRouter>
+        <BrowserRouter>
           <Routes>
             <Route path="/" element={<LibraryPage />} />
             <Route path="/resume/:id" element={<BuilderPage />} />
@@ -41,7 +47,7 @@ export default function App() {
             <Route path="/samples" element={<Navigate to="/" replace />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
-        </HashRouter>
+        </BrowserRouter>
       </StashProvider>
     </ThemeProvider>
   )

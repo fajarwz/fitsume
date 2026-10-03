@@ -101,13 +101,20 @@ export default function ResumeSheet({ pages, padding, stackRef, zoom = 1 }) {
         >
           {pages.map((page, index) => (
             <div key={index} className="flex shrink-0 flex-col items-center gap-1">
+              {/**
+               * The elevation sits here, on the unscaled wrapper, and not on the sheet
+               * itself. The sheet is drawn through `transform: scale()`, and the fit
+               * lands well under 1, so a 1px ring on it renders three-quarters of a
+               * pixel wide and anti-aliases away to nothing. On this box the ring and
+               * the shadow are real CSS pixels at every zoom level.
+               */}
               <div
-                className="relative"
+                className="relative rounded-sm shadow-[var(--shadow-page)]"
                 style={{ width: PAGE_WIDTH * scale, height: PAGE_HEIGHT * scale }}
               >
                 <div
                   data-page
-                  className="absolute left-0 top-0 overflow-hidden rounded-sm shadow-[var(--shadow-page)]"
+                  className="absolute left-0 top-0 overflow-hidden rounded-sm"
                   style={{
                     width: PAGE_WIDTH,
                     height: PAGE_HEIGHT,

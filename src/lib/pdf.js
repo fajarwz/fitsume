@@ -46,7 +46,14 @@ const PAGE_STYLE_PROPS = [
   'background',
 ]
 
-const ANCESTOR_STYLE_PROPS = ['overflow', 'transform', 'position', 'visibility', 'background']
+const ANCESTOR_STYLE_PROPS = [
+  'overflow',
+  'transform',
+  'position',
+  'visibility',
+  'background',
+  'boxShadow',
+]
 
 /** The browser names a downloaded PDF after the document title. */
 export function printTitleFor(markdown) {
@@ -110,6 +117,8 @@ export function exportToPdf({
   // siblings of one another: hiding siblings naively would hide every page after the
   // first.
   const protectedNodes = new Set()
+  const flattened = new Set()
+  const hidden = new Set()
 
   for (const sheet of sheets) {
     for (let node = sheet; node && node !== doc.body; node = node.parentElement) {
@@ -117,32 +126,52 @@ export function exportToPdf({
     }
   }
 
-  // Walk from the first sheet up to (but never including) <body>: hide every sibling
-  // on the way, and flatten the wrappers in between, which are overflow:hidden and
-  // scaled for the preview.
-  let current = sheets[0]
-  let ancestors = 0
+  const hideOnce = (el) => {
+    if (hidden.has(el)) return
 
-  while (current.parentElement && current !== doc.body && ancestors < 20) {
-    const parent = current.parentElement
+    hidden.add(el)
+    hide(el)
+  }
 
-    for (const sibling of Array.from(parent.children)) {
-      if (sibling !== current && !protectedNodes.has(sibling)) hide(sibling)
+  const flatten = (el) => {
+    if (flattened.has(el)) return
+
+    flattened.add(el)
+
+    rememberStyle(el, ANCESTOR_STYLE_PROPS)
+    el.style.overflow = 'visible'
+    el.style.transform = 'none'
+    el.style.visibility = 'visible'
+    el.style.background = 'none'
+    // Normal flow is what lets the sheets paginate: a browser will not break pages
+    // inside an absolutely positioned ancestor.
+    el.style.position = 'static'
+    // The ring and shadow drawn around each page in the preview are screen furniture,
+    // and this box is the one that carries them.
+    el.style.boxShadow = 'none'
+  }
+
+  // Every sheet's chain, not just the first one's: with several pages, each page sits
+  // in a wrapper of its own with its own preview chrome, and walking only the first
+  // chain would print the rest of it. The two Sets make repeat visits harmless, which
+  // matters because restoring a style to the value it already had is how a preview ends
+  // up quietly broken.
+  for (const sheet of sheets) {
+    let node = sheet
+    let depth = 0
+
+    while (node.parentElement && node !== doc.body && depth < 20) {
+      const parent = node.parentElement
+
+      for (const sibling of Array.from(parent.children)) {
+        if (!protectedNodes.has(sibling)) hideOnce(sibling)
+      }
+
+      if (parent !== doc.body) flatten(parent)
+
+      node = parent
+      depth += 1
     }
-
-    if (parent !== doc.body) {
-      rememberStyle(parent, ANCESTOR_STYLE_PROPS)
-      parent.style.overflow = 'visible'
-      parent.style.transform = 'none'
-      parent.style.visibility = 'visible'
-      parent.style.background = 'none'
-      // Normal flow is what lets the sheets paginate: a browser will not break pages
-      // inside an absolutely positioned ancestor.
-      parent.style.position = 'static'
-    }
-
-    current = parent
-    ancestors += 1
   }
 
   // A transform scales what is drawn without changing the box that draws it, and the

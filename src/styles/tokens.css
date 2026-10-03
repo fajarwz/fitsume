@@ -39,7 +39,7 @@
    * survives.
    */
   --shadow-page:
-    0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06), 0 10px 28px rgba(0, 0, 0, 0.14);
+    0 0 0 1px rgba(0, 0, 0, 0.14), 0 1px 3px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.16);
 
   --paper: #ffffff;
   --ink: #111111;
@@ -71,7 +71,7 @@
    * the sheet's edge is the ring and the shadow is only there for the sense of the page
    * sitting above the surface.
    */
-  --shadow-page: 0 0 0 1px rgba(255, 255, 255, 0.16), 0 10px 28px rgba(0, 0, 0, 0.8);
+  --shadow-page: 0 0 0 1px rgba(255, 255, 255, 0.2), 0 8px 24px rgba(0, 0, 0, 0.8);
 
   --paper: #ffffff;
   --ink: #111111;

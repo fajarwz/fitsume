@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 import Button from '../ui/Button.jsx'
+import CheatSheet from './CheatSheet.jsx'
 import { useUndo } from '../../hooks/useUndo.js'
 
 /**
@@ -30,6 +31,23 @@ function prefixSelection(textarea, prefix) {
 
       return line.startsWith(prefix) ? line : prefix + line
     })
+    .join('\n')
+
+  return {
+    value: `${value.slice(0, lineStart)}${next}${value.slice(lineEnd)}`,
+    caret: lineStart + next.length,
+  }
+}
+
+/** Adds or removes two spaces at the start of the lines the selection touches. */
+function indentSelection(textarea, outdent) {
+  const { value, selectionStart: start, selectionEnd: end } = textarea
+  const lineStart = value.lastIndexOf('\n', start - 1) + 1
+  const endOfBlock = value.indexOf('\n', end)
+  const lineEnd = endOfBlock === -1 ? value.length : endOfBlock
+  const lines = value.slice(lineStart, lineEnd).split('\n')
+  const next = lines
+    .map((line) => (outdent ? line.replace(/^ {1,2}/, '') : `  ${line}`))
     .join('\n')
 
   return {
@@ -80,6 +98,16 @@ export default function MarkdownEditor({
   }
 
   const onKeyDown = (event) => {
+    // Tab indents rather than leaving the field, the way an editor should. It is a
+    // deliberate trade against reaching the next control by keyboard, so it is
+    // documented in the cheat sheet.
+    if (event.key === 'Tab') {
+      event.preventDefault()
+      edit((element) => indentSelection(element, event.shiftKey))
+
+      return
+    }
+
     const meta = event.metaKey || event.ctrlKey
 
     if (!meta) return
@@ -162,6 +190,7 @@ export default function MarkdownEditor({
       <label className="sr-only" htmlFor="markdown-editor">
         Resume markdown
       </label>
+      <CheatSheet />
       <textarea
         id="markdown-editor"
         ref={textarea}

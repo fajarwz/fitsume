@@ -15,7 +15,7 @@ export default defineConfig({
       // Correctness lives in lib/. Thresholds are deliberately enforced there and
       // nowhere else: component tests exist to catch behaviour regressions, not
       // to chase a number.
-      thresholds: { lines: 90, functions: 90, statements: 90, branches: 80 },
+      thresholds: { lines: 95, functions: 95, statements: 95, branches: 90 },
       reporter: ['text', 'html'],
     },
   },

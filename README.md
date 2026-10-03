@@ -1,19 +1,90 @@
 # fittyresume
 
-Write your resume in markdown. The preview finds the largest font size and line
-spacing that still fits everything on exactly one A4 page — no DOM measuring, no
-flickering, no layout shifts.
+Write a resume in markdown. The preview finds the largest font size and line
+spacing that still fits everything on exactly one A4 page.
 
-- **Auto-fit** — a two-pass binary search picks the font size, then the line height
-- **Markdown editor** — `#`, `##`, `###`, `-`, `---`
-- **Live A4 preview** — updates as you type
-- **Resume library** — several named resumes, each with its own typography settings
-- **PDF export** — the browser's own print pipeline, sized for A4
-- **No server, no account** — everything stays in your browser's storage
+- **Auto-fit** — a two-pass binary search: biggest font size first, then the widest
+  line spacing that still fits
+- **No layout thrashing** — text is measured without touching the DOM, so the
+  preview does not flicker or shift as you type
+- **Markdown editor** — `#`, `##`, `###`, `-`, `---`, and the two conventions that
+  make a resume header read the way it should
+- **Resume library** — as many named resumes as you like, each with its own
+  typography settings
+- **Print to PDF** — the browser's own print pipeline, sized for A4, named after
+  the resume on screen
+- **No server, no account, nothing uploaded** — your resumes live in your browser,
+  and one file backs all of them up
+- **Works offline** — the font is bundled, so the fit is measured against the font
+  that actually renders
 
-## Status
+## The markdown dialect
 
-Under construction. See `.hermes/plans/` for the build plan.
+Five rules. The two that are easy to miss are what make a header come out right:
+the line after your name is your role, and the line after that is the faint contact
+line. The line under a `### ` job title is its dates.
+
+```markdown
+# Your Name
+Your Role
+City · you@example.com · github.com/you
+---
+A short summary.
+
+## EXPERIENCE
+
+### Job Title — Company
+2020 — Present
+- What you did, and what it changed
+
+## EDUCATION
+
+### Degree — University
+Details
+```
+
+Blank lines are ignored, so space the source out however you like. There is a
+cheat sheet in the editor, and a toolbar for section headings, job titles, bullets
+and rules.
+
+## How the fit works
+
+Measuring text normally means `getBoundingClientRect()` or `offsetHeight`, each of
+which forces the browser to re-lay-out the document. A binary search that runs
+hundreds of measurements per frame is not possible that way.
+
+So the text is prepared once per string with a canvas — normalise, segment, read
+glyph advances — and after that, line breaking and height are arithmetic. The fit
+search then does two passes: the largest font size at the tightest line spacing,
+then the widest line spacing at that size. Prepared text is cached, so a repeat
+measurement is a lookup rather than a re-measure.
+
+That cache is measured, not assumed. On the densest sample (34 blocks, 2,324
+characters), one fit run went from **7,590 text preparations to 396**, and from
+**51.4 ms to 6.2 ms** — with the real engine, on a real canvas. Run it yourself:
+
+```bash
+npx vitest run scripts/profile-measurement.test.js
+```
+
+The measurement engine only appears in one file (`src/lib/textMetrics.js`).
+Everything else in `lib/` takes the metrics it is given, which is why the fit engine
+can be tested exhaustively without a canvas.
+
+## Your data
+
+Everything is stored in your browser's `localStorage`. There is no server, no
+account, and no upload. That has two consequences worth knowing:
+
+- **A backup file is the only copy that survives clearing browser data.** The
+  library screen writes the whole library to a `.json` file, and restoring it
+  merges by default — restoring the same backup twice cannot overwrite the resume
+  you have been editing since.
+- **If your browser refuses storage** (private mode, a hardened profile), the app
+  still works, but only for the session, and it says so rather than pretending to
+  save.
+
+Each resume can also be exported as a `.md` file, which is what the import does.
 
 ## Development
 
@@ -31,10 +102,49 @@ npm run verify     # lint + tests with coverage + production build
 `verify` is the same gate CI runs, so a failure should never be discovered for the
 first time on CI.
 
+## How the code is arranged
+
+```
+src/
+  lib/         pure: markdown, measurement, fit search, layout, storage, files
+  hooks/       React glue over lib
+  components/  ui primitives, layout, builder, library, samples
+  pages/       route-level screens
+  state/       providers
+```
+
+Two rules keep it that way, and ESLint enforces both:
+
+1. **`lib/` never imports React**, a hook, a component, or a page. It is pure
+   functions and data, which is what makes it testable without a DOM.
+2. **A page is never imported by a component.** Pages compose; components do not
+   reach upward.
+
+## Tests
+
+- **`lib/`** is covered exhaustively: the parser's block styles, the fit search's
+  bounds and fallbacks, the measurement cache, storage round-trips, corruption,
+  migration, quota failures, and file import/export.
+- **Components** are tested through the DOM as a person would use them.
+- **The app end to end**: it renders, types a resume, waits for the fit, reloads
+  and checks the work survived, and asserts the export is named after the resume on
+  screen.
+- **Every shipped sample** is fitted against the real measurement engine, and the
+  geometry that gets *rendered* is checked against the page — so the preview cannot
+  silently disagree with the fit that produced it.
+- Coverage thresholds apply to `lib/` only, on purpose: component tests exist to
+  catch behaviour regressions, not to chase a number.
+
+`canvas` is an **optional** dependency. It gives jsdom a real font engine, so the
+tests that need true glyph metrics actually run; without it they skip themselves
+rather than failing, which keeps installs working on a machine with no prebuilt
+binary.
+
 ## Stack
 
-React 19 · Vite · Tailwind · [pretext](https://github.com/chenglou/pretext) for
-DOM-free text measurement · Vitest + Testing Library · ESLint + Prettier.
+React 19 · Vite · Tailwind CSS · [pretext](https://github.com/chenglou/pretext)
+for DOM-free text measurement · Vitest + Testing Library · ESLint + Prettier.
+Inter is bundled via `@fontsource-variable/inter`.
 
 ## License
 

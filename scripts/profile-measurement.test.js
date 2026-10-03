@@ -35,6 +35,8 @@ describe.skipIf(!hasCanvas)('fit search measurement cost', () => {
 
     expect(result.warmPreparations).toBeGreaterThan(0)
     expect(result.warmPreparations * 10).toBeLessThan(result.uncachedPreparations)
-    expect(result.speedupVsUncached).toBeGreaterThan(1)
+    // The timings are printed, not asserted: on a loaded machine (a full parallel
+    // test run, a busy CI box) wall-clock ratios wobble, and a flaky gate is worse
+    // than no gate. The preparation count above is the actual contract.
   })
 })

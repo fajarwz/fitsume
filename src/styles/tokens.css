@@ -31,7 +31,15 @@
   --ring: #0072f5;
   --positive: #0cce6b;
   --negative: #ee0000;
-  --shadow: 0 5px 10px rgba(0, 0, 0, 0.12);
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  /*
+   * Elevation for the A4 sheet, which is a different problem from an overlay: a white
+   * page on a light canvas needs its *edge* defined, and a shadow alone cannot do that
+   * at hairlines. So it is a ring plus a soft shadow, and the ring is the part that
+   * survives.
+   */
+  --shadow-page:
+    0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06), 0 10px 28px rgba(0, 0, 0, 0.14);
 
   --paper: #ffffff;
   --ink: #111111;
@@ -57,7 +65,13 @@
   --ring: #3291ff;
   --positive: #0cce6b;
   --negative: #ff6369;
-  --shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  /*
+   * On a #000 canvas a black shadow casts nothing, whatever its alpha, so in dark mode
+   * the sheet's edge is the ring and the shadow is only there for the sense of the page
+   * sitting above the surface.
+   */
+  --shadow-page: 0 0 0 1px rgba(255, 255, 255, 0.16), 0 10px 28px rgba(0, 0, 0, 0.8);
 
   --paper: #ffffff;
   --ink: #111111;

@@ -70,7 +70,8 @@ export default function SettingsPage() {
         <section className="flex flex-col gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
           <h2 className="text-xs font-semibold">Sample resumes</h2>
           <p className="text-[11px] text-[var(--muted-foreground)]">
-            Rename, duplicate or delete them like any other, and restore whichever you delete.
+            Rename, duplicate or delete them like any other, and restore whichever you delete. Their
+            contact lines link to the public record rather than to an address invented for them.
           </p>
           <p className="text-xs">
             <span className="font-mono tabular-nums">{present}</span> of{' '}

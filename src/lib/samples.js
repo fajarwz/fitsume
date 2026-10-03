@@ -73,7 +73,7 @@ const SAMPLE_LIBRARY = [
     source: 'https://en.wikipedia.org/wiki/Al-Khwarizmi',
     markdown: `# Al-Khwarizmi
 Mathematician, astronomer and geographer
-Baghdad, Abbasid Caliphate · House of Wisdom · c. 780 – c. 850 CE
+Baghdad, Abbasid Caliphate · House of Wisdom · c. 780 – c. 850 CE · wikipedia.org
 
 ---
 
@@ -129,7 +129,7 @@ Algebra · arithmetic · astronomy · geography · trigonometry · calendrical c
     source: 'https://en.wikipedia.org/wiki/Abd_al-Rahman_ibn_Awf',
     markdown: `# Abdurrahman bin Auf
 Merchant · Companion of the Prophet ﷺ
-Mecca and Medina · c. 581 – 653 CE
+Mecca and Medina · c. 581 – 653 CE · wikipedia.org
 
 ---
 
@@ -177,7 +177,7 @@ Trade · negotiation · capital and liquidity management · honest dealing · ch
     source: 'https://en.wikipedia.org/wiki/Fatima_al-Fihri',
     markdown: `# Fatima al-Fihri
 Founder and endower of al-Qarawiyyin
-Fez, Morocco · c. 800 – c. 880 CE
+Fez, Morocco · c. 800 – c. 880 CE · wikipedia.org
 
 ---
 
@@ -222,7 +222,7 @@ Patronage of scholarship · endowment and estate management · construction over
     source: 'https://www.britannica.com/biography/B-J-Habibie',
     markdown: `# B. J. Habibie
 Aeronautical engineer and third President of Indonesia
-Parepare, South Sulawesi · RWTH Aachen · 1936 – 2019
+Parepare, South Sulawesi · RWTH Aachen · 1936 – 2019 · britannica.com
 
 ---
 
@@ -280,7 +280,7 @@ Structural analysis · lightweight and composite aircraft structures · aerospac
     source: 'https://www.nobelprize.org/prizes/physics/1979/salam/biographical/',
     markdown: `# Abdus Salam
 Theoretical physicist · Nobel laureate
-Jhang, Punjab · Imperial College London · 1926 – 1996
+Jhang, Punjab · Imperial College London · 1926 – 1996 · nobelprize.org
 
 ---
 
@@ -341,7 +341,7 @@ Quantum field theory · electroweak unification · gauge theory · institution b
     source: 'https://www.caltech.edu/about/news/ahmed-zewail-1946-2016-51594',
     markdown: `# Ahmed Zewail
 Chemist · Nobel laureate
-Damanhur, Egypt · California Institute of Technology · 1946 – 2016
+Damanhur, Egypt · California Institute of Technology · 1946 – 2016 · caltech.edu
 
 ---
 

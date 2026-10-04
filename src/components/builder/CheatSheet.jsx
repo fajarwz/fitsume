@@ -47,7 +47,8 @@ export default function CheatSheet() {
 
           <dt className="font-mono text-[var(--foreground)]">[Label](url)</dt>
           <dd className="text-[var(--muted-foreground)]">
-            A link that shows the label instead of the address; the Link button writes these for you
+            A link that shows the label instead of the address; the Link button drops in{' '}
+            <span className="font-mono">[label](example.com)</span> for you
           </dd>
 
           <dt className="font-mono text-[var(--foreground)]">## SECTION</dt>

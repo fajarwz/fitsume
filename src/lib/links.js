@@ -109,33 +109,6 @@ export function segmentsFrom(text, ...groups) {
   return segments
 }
 
-/**
- * Writes a link into a block of text at the caret, and says where the caret lands.
- *
- * With a label it writes `[Label](https://…)`; without one it writes the address on its
- * own, which the renderer links by sight, so both forms are clickable and the shorter one
- * is still available. Selected text becomes the label, which is the gesture people expect
- * — but a selection spanning lines is not a label, so it is replaced rather than mangled
- * into one.
- *
- * Pure, so the button's behaviour can be checked without a browser.
- */
-export function insertLinkAt(value, selection, { label = '', address }) {
-  const written = (address ?? '').trim()
-
-  if (written === '') return null
-
-  const [start, end] = selection
-  const selected = value.slice(start, end).trim()
-  const chosen = label.trim() || (selected.includes('\n') ? '' : selected)
-  const snippet = chosen === '' ? written : `[${chosen}](${hrefFor(written) ?? written})`
-
-  return {
-    value: `${value.slice(0, start)}${snippet}${value.slice(end)}`,
-    caret: start + snippet.length,
-  }
-}
-
 /** A line whose only links are addresses written out in it. */
 export function splitLinks(text) {
   return segmentsFrom(text, findAddresses(text))

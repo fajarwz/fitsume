@@ -1,8 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 import Button from '../ui/Button.jsx'
 import CheatSheet from './CheatSheet.jsx'
-import { insertLinkAt } from '../../lib/links.js'
 import { useUndo } from '../../hooks/useUndo.js'
 
 /**
@@ -17,6 +16,14 @@ const TOOLS = [
   { label: 'H3', title: 'Item heading', prefix: '### ' },
   { label: '•', title: 'Bullet', prefix: '- ' },
 ]
+
+/**
+ * What the Link button drops in.
+ *
+ * Placeholder syntax rather than a dialog: `example.com` resolves as a link as soon as it
+ * lands, so the thing being inserted shows what it does before it is edited.
+ */
+const LINK_PLACEHOLDER = '[label](example.com)'
 
 /** Prefixes the lines the selection touches, and un-prefixes them if they all have it. */
 function prefixSelection(textarea, prefix) {
@@ -64,19 +71,9 @@ export default function MarkdownEditor({
   footer = null,
 }) {
   const textarea = useRef(null)
-  const addressInput = useRef(null)
   const pendingCaret = useRef(null)
+  const pendingSelection = useRef(null)
   const previousResume = useRef(resumeId)
-  const [linkOpen, setLinkOpen] = useState(false)
-  const [linkLabel, setLinkLabel] = useState('')
-  const [linkAddress, setLinkAddress] = useState('')
-
-  // Focused by hand rather than with autoFocus: the field only appears because someone
-  // asked for it, and the lint rule against autoFocus exists for the fields that appear
-  // whether you asked or not.
-  useEffect(() => {
-    if (linkOpen) addressInput.current?.focus()
-  }, [linkOpen])
 
   const { undo, redo, reset, canUndo, canRedo } = useUndo(markdown, onChange)
 
@@ -96,6 +93,14 @@ export default function MarkdownEditor({
     pendingCaret.current = null
   })
 
+  // Restoring a selection, for the inserts that leave something to type over.
+  useEffect(() => {
+    if (pendingSelection.current === null || !textarea.current) return
+
+    textarea.current.setSelectionRange(...pendingSelection.current)
+    pendingSelection.current = null
+  })
+
   const edit = (compute) => {
     const element = textarea.current
 
@@ -107,44 +112,24 @@ export default function MarkdownEditor({
     onChange(value)
   }
 
-  const closeLink = () => {
-    setLinkOpen(false)
-    setLinkLabel('')
-    setLinkAddress('')
-  }
-
   /**
-   * Writes a link at the caret, by way of the same function the checks exercise.
+   * Drops the link placeholder in at the caret, with the label word selected so the first
+   * thing typed replaces it.
+   *
+   * No dialog and no two-field form: this is a plain text editor, and the syntax is short
+   * enough to write. The placeholder is live the moment it lands — `[label](example.com)`
+   * resolves and renders as a link before anyone edits it, which is the whole
+   * demonstration.
    */
-  const insertLink = () => {
+  const insertPlaceholder = () => {
     const element = textarea.current
 
     if (!element) return
 
-    const inserted = insertLinkAt(element.value, [element.selectionStart, element.selectionEnd], {
-      label: linkLabel,
-      address: linkAddress,
-    })
+    const { selectionStart: start, selectionEnd: end, value } = element
 
-    if (!inserted) return
-
-    pendingCaret.current = inserted.caret
-    onChange(inserted.value)
-    closeLink()
-  }
-
-  const onLinkKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault()
-      insertLink()
-
-      return
-    }
-
-    if (event.key === 'Escape') {
-      event.preventDefault()
-      closeLink()
-    }
+    pendingSelection.current = [start + 1, start + 1 + 'label'.length]
+    onChange(`${value.slice(0, start)}${LINK_PLACEHOLDER}${value.slice(end)}`)
   }
 
   const onKeyDown = (event) => {
@@ -222,10 +207,9 @@ export default function MarkdownEditor({
         </Button>
         <Button
           size="sm"
-          variant={linkOpen ? 'primary' : 'ghost'}
-          title="Add a link: an address on its own, or a label that hides one"
-          aria-expanded={linkOpen}
-          onClick={() => (linkOpen ? closeLink() : setLinkOpen(true))}
+          variant="ghost"
+          title={`Insert a link placeholder: ${LINK_PLACEHOLDER}`}
+          onClick={insertPlaceholder}
         >
           Link
         </Button>
@@ -251,47 +235,6 @@ export default function MarkdownEditor({
           </Button>
         </div>
       </div>
-
-      {linkOpen && (
-        <div className="flex flex-wrap items-center gap-1.5 rounded-md border border-[var(--border)] bg-[var(--muted)] p-1.5">
-          <label className="sr-only" htmlFor="link-label">
-            Link label
-          </label>
-          <input
-            id="link-label"
-            value={linkLabel}
-            onChange={(event) => setLinkLabel(event.target.value)}
-            onKeyDown={onLinkKeyDown}
-            placeholder="Label (optional)"
-            title="Leave blank to insert the address on its own; selected text is used as the label"
-            className="h-7 w-36 rounded border border-[var(--border)] bg-[var(--card)] px-2 text-xs outline-none"
-          />
-          <label className="sr-only" htmlFor="link-address">
-            Link address
-          </label>
-          <input
-            id="link-address"
-            ref={addressInput}
-            value={linkAddress}
-            onChange={(event) => setLinkAddress(event.target.value)}
-            onKeyDown={onLinkKeyDown}
-            placeholder="fajarwz.com"
-            title="An email address, or a web address with or without the https://"
-            className="h-7 w-44 rounded border border-[var(--border)] bg-[var(--card)] px-2 font-mono text-xs outline-none"
-          />
-          <Button
-            size="sm"
-            variant="primary"
-            onClick={insertLink}
-            disabled={linkAddress.trim() === ''}
-          >
-            Insert
-          </Button>
-          <Button size="sm" variant="ghost" onClick={closeLink}>
-            Cancel
-          </Button>
-        </div>
-      )}
 
       <label className="sr-only" htmlFor="markdown-editor">
         Resume markdown

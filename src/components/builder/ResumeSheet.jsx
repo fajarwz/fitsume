@@ -112,7 +112,7 @@ export default function ResumeSheet({ pages, padding, stackRef, zoom = 1 }) {
         <div
           ref={stackRef}
           data-sheet-stack
-          className="flex flex-col items-center gap-4 p-4 sm:p-6"
+          className="flex flex-col items-center gap-4"
           style={{ margin: 'auto' }}
         >
           {pages.map((page, index) => (

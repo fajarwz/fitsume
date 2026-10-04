@@ -61,7 +61,7 @@ export default function ResumeList({
               aria-current={isActive ? 'true' : undefined}
               className={`relative flex flex-wrap items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--glass)] p-3 backdrop-blur-xl ${
                 isActive ? 'border-l-2 border-l-[var(--accent)]' : ''
-              }`}
+              } ${menuOpen ? 'z-20' : ''}`}
             >
               <input
                 type="checkbox"

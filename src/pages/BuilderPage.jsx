@@ -54,6 +54,7 @@ export default function BuilderPage() {
   const [zoom, setZoom] = useState(1)
   const [focus, setFocus] = useState(false)
   const sheet = useRef(null)
+  const previewTarget = useRef(null)
   const stacked = useMediaQuery('(max-width: 1000px)')
 
   // The address is the source of truth for which resume is open, and the library's
@@ -78,6 +79,36 @@ export default function BuilderPage() {
 
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [focus])
+
+  // The browser's own Esc exits real fullscreen without telling React, so this keeps the
+  // two in step: when the OS (or anything else) leaves fullscreen, the panels come back.
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      if (!document.fullscreenElement) setFocus(false)
+    }
+
+    document.addEventListener('fullscreenchange', onFullscreenChange)
+
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange)
+  }, [])
+
+  const toggleFullscreen = () => {
+    if (focus) {
+      document.exitFullscreen?.()
+      setFocus(false)
+
+      return
+    }
+
+    // Hiding the panels happens regardless; the browser fullscreen is a layer on top of
+    // it, so when the API is missing or refused the button still does its useful thing.
+    setFocus(true)
+    const target = previewTarget.current
+
+    if (target?.requestFullscreen) {
+      target.requestFullscreen()?.catch?.(() => {})
+    }
+  }
 
   const markdown = resume?.markdown ?? ''
   const settings = resume?.settings ?? DEFAULT_RESUME_SETTINGS
@@ -114,6 +145,7 @@ export default function BuilderPage() {
     // that strip. flex-1 grows in a column and is ignored in a grid cell, where
     // stretching already fills the row.
     <div
+      ref={previewTarget}
       className={
         stacked
           ? 'relative flex min-h-0 flex-1 w-full flex-col'
@@ -135,7 +167,7 @@ export default function BuilderPage() {
         onZoomIn={() => setZoom((current) => clampZoom(current + ZOOM_STEP))}
         onZoomOut={() => setZoom((current) => clampZoom(current - ZOOM_STEP))}
         onFit={() => setZoom(1)}
-        onFull={() => setFocus((current) => !current)}
+        onFull={toggleFullscreen}
         full={focus}
         showFull={!stacked}
         zoom={zoom}

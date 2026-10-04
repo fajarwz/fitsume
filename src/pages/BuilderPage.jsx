@@ -97,7 +97,7 @@ export default function BuilderPage() {
     // grid cell, where stretching already fills the row.
     <div
       className={
-        stacked ? 'flex min-h-0 flex-1 w-full flex-col gap-2' : 'flex min-h-0 flex-1 w-full gap-2'
+        stacked ? 'flex min-h-0 flex-1 w-full flex-col gap-2' : 'flex min-h-0 flex-1 w-full'
       }
     >
       {/* The controls run down the left edge rather than across the top: a toolbar costs

@@ -5,6 +5,8 @@ spacing that still fits everything on exactly one A4 page.
 
 **Live at [fitsume.fajarwz.com](https://fitsume.fajarwz.com).**
 
+![visitors](https://img.shields.io/badge/dynamic/json?url=https://fitsume.goatcounter.com/counter/.json&query=count&label=Visits&color=blue)
+
 - **Auto-fit** — a two-pass binary search: biggest font size first, then the widest
   line spacing that still fits
 - **No layout thrashing** — text is measured without touching the DOM, so the

@@ -180,6 +180,8 @@ The values were taken from the public account of Vercel's design system
 ([design-bites](https://github.com/educlopez/design-bites), MIT) rather than vendored
 into this repo as a spec document.
 
+Fitsume is inspired by [vladartym/always-fit-resume](https://github.com/vladartym/always-fit-resume).
+
 ## License
 
 MIT — see [LICENSE](./LICENSE).

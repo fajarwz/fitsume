@@ -85,7 +85,7 @@ export default function SheetActions({
 
           {open ? (
             <div
-              className="absolute right-0 top-full mt-1.5 flex min-w-[11rem] flex-col gap-0.5 rounded-md border border-[var(--border)] bg-[var(--card)] p-1 shadow-lg"
+              className="absolute right-0 top-full mt-1.5 flex min-w-[11rem] flex-col gap-0.5 rounded-md border border-[var(--border-strong)] bg-[var(--card)] p-1 shadow-lg"
               data-no-print
               role="menu"
             >

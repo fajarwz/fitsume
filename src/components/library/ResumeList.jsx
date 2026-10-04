@@ -78,7 +78,7 @@ export default function ResumeList({
                 id={`name-${resume.id}`}
                 value={resume.name}
                 onChange={(event) => onRename(resume.id, event.target.value)}
-                className="h-8 min-w-[10rem] flex-1 rounded-md border border-transparent bg-transparent px-2 text-sm font-medium hover:border-[var(--border)] focus:border-[var(--border)]"
+                className="h-8 min-w-0 flex-1 rounded-md border border-transparent bg-transparent px-2 text-sm font-medium hover:border-[var(--border)] focus:border-[var(--border)] md:min-w-[10rem]"
               />
 
               {isSampleResume(resume) ? (

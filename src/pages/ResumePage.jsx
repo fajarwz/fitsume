@@ -263,9 +263,9 @@ export default function ResumePage() {
           />
         ) : null}
 
-        <section className="flex flex-wrap items-center gap-2 rounded-lg glass p-3">
+        <section className="flex flex-wrap items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--glass)] p-3 backdrop-blur-xl">
           <Text as="h2" variant="12-semibold" className="w-full">
-            Move work in and out
+            Import &amp; restore
           </Text>
 
           <Button size="sm" onClick={() => markdownInput.current?.click()}>

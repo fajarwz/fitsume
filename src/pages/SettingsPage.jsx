@@ -46,7 +46,7 @@ export default function SettingsPage() {
           />
         </PageHeader>
 
-        <section className="flex flex-col gap-2 rounded-lg glass p-3">
+        <section className="flex flex-col gap-2 rounded-lg border border-[var(--border)] bg-[var(--glass)] p-3 backdrop-blur-xl">
           <Text as="h2" variant="12-semibold">
             Display mode
           </Text>
@@ -68,7 +68,7 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        <section className="flex flex-col gap-2 rounded-lg glass p-3">
+        <section className="flex flex-col gap-2 rounded-lg border border-[var(--border)] bg-[var(--glass)] p-3 backdrop-blur-xl">
           <Text as="h2" variant="12-semibold">
             Sample resumes
           </Text>

@@ -155,8 +155,13 @@ binary.
 
 ## Stack
 
-React 19 · Vite · Tailwind CSS · [pretext](https://github.com/chenglou/pretext)
-for DOM-free text measurement · Vitest + Testing Library · ESLint + Prettier.
+- **React 19**
+- **Vite**
+- **Tailwind CSS**
+- **[pretext](https://github.com/chenglou/pretext)** — DOM-free text measurement
+- **Vitest + Testing Library** — testing
+- **ESLint + Prettier** — linting and formatting
+
 Geist Sans and Geist Mono are bundled via `@fontsource-variable/geist` and
 `@fontsource-variable/geist-mono`.
 

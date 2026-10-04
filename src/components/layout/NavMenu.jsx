@@ -135,7 +135,9 @@ export default function NavMenu({
               value={resume?.id ?? ''}
               onChange={switchResume}
             >
-              <option value="">No resume open</option>
+              {/* A placeholder for when nothing is open, not a pickable destination — so a
+                  resume can't be "unselected" into a broken /resume/ route. */}
+              {!resume ? <option value="">No resume open</option> : null}
               {resumes.map((entry) => (
                 <option key={entry.id} value={entry.id}>
                   {entry.name}

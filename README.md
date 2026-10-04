@@ -7,7 +7,7 @@ spacing that still fits everything on exactly one A4 page.
   line spacing that still fits
 - **No layout thrashing** — text is measured without touching the DOM, so the
   preview does not flicker or shift as you type
-- **Markdown editor** — `#`, `##`, `###`, `-`, `---`, and the two conventions that
+- **Markdown editor** — `#`, `##`, `###`, `-`, `---`, links, and the two conventions that
   make a resume header read the way it should
 - **Resume library** — as many named resumes as you like, each with its own
   typography settings
@@ -49,8 +49,16 @@ Details
 ```
 
 Blank lines are ignored, so space the source out however you like. There is a
-cheat sheet in the editor, and a toolbar for section headings, job titles, bullets
-and rules.
+cheat sheet in the editor, and a toolbar for section headings, job titles, bullets,
+rules and links.
+
+**Email and web addresses are links.** Write one and it is clickable, in the preview and
+in the exported PDF — `you@example.com`, `https://yoursite.com`, and a bare domain like
+`github.com/you`. To show a label instead of the address, write `[GitHub](github.com/you)`,
+or press **Link** in the editor toolbar and let it write the syntax for you: with text
+selected, the selection becomes the label; with nothing selected, the address goes in on
+its own. A label that the line breaker splits in two loses only its click, never its text,
+which is also why a one-word label is the safe choice.
 
 ## How the fit works
 

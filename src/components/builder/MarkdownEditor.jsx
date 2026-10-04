@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import Button from '../ui/Button.jsx'
 import CheatSheet from './CheatSheet.jsx'
+import { insertLinkAt } from '../../lib/links.js'
 import { useUndo } from '../../hooks/useUndo.js'
 
 /**
@@ -63,8 +64,19 @@ export default function MarkdownEditor({
   footer = null,
 }) {
   const textarea = useRef(null)
+  const addressInput = useRef(null)
   const pendingCaret = useRef(null)
   const previousResume = useRef(resumeId)
+  const [linkOpen, setLinkOpen] = useState(false)
+  const [linkLabel, setLinkLabel] = useState('')
+  const [linkAddress, setLinkAddress] = useState('')
+
+  // Focused by hand rather than with autoFocus: the field only appears because someone
+  // asked for it, and the lint rule against autoFocus exists for the fields that appear
+  // whether you asked or not.
+  useEffect(() => {
+    if (linkOpen) addressInput.current?.focus()
+  }, [linkOpen])
 
   const { undo, redo, reset, canUndo, canRedo } = useUndo(markdown, onChange)
 
@@ -93,6 +105,46 @@ export default function MarkdownEditor({
 
     pendingCaret.current = caret
     onChange(value)
+  }
+
+  const closeLink = () => {
+    setLinkOpen(false)
+    setLinkLabel('')
+    setLinkAddress('')
+  }
+
+  /**
+   * Writes a link at the caret, by way of the same function the checks exercise.
+   */
+  const insertLink = () => {
+    const element = textarea.current
+
+    if (!element) return
+
+    const inserted = insertLinkAt(element.value, [element.selectionStart, element.selectionEnd], {
+      label: linkLabel,
+      address: linkAddress,
+    })
+
+    if (!inserted) return
+
+    pendingCaret.current = inserted.caret
+    onChange(inserted.value)
+    closeLink()
+  }
+
+  const onLinkKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      insertLink()
+
+      return
+    }
+
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      closeLink()
+    }
   }
 
   const onKeyDown = (event) => {
@@ -168,6 +220,15 @@ export default function MarkdownEditor({
         >
           —
         </Button>
+        <Button
+          size="sm"
+          variant={linkOpen ? 'primary' : 'ghost'}
+          title="Add a link: an address on its own, or a label that hides one"
+          aria-expanded={linkOpen}
+          onClick={() => (linkOpen ? closeLink() : setLinkOpen(true))}
+        >
+          Link
+        </Button>
 
         <div className="ml-auto flex items-center gap-1">
           <Button
@@ -190,6 +251,47 @@ export default function MarkdownEditor({
           </Button>
         </div>
       </div>
+
+      {linkOpen && (
+        <div className="flex flex-wrap items-center gap-1.5 rounded-md border border-[var(--border)] bg-[var(--muted)] p-1.5">
+          <label className="sr-only" htmlFor="link-label">
+            Link label
+          </label>
+          <input
+            id="link-label"
+            value={linkLabel}
+            onChange={(event) => setLinkLabel(event.target.value)}
+            onKeyDown={onLinkKeyDown}
+            placeholder="Label (optional)"
+            title="Leave blank to insert the address on its own; selected text is used as the label"
+            className="h-7 w-36 rounded border border-[var(--border)] bg-[var(--card)] px-2 text-xs outline-none"
+          />
+          <label className="sr-only" htmlFor="link-address">
+            Link address
+          </label>
+          <input
+            id="link-address"
+            ref={addressInput}
+            value={linkAddress}
+            onChange={(event) => setLinkAddress(event.target.value)}
+            onKeyDown={onLinkKeyDown}
+            placeholder="fajarwz.com"
+            title="An email address, or a web address with or without the https://"
+            className="h-7 w-44 rounded border border-[var(--border)] bg-[var(--card)] px-2 font-mono text-xs outline-none"
+          />
+          <Button
+            size="sm"
+            variant="primary"
+            onClick={insertLink}
+            disabled={linkAddress.trim() === ''}
+          >
+            Insert
+          </Button>
+          <Button size="sm" variant="ghost" onClick={closeLink}>
+            Cancel
+          </Button>
+        </div>
+      )}
 
       <label className="sr-only" htmlFor="markdown-editor">
         Resume markdown

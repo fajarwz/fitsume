@@ -1,3 +1,5 @@
+import { hrefFor } from './links.js'
+
 /**
  * The markdown dialect: `#`, `##`, `###`, `- `, `---`, and blank lines. Nothing
  * else, and deliberately so — this is a resume, not a blogging platform.
@@ -63,10 +65,43 @@ export const BLOCK_TYPE = {
 /** Titles are level-1; nothing else uses this scale. */
 const TITLE_SCALE = STYLES.title.fontScale
 
+/**
+ * `[Label](https://address)` becomes the label, with the address kept aside.
+ *
+ * Resolving this in the parser rather than the renderer is what keeps the fit honest: the
+ * engine measures the text of a block, so the text has to be what gets printed — the
+ * label — and not the syntax around it. An address it cannot make sense of is left
+ * exactly as typed, brackets and all, rather than being silently emptied of a link.
+ */
+function resolveLabels(text) {
+  const labels = []
+  const pattern = /\[([^\]]+)\]\(([^)\s]+)\)/g
+  let resolved = ''
+  let at = 0
+
+  for (const match of text.matchAll(pattern)) {
+    const href = hrefFor(match[2])
+
+    if (!href) continue
+
+    resolved += text.slice(at, match.index) + match[1]
+    at = match.index + match[0].length
+    // The offset is the label's position in the text as it will be printed, which is what
+    // lets the renderer link the right occurrence of a word that appears twice.
+    labels.push({ text: match[1], href, start: resolved.length - match[1].length })
+  }
+
+  if (labels.length === 0) return { text, labels }
+
+  return { text: resolved + text.slice(at), labels }
+}
+
 function textBlock(text, style) {
-  return {
+  const { text: resolved, labels } = resolveLabels(text)
+
+  const block = {
     type: BLOCK_TYPE.text,
-    text,
+    text: resolved,
     fontScale: style.fontScale,
     bold: Boolean(style.bold),
     marginBottom: style.marginBottom,
@@ -76,6 +111,10 @@ function textBlock(text, style) {
     // stranding "EXPERIENCE" at the foot of a page with nothing under it.
     keepWithNext: Boolean(style.keepWithNext),
   }
+
+  if (labels.length > 0) block.labels = labels
+
+  return block
 }
 
 function wasTitle(block) {

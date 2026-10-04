@@ -29,7 +29,7 @@ import { useStashContext } from '../state/StashProvider.jsx'
  * file is the real safety net — which is why restore asks whether to merge or
  * replace, and merge is the default.
  */
-export default function LibraryPage() {
+export default function ResumePage() {
   const { resumes, activeId, library, actions, status, persistent, saveResult } = useStashContext()
   const navigate = useNavigate()
   const [mode, setMode] = useState(MERGE_MODES.merge)

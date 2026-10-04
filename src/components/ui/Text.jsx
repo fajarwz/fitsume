@@ -12,7 +12,7 @@
  * readable in the code, not inferred.
  *
  *   <Text variant="12-medium">Auto-fit</Text>
- *   <Text as="h1" variant="18-semibold" className="tracking-tight">Library</Text>
+ *   <Text as="h1" variant="18-semibold" className="tracking-tight">Resume</Text>
  *   <Text variant="12-regular" tone="muted">Stored in this browser.</Text>
  *
  * Line heights come with the size, because a size without one is where the fractional

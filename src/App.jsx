@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import { resolveStorage } from './lib/stash.js'
 import BuilderPage from './pages/BuilderPage.jsx'
-import LibraryPage from './pages/LibraryPage.jsx'
+import ResumePage from './pages/ResumePage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 import SettingsPage from './pages/SettingsPage.jsx'
 import StashProvider from './state/StashProvider.jsx'
@@ -40,7 +40,7 @@ export default function App() {
       <StashProvider storage={storage} persistent={persistent}>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<LibraryPage />} />
+            <Route path="/" element={<ResumePage />} />
             <Route path="/resume/:id" element={<BuilderPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/library" element={<Navigate to="/" replace />} />

@@ -78,11 +78,16 @@ export default function SheetActions({
             steps down to secondary until the page is on its own again. Escape exits too
             (wired in the builder). */}
         {full ? (
-          <Button size="sm" variant="primary" onClick={onFull} title="Exit full screen (Esc)">
+          <Button size="sm" variant="primary" onClick={onFull} title="Exit full screen (Esc)" className="shadow-md">
             Exit full
           </Button>
         ) : null}
-        <Button size="sm" variant={full ? 'secondary' : 'primary'} onClick={onExport}>
+        <Button
+          size="sm"
+          variant={full ? 'secondary' : 'primary'}
+          onClick={onExport}
+          className="shadow-md"
+        >
           Export PDF
         </Button>
 
@@ -94,7 +99,7 @@ export default function SheetActions({
             aria-expanded={open}
             aria-label={toggleLabel}
             title={toggleLabel}
-            className="border border-[var(--border)] bg-[var(--card)]"
+            className="border border-[var(--border)] bg-[var(--card)] shadow-md"
           >
             {open ? <CloseIcon className="h-4 w-4" /> : <MoreIcon className="h-4 w-4" />}
           </Button>

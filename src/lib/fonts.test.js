@@ -16,7 +16,7 @@ describe('resumeFont', () => {
   })
 
   it('names the self-hosted family first, so a missing font cannot silently win', () => {
-    expect(RESUME_FONT_FAMILY.startsWith("'Inter Variable'")).toBe(true)
+    expect(RESUME_FONT_FAMILY.startsWith("'Geist Variable'")).toBe(true)
   })
 })
 

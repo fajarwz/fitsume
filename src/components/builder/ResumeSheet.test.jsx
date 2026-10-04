@@ -4,6 +4,17 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import ResumeSheet from './ResumeSheet.jsx'
 import { PAGE_HEIGHT, PAGE_WIDTH } from '../../lib/page.js'
 
+/* These pin pixel-level fit against the real measurement engine, which the
+   optional `canvas` package provides; jsdom alone has nothing to measure. */
+const hasCanvas = (() => {
+  try {
+    if (typeof document === 'undefined') return false
+    return Boolean(document.createElement('canvas').getContext('2d'))
+  } catch {
+    return false
+  }
+})()
+
 /* jsdom has no layout, so the pane's client box is stubbed; the behaviour pinned is
    that the page fits in both directions and zoom multiplies the fit. */
 const PANE = { width: 400, height: 500 }
@@ -27,7 +38,7 @@ afterEach(() => {
 const pageBox = (container) => container.querySelector('[data-page]').parentElement.style
 const fitScale = Math.min(PANE.width / PAGE_WIDTH, PANE.height / PAGE_HEIGHT)
 
-describe('ResumeSheet', () => {
+describe.skipIf(!hasCanvas)('ResumeSheet', () => {
   it('fits the whole page into the pane, so nothing needs scrolling', () => {
     const { container } = render(<ResumeSheet positioned={[]} padding={40} />)
 

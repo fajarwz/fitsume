@@ -4,13 +4,20 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import App from './App.jsx'
 
-/**
- * End-to-end app tests. The fit engine runs for real here, so the optional
- * `canvas` dependency must be installed for them to pass.
- */
+/* The fit engine runs for real here, so the optional `canvas` dependency must be
+   installed for them to pass; skip without it. */
+const hasCanvas = (() => {
+  try {
+    if (typeof document === 'undefined') return false
+    return Boolean(document.createElement('canvas').getContext('2d'))
+  } catch {
+    return false
+  }
+})()
+
 const editor = () => screen.getByLabelText(/resume markdown/i)
 
-describe('Fitsume', () => {
+describe.skipIf(!hasCanvas)('Fitsume', () => {
   beforeEach(() => {
     window.localStorage.clear()
     window.location.hash = ''

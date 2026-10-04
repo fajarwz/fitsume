@@ -5,6 +5,17 @@ import { describe, expect, it, vi } from 'vitest'
 import { DEFAULT_RESUME_SETTINGS } from '../../lib/settings.js'
 import FitPanel from './FitPanel.jsx'
 
+/* The fit readout here is measured for real; that needs the optional `canvas`
+   package, so skip without it. */
+const hasCanvas = (() => {
+  try {
+    if (typeof document === 'undefined') return false
+    return Boolean(document.createElement('canvas').getContext('2d'))
+  } catch {
+    return false
+  }
+})()
+
 /* The fit controls as a person uses them: numbers arrive intact, readout tells the truth. */
 const setup = ({ settings = {}, fit = {} } = {}) => {
   const onChange = vi.fn()
@@ -20,7 +31,7 @@ const setup = ({ settings = {}, fit = {} } = {}) => {
   return { onChange, view }
 }
 
-describe('FitPanel', () => {
+describe.skipIf(!hasCanvas)('FitPanel', () => {
   it('reports what auto-fit chose', () => {
     setup()
 

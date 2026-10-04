@@ -233,10 +233,7 @@ describe('sortResumesByRecency', () => {
   })
 
   it('keeps resumes without a date last', () => {
-    const input = [
-      { id: 'a', updatedAt: '2026-03-02T00:00:00.000Z' },
-      { id: 'b' },
-    ]
+    const input = [{ id: 'a', updatedAt: '2026-03-02T00:00:00.000Z' }, { id: 'b' }]
 
     expect(sortResumesByRecency(input).map((entry) => entry.id)).toEqual(['a', 'b'])
   })
@@ -270,6 +267,7 @@ describe('validateLibrary', () => {
       schemaVersion: SCHEMA_VERSION,
       activeId: null,
       resumes: [],
+      samplesSeeded: false,
     })
   })
 })

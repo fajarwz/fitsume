@@ -129,7 +129,7 @@ describe('exportToPdf', () => {
     })
 
     expect(observed[0]).toEqual({
-      position: 'fixed',
+      position: 'absolute',
       top: '0px',
       left: '0px',
       transform: `scale(${PRINT_SCALE})`,

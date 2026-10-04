@@ -47,55 +47,59 @@ const options = (overrides = {}) => ({
   ...overrides,
 })
 
-describe.skipIf(!hasCanvas)('every sample', () => {
-  for (const sample of SAMPLES) {
-    describe(`${sample.id} (${sample.length})`, () => {
-      const blocks = parseMarkdown(sample.markdown)
-      const opts = options()
-      const fit = findOptimalFit(blocks, opts)
-      const positioned = layoutBlocks(blocks, {
-        ...opts,
-        baseFontSize: fit.fontSize,
-        lineHeightMultiplier: fit.lineHeightMultiplier,
+if (hasCanvas) {
+  describe('every sample', () => {
+    for (const sample of SAMPLES) {
+      describe(`${sample.id} (${sample.length})`, () => {
+        const blocks = parseMarkdown(sample.markdown)
+        const opts = options()
+        const fit = findOptimalFit(blocks, opts)
+        const positioned = layoutBlocks(blocks, {
+          ...opts,
+          baseFontSize: fit.fontSize,
+          lineHeightMultiplier: fit.lineHeightMultiplier,
+        })
+
+        it('produces layout, not an empty page', () => {
+          expect(blocks.length).toBeGreaterThan(0)
+          expect(positioned.length).toBeGreaterThan(0)
+        })
+
+        it('stays inside the fit bounds', () => {
+          expect(fit.fontSize).toBeGreaterThanOrEqual(FONT_SIZE_MIN)
+          expect(fit.fontSize).toBeLessThanOrEqual(FONT_SIZE_MAX)
+          expect(fit.lineHeightMultiplier).toBeGreaterThanOrEqual(LINE_HEIGHT_MIN)
+          expect(fit.lineHeightMultiplier).toBeLessThanOrEqual(LINE_HEIGHT_MAX)
+        })
+
+        it('either fits on one page, or says so at the smallest size it will use', () => {
+          if (fit.height <= opts.maxHeight) {
+            expect(fit.height).toBeLessThanOrEqual(opts.maxHeight)
+
+            return
+          }
+
+          // Nothing fits, so the honest outcome is the floor plus a reported overflow.
+          expect(fit.fontSize).toBe(FONT_SIZE_MIN)
+          expect(overflowBy(blocks, opts, fit.fontSize, fit.lineHeightMultiplier)).toBeGreaterThan(
+            0,
+          )
+        })
+
+        it('draws inside the page it was fitted for', () => {
+          const bottom = contentBottom(positioned)
+
+          if (fit.height <= opts.maxHeight) {
+            // The rendered content must fit the sheet, not just the measurement.
+            expect(bottom).toBeLessThanOrEqual(PAGE_HEIGHT - DEFAULT_PADDING + 0.5)
+          } else {
+            expect(bottom).toBeGreaterThan(PAGE_HEIGHT - DEFAULT_PADDING)
+          }
+        })
       })
-
-      it('produces layout, not an empty page', () => {
-        expect(blocks.length).toBeGreaterThan(0)
-        expect(positioned.length).toBeGreaterThan(0)
-      })
-
-      it('stays inside the fit bounds', () => {
-        expect(fit.fontSize).toBeGreaterThanOrEqual(FONT_SIZE_MIN)
-        expect(fit.fontSize).toBeLessThanOrEqual(FONT_SIZE_MAX)
-        expect(fit.lineHeightMultiplier).toBeGreaterThanOrEqual(LINE_HEIGHT_MIN)
-        expect(fit.lineHeightMultiplier).toBeLessThanOrEqual(LINE_HEIGHT_MAX)
-      })
-
-      it('either fits on one page, or says so at the smallest size it will use', () => {
-        if (fit.height <= opts.maxHeight) {
-          expect(fit.height).toBeLessThanOrEqual(opts.maxHeight)
-
-          return
-        }
-
-        // Nothing fits, so the honest outcome is the floor plus a reported overflow.
-        expect(fit.fontSize).toBe(FONT_SIZE_MIN)
-        expect(overflowBy(blocks, opts, fit.fontSize, fit.lineHeightMultiplier)).toBeGreaterThan(0)
-      })
-
-      it('draws inside the page it was fitted for', () => {
-        const bottom = contentBottom(positioned)
-
-        if (fit.height <= opts.maxHeight) {
-          // The rendered content must fit the sheet, not just the measurement.
-          expect(bottom).toBeLessThanOrEqual(PAGE_HEIGHT - DEFAULT_PADDING + 0.5)
-        } else {
-          expect(bottom).toBeGreaterThan(PAGE_HEIGHT - DEFAULT_PADDING)
-        }
-      })
-    })
-  }
-})
+    }
+  })
+}
 
 describe.skipIf(!hasCanvas)('the shape of the set', () => {
   const fitOf = (sample, overrides = {}) =>

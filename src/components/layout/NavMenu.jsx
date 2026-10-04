@@ -66,9 +66,9 @@ export default function NavMenu({
   const switchResume = (event) => {
     const id = event.target.value
 
-    if (id === '') return
-
-    navigate(`/resume/${id}`)
+    // "No resume open" (the empty option) means the library, not `/resume/` — an empty
+    // param matches nothing and lands on the 404 page.
+    navigate(id === '' ? '/' : `/resume/${id}`)
     close()
   }
 

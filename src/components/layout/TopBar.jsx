@@ -60,7 +60,7 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
                 size="sm"
                 className="max-w-[14rem]"
                 value={resume?.id ?? ''}
-                onChange={(event) => navigate(`/resume/${event.target.value}`)}
+                onChange={(event) => navigate(event.target.value === '' ? '/' : `/resume/${event.target.value}`)}
               >
                 <option value="">No resume open</option>
                 {resumes.map((entry) => (

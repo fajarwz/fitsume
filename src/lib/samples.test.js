@@ -4,7 +4,12 @@ import {
   DEFAULT_SAMPLE_ID,
   SAMPLES,
   SAMPLE_CATEGORIES,
+  SAMPLE_ORDER,
+  SAMPLE_RESUME_PREFIX,
   getSample,
+  isSampleResume,
+  sampleResumeId,
+  sampleResumes,
   samplesByCategory,
 } from './samples.js'
 import { deriveTitle } from './title.js'
@@ -80,5 +85,37 @@ describe('samples', () => {
   it('returns null for an unknown sample id', () => {
     expect(getSample('nope')).toBeNull()
     expect(getSample(undefined)).toBeNull()
+  })
+
+  it('seeds a stable prefixed resume id from the id', () => {
+    for (const sample of SAMPLES) {
+      expect(sampleResumeId(sample)).toBe(`${SAMPLE_RESUME_PREFIX}${sample.id}`)
+    }
+  })
+
+  it('recognises only prefixed ids as sample resumes', () => {
+    expect(isSampleResume({ id: `${SAMPLE_RESUME_PREFIX}al-khwarizmi` })).toBe(true)
+    expect(isSampleResume({ id: 'editorial' })).toBe(false)
+    // A missing id must short-circuit to false instead of throwing.
+    expect(isSampleResume({})).toBe(false)
+    expect(isSampleResume({ id: 42 })).toBe(false)
+    expect(isSampleResume(null)).toBe(false)
+  })
+
+  it('turns every sample into a library record in display order', () => {
+    const resumes = sampleResumes()
+
+    expect(resumes).toHaveLength(SAMPLE_ORDER.length)
+    expect(SAMPLE_ORDER).toEqual(['bj-habibie', 'al-khwarizmi', 'fatima-al-fihri'])
+    expect(resumes.map((resume) => resume.id)).toEqual(
+      SAMPLE_ORDER.map((id) => `${SAMPLE_RESUME_PREFIX}${id}`),
+    )
+
+    for (const resume of resumes) {
+      expect(resume.markdown).toBeTruthy()
+      expect(resume.id.startsWith(SAMPLE_RESUME_PREFIX)).toBe(true)
+      // Restore can tell a row began life as a sample.
+      expect(isSampleResume(resume)).toBe(true)
+    }
   })
 })

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { createFakeMetrics } from '../test/fakeMetrics.js'
 import { parseMarkdown } from './markdown.js'
-import { measureBlocks, spaceBefore, skipsMarginAfter } from './measure.js'
+import { fitsOnPage, measureBlocks, spaceBefore, skipsMarginAfter } from './measure.js'
 import {
   DEFAULT_PADDING,
   DEFAULT_SPACING,
@@ -100,6 +100,14 @@ describe('measureBlocks', () => {
     const height = measureBlocks(parseMarkdown('# Name'), pageOptions(createFakeMetrics()))
 
     expect(height).toBeLessThan(PAGE_HEIGHT)
+  })
+})
+
+describe('fitsOnPage', () => {
+  it('fits when the measured height is no taller than the page', () => {
+    expect(fitsOnPage(1000, 1200)).toBe(true)
+    expect(fitsOnPage(1200, 1000)).toBe(false)
+    expect(fitsOnPage(800, 800)).toBe(true)
   })
 })
 

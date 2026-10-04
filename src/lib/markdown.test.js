@@ -104,6 +104,30 @@ describe('parseMarkdown', () => {
     expect(blocks[1].marginBottom).toBe(6)
   })
 
+  it('resolves bracketed links into labels with printed-text offsets', () => {
+    const blocks = parseMarkdown('Contact [GitHub](https://github.com) and [Blog](https://blog.dev) now')
+
+    expect(blocks[0].text).toBe('Contact GitHub and Blog now')
+    expect(blocks[0].labels).toEqual([
+      { text: 'GitHub', href: 'https://github.com', start: 8 },
+      { text: 'Blog', href: 'https://blog.dev', start: 19 },
+    ])
+  })
+
+  it('leaves an unresolvable link address exactly as typed, without a label', () => {
+    const blocks = parseMarkdown('See [Thing](notalink)')
+
+    expect(blocks[0].text).toBe('See [Thing](notalink)')
+    expect(blocks[0].labels).toBeUndefined()
+  })
+
+  it('drops an unresolvable link but still resolves the others on the same line', () => {
+    const blocks = parseMarkdown('[Gone](nope) and [Real](https://example.com)')
+
+    expect(blocks[0].text).toBe('[Gone](nope) and Real')
+    expect(blocks[0].labels).toEqual([{ text: 'Real', href: 'https://example.com', start: 17 }])
+  })
+
   it('parses the shipped samples without throwing', async () => {
     const { SAMPLES } = await import('./samples.js')
 

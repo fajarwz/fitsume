@@ -14,13 +14,17 @@ import {
   findResume,
   loadLibrary,
   migrateLibrary,
+  missingSamples,
   removeManyResume,
   removeResume,
   renameResume,
   resolveStorage,
+  restoreSamples,
   saveLibrary,
+  seedLibrary,
   setActiveResume,
   sortResumesByRecency,
+  uniqueResumeName,
   updateResume,
   validateLibrary,
 } from './stash.js'
@@ -237,6 +241,14 @@ describe('sortResumesByRecency', () => {
 
     expect(sortResumesByRecency(input).map((entry) => entry.id)).toEqual(['a', 'b'])
   })
+
+  it('sorts a dateless resume ahead of older dated ones when it is newer', () => {
+    // A missing date reads as epoch 0, so it lands behind anything dated; here
+    // both sides run through the undefined-date branch of the comparator.
+    const input = [{ id: 'x' }, { id: 'a', updatedAt: '2020-01-01T00:00:00.000Z' }]
+
+    expect(sortResumesByRecency(input).map((entry) => entry.id)).toEqual(['a', 'x'])
+  })
 })
 
 describe('validateLibrary', () => {
@@ -270,6 +282,21 @@ describe('validateLibrary', () => {
       samplesSeeded: false,
     })
   })
+
+  it('keeps an explicit samplesSeeded flag', () => {
+    expect(validateLibrary({ resumes: [], samplesSeeded: true }).samplesSeeded).toBe(true)
+    expect(validateLibrary({ resumes: [resume()], samplesSeeded: false }).samplesSeeded).toBe(false)
+  })
+
+  it('repairs non-string timestamps on the way in', () => {
+    const repaired = validateLibrary({
+      resumes: [{ id: 'ok', name: 'R', markdown: '# R', createdAt: 12345, updatedAt: 67890 }],
+    })
+
+    expect(repaired.resumes[0].id).toBe('ok')
+    expect(repaired.resumes[0].createdAt).toEqual(expect.any(String))
+    expect(repaired.resumes[0].updatedAt).toEqual(expect.any(String))
+  })
 })
 
 describe('migrateLibrary', () => {
@@ -290,6 +317,124 @@ describe('migrateLibrary', () => {
 
   it('does not invent a resume out of junk', () => {
     expect(migrateLibrary({ some: 'junk' })).toEqual({ some: 'junk' })
+  })
+
+  it('passes non-objects straight through', () => {
+    expect(migrateLibrary(null)).toBeNull()
+    expect(migrateLibrary(42)).toBe(42)
+  })
+
+  it('hands out a fresh id to an old resume with a broken identity', () => {
+    const migrated = migrateLibrary({ id: '', markdown: '# X' })
+
+    expect(migrated.resumes[0].id).toEqual(expect.any(String))
+    expect(migrated.resumes[0].id.length).toBeGreaterThan(0)
+  })
+})
+
+describe('sample seeding and restore', () => {
+  const sample = (id, name) => ({ id, name, markdown: `# ${name}` })
+
+  it('seeds the samples on first run, marking the flag and selecting the first', () => {
+    const seeded = seedLibrary(createLibrary(), [sample('s1', 'Ada'), sample('s2', 'Grace')])
+
+    expect(seeded.samplesSeeded).toBe(true)
+    expect(seeded.resumes.map((entry) => entry.id)).toEqual(['s1', 's2'])
+    expect(seeded.activeId).toBe('s1')
+  })
+
+  it('does nothing when the samples were already seeded once', () => {
+    const library = { ...createLibrary(), samplesSeeded: true, resumes: [resume()] }
+
+    expect(seedLibrary(library, [sample('s1', 'Ada')])).toBe(library)
+  })
+
+  it('seeds samples even when the flag is unset but the library is not empty', () => {
+    const library = { ...createLibrary(), activeId: 'r1', resumes: [resume()] }
+
+    const seeded = seedLibrary(library, [sample('s1', 'Ada')])
+
+    expect(seeded.samplesSeeded).toBe(true)
+    expect(seeded.resumes).toHaveLength(2)
+    expect(seeded.activeId).toBe('r1')
+  })
+
+  it('lists only the samples a library is missing', () => {
+    const library = { ...createLibrary(), resumes: [sample('s1', 'Ada')] }
+
+    expect(missingSamples(library, [sample('s1', 'Ada'), sample('s2', 'Grace')]).map((s) => s.id)).toEqual([
+      's2',
+    ])
+  })
+
+  it('restores deleted samples without duplicating the ones that remain', () => {
+    const seeded = seedLibrary(createLibrary(), [sample('s1', 'Ada'), sample('s2', 'Grace')])
+    const oneLeft = removeResume(seeded, 's2')
+    const restored = restoreSamples(oneLeft, [sample('s1', 'Ada'), sample('s2', 'Grace')])
+
+    expect(restored.resumes.map((entry) => entry.id)).toEqual(['s1', 's2'])
+  })
+
+  it('re-activates a sample when the library was left empty', () => {
+    const restored = restoreSamples(createLibrary(), [sample('s1', 'Ada'), sample('s2', 'Grace')])
+
+    expect(restored.resumes).toHaveLength(2)
+    expect(restored.activeId).toBe('s1')
+    expect(restored.samplesSeeded).toBe(true)
+  })
+
+  it('keeps the library identity when nothing is missing and seeding is done', () => {
+    const library = {
+      ...createLibrary(),
+      samplesSeeded: true,
+      resumes: [sample('s1', 'Ada')],
+      activeId: 's1',
+    }
+
+    expect(restoreSamples(library, [sample('s1', 'Ada')])).toBe(library)
+  })
+
+  it('marks seeding done even when there is nothing to hand out', () => {
+    const seeded = seedLibrary(createLibrary(), [])
+
+    expect(seeded.samplesSeeded).toBe(true)
+    expect(seeded.resumes).toEqual([])
+    expect(seeded.activeId).toBeNull()
+  })
+})
+
+describe('uniqueResumeName', () => {
+  it('returns the base name when it is free', () => {
+    expect(uniqueResumeName(libraryWith(resume()), 'Free Name')).toBe('Free Name')
+  })
+
+  it('numbers a taken name', () => {
+    expect(uniqueResumeName(libraryWith(resume()), 'Ada Lovelace')).toBe('Ada Lovelace 2')
+  })
+
+  it('gives up and returns the base when every numbered variant is taken', () => {
+    const resumes = [resume({ id: 'base', name: 'X' })]
+
+    for (let index = 2; index < 1000; index += 1) {
+      resumes.push({ id: `x${index}`, name: `X ${index}`, markdown: '# x' })
+    }
+
+    expect(uniqueResumeName({ resumes }, 'X')).toBe('X')
+  })
+})
+
+describe('newResumeId fallback', () => {
+  it('generates an id without a crypto implementation', () => {
+    const owned = Object.getOwnPropertyDescriptor(globalThis, 'crypto')
+
+    try {
+      Object.defineProperty(globalThis, 'crypto', { configurable: true, value: undefined })
+
+      expect(createResume({ markdown: '# X' }).id).toMatch(/^resume-/)
+    } finally {
+      if (owned) Object.defineProperty(globalThis, 'crypto', owned)
+      else delete globalThis.crypto
+    }
   })
 })
 
@@ -354,6 +499,14 @@ describe('loadLibrary / saveLibrary', () => {
   it('says so when the browser gives it no storage at all', () => {
     expect(loadLibrary(null)).toEqual({ library: createLibrary(), status: 'unavailable' })
     expect(saveLibrary(null, createLibrary())).toEqual({ saved: false, reason: 'unavailable' })
+  })
+
+  it('refuses a storage object that is missing the required method', () => {
+    const justWrites = { setItem: () => {} }
+    const justReads = { getItem: () => '{}' }
+
+    expect(loadLibrary(justWrites).status).toBe('unavailable')
+    expect(saveLibrary(justReads, createLibrary())).toEqual({ saved: false, reason: 'unavailable' })
   })
 
   it('reports a full disk rather than failing silently', () => {
@@ -429,5 +582,56 @@ describe('resolveStorage', () => {
     resolveStorage({ ...spy, setItem })
 
     expect(setItem).toHaveBeenCalled()
+  })
+
+  it('falls back to the global store when no candidate is passed', () => {
+    const globalStore = createMemoryStorage()
+    const owned = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
+
+    try {
+      Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: globalStore })
+
+      expect(resolveStorage(undefined)).toEqual({ storage: globalStore, persistent: true })
+    } finally {
+      owned
+        ? Object.defineProperty(globalThis, 'localStorage', owned)
+        : delete globalThis.localStorage
+    }
+  })
+
+  it('falls back to memory when no candidate is passed and there is no store', () => {
+    const owned = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
+
+    try {
+      delete globalThis.localStorage
+
+      const resolved = resolveStorage(undefined)
+
+      expect(resolved.persistent).toBe(false)
+      expect(saveLibrary(resolved.storage, createLibrary()).saved).toBe(true)
+    } finally {
+      owned
+        ? Object.defineProperty(globalThis, 'localStorage', owned)
+        : delete globalThis.localStorage
+    }
+  })
+
+  it('catches a local store that refuses even to be read', () => {
+    const owned = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
+
+    try {
+      Object.defineProperty(globalThis, 'localStorage', {
+        configurable: true,
+        get() {
+          throw new Error('denied')
+        },
+      })
+
+      expect(resolveStorage(undefined).persistent).toBe(false)
+    } finally {
+      owned
+        ? Object.defineProperty(globalThis, 'localStorage', owned)
+        : delete globalThis.localStorage
+    }
   })
 })

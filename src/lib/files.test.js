@@ -67,6 +67,17 @@ describe('markdown round trip', () => {
   it('accepts an empty import without inventing a document', () => {
     expect(resumeFromMarkdown('').markdown).toBe('')
   })
+
+  it('treats a non-string import as an empty document', () => {
+    expect(resumeFromMarkdown(null).markdown).toBe('')
+    expect(resumeFromMarkdown(undefined).markdown).toBe('')
+    expect(resumeFromMarkdown({}).markdown).toBe('')
+  })
+
+  it('drops a filename that collapses to nothing, falling back to the heading', () => {
+    expect(resumeFromMarkdown('# Hello', { filename: '___' }).name).toBe('Hello')
+    expect(resumeFromMarkdown('# Hello', { filename: '-_-' }).name).toBe('Hello')
+  })
 })
 
 describe('library backup', () => {
@@ -128,6 +139,25 @@ describe('mergeLibraries', () => {
     const merged = mergeLibraries(current, incoming, { mode: MERGE_MODES.replace })
 
     expect(merged.resumes.map((entry) => entry.name)).toEqual(['Grace Hopper'])
+  })
+
+  it('keeps the incoming active id on a replace', () => {
+    const incoming = {
+      ...createLibrary(),
+      resumes: [resume({ id: 'r2', name: 'Grace Hopper' })],
+      activeId: 'r2',
+    }
+    const merged = mergeLibraries(current, incoming, { mode: MERGE_MODES.replace })
+
+    expect(merged.activeId).toBe('r2')
+  })
+
+  it('keeps the current library when the incoming file has no resumes to add', () => {
+    const merged = mergeLibraries(current, { ...createLibrary(), resumes: [] })
+
+    expect(merged.activeId).toBe('r1')
+    expect(merged.resumes).toHaveLength(1)
+    expect(merged.resumes[0].id).toBe('r1')
   })
 
   it('leaves the library alone when the file cannot be read', () => {

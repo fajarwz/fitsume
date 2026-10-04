@@ -20,6 +20,17 @@ spacing that still fits everything on exactly one A4 page.
 - **Works offline** — the font is bundled, so the fit is measured against the font
   that actually renders
 
+**Working on this repo?** Read [`AGENTS.md`](./AGENTS.md) first — it documents the
+architecture rules (both enforced by CI) and the non-obvious facts an agent gets
+wrong.
+
+## Deployment
+
+Hosted on **Netlify** at the custom domain **`fitsume.fajarwz.com`**. Config lives
+in [`netlify.toml`](./netlify.toml): `npm run build` publishes `dist/`, `/*` is
+rewritten to `/index.html` (so direct hits on client-side routes survive a
+refresh), and hashed `/assets/*` are cached `immutable`.
+
 ## The markdown dialect
 
 Five rules. The two that are easy to miss are what make a header come out right:
@@ -79,10 +90,10 @@ characters), one fit run went from **7,590 text preparations to 396**, and from
 **51.4 ms to 6.2 ms** — with the real engine, on a real canvas. Run it yourself:
 
 ```bash
-npx vitest run scripts/profile-measurement.test.js
+npx vitest run scripts/profile-measurement.test.ts
 ```
 
-The measurement engine only appears in one file (`src/lib/textMetrics.js`).
+The measurement engine only appears in one file (`src/lib/textMetrics.ts`).
 Everything else in `lib/` takes the metrics it is given, which is why the fit engine
 can be tested exhaustively without a canvas.
 

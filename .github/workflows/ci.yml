@@ -8,7 +8,9 @@ on:
 jobs:
   verify:
     name: lint + tests + build
-    runs-on: ubuntu-latest
+    # Pin the image so a ubuntu-latest migration can't change the build OS
+    # underneath the pipeline.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
 

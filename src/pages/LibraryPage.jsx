@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import ResumeList from '../components/library/ResumeList.jsx'
 import TopBar from '../components/layout/TopBar.jsx'
 import Button from '../components/ui/Button.jsx'
+import Text from '../components/ui/Text.jsx'
 import { STARTER_MARKDOWN } from '../lib/starter.js'
 import {
   MERGE_MODES,
@@ -99,7 +100,7 @@ export default function LibraryPage() {
         resume={resumes.find((resume) => resume.id === activeId) ?? null}
         onNew={() => open(actions.create({ name: 'New resume', markdown: STARTER_MARKDOWN }).id)}
         secondary={
-          <Button size="sm" variant="primary" onClick={backup}>
+          <Button size="sm" variant="secondary" onClick={backup}>
             Back up library
           </Button>
         }
@@ -107,57 +108,63 @@ export default function LibraryPage() {
 
       <main className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4">
         <div>
-          <h1 className="text-lg font-semibold tracking-tight">Library</h1>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          <Text as="h1" variant="18-semibold" className="tracking-tight">
+            Library
+          </Text>
+          <Text variant="12-regular" tone="muted" className="mt-1">
             All of this is in your browser. Nothing is uploaded, and there is no account — so a
             backup file is the only copy that survives clearing your browser data.
-          </p>
+          </Text>
         </div>
 
         {!persistent ? (
-          <p
+          <Text
             role="status"
-            className="rounded-md p-2 text-xs"
+            variant="12-regular"
+            className="rounded-md p-2"
             style={{ background: 'rgba(185,28,28,0.12)', color: 'var(--negative)' }}
           >
             This browser is refusing storage, so changes last only for this session. Download a
             backup before you close the tab.
-          </p>
+          </Text>
         ) : null}
 
         {status === 'migrated' ? (
-          <p role="status" className="rounded-md bg-[var(--card)] p-2 text-xs">
+          <Text role="status" variant="12-regular" className="rounded-md bg-[var(--card)] p-2">
             An older saved document was upgraded into the new library format.
-          </p>
+          </Text>
         ) : null}
 
         {status === 'corrupt' ? (
-          <p
+          <Text
             role="status"
-            className="rounded-md p-2 text-xs"
+            variant="12-regular"
+            className="rounded-md p-2"
             style={{ background: 'rgba(185,28,28,0.12)', color: 'var(--negative)' }}
           >
             Saved data could not be read and was skipped rather than deleted. Restore a backup to
             get it back.
-          </p>
+          </Text>
         ) : null}
 
         {saveResult.saved ? null : (
-          <p
+          <Text
             role="status"
-            className="rounded-md p-2 text-xs"
+            variant="12-regular"
+            className="rounded-md p-2"
             style={{ background: 'rgba(185,28,28,0.12)', color: 'var(--negative)' }}
           >
             The last save failed
             {saveResult.reason === 'quota' ? ' because browser storage is full' : ''}. Download a
             backup.
-          </p>
+          </Text>
         )}
 
         {notice ? (
-          <p
+          <Text
             role="status"
-            className="rounded-md p-2 text-xs"
+            variant="12-regular"
+            className="rounded-md p-2"
             style={
               notice.kind === 'error'
                 ? { background: 'rgba(185,28,28,0.12)', color: 'var(--negative)' }
@@ -165,14 +172,14 @@ export default function LibraryPage() {
             }
           >
             {notice.text}
-          </p>
+          </Text>
         ) : null}
 
         {resumes.length === 0 ? (
           <div className="flex flex-col items-start gap-2 rounded-md border border-dashed border-[var(--border)] p-4">
-            <p className="text-xs text-[var(--muted-foreground)]">
+            <Text variant="12-regular" tone="muted">
               No resumes in this browser. Write one, or bring the sample resumes back from Settings.
-            </p>
+            </Text>
             <div className="flex flex-wrap gap-2">
               <Button size="sm" variant="primary" onClick={startBlank}>
                 New resume
@@ -200,7 +207,9 @@ export default function LibraryPage() {
         )}
 
         <section className="flex flex-wrap items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
-          <h2 className="w-full text-xs font-semibold">Move work in and out</h2>
+          <Text as="h2" variant="12-semibold" className="w-full">
+            Move work in and out
+          </Text>
 
           <Button size="sm" onClick={() => markdownInput.current?.click()}>
             Import .md
@@ -224,7 +233,12 @@ export default function LibraryPage() {
             onChange={importBackup}
           />
 
-          <label className="ml-1 flex items-center gap-2 text-[11px] text-[var(--muted-foreground)]">
+          <Text
+            as="label"
+            variant="11-regular"
+            tone="muted"
+            className="ml-1 flex items-center gap-2"
+          >
             <input
               type="checkbox"
               checked={mode === MERGE_MODES.replace}
@@ -234,7 +248,7 @@ export default function LibraryPage() {
               className="h-3.5 w-3.5 accent-[var(--accent)]"
             />
             Replace everything instead of merging
-          </label>
+          </Text>
         </section>
       </main>
     </div>

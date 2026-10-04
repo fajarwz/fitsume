@@ -6,6 +6,7 @@ import MarkdownEditor from '../components/builder/MarkdownEditor.jsx'
 import ResumeSheet from '../components/builder/ResumeSheet.jsx'
 import TopBar from '../components/layout/TopBar.jsx'
 import Button from '../components/ui/Button.jsx'
+import Text from '../components/ui/Text.jsx'
 import { useDebouncedValue } from '../hooks/useDebouncedValue.js'
 import { useFit } from '../hooks/useFit.js'
 import { useMediaQuery } from '../hooks/useMediaQuery.js'
@@ -107,8 +108,8 @@ export default function BuilderPage() {
         data-no-print
         className={
           stacked
-            ? 'flex w-full shrink-0 flex-row items-center gap-2 text-[10px] text-[var(--muted-foreground)]'
-            : 'flex w-16 shrink-0 flex-col gap-1 p-3 text-[10px] text-[var(--muted-foreground)]'
+            ? 'flex w-full shrink-0 flex-row items-center gap-2'
+            : 'flex w-16 shrink-0 flex-col gap-1 p-3'
         }
       >
         {stacked ? null : (
@@ -127,6 +128,7 @@ export default function BuilderPage() {
 
         <div className={stacked ? 'flex flex-row items-center gap-1' : 'mt-2 flex flex-col gap-1'}>
           <Button
+            size="sm"
             variant="ghost"
             onClick={() => setZoom((current) => clampZoom(current + ZOOM_STEP))}
             disabled={zoom >= ZOOM_MAX}
@@ -135,10 +137,11 @@ export default function BuilderPage() {
           >
             +
           </Button>
-          <span className="text-center tabular-nums">
+          <Text as="span" variant="11-regular" tone="muted" tabular className="text-center">
             {zoom === 1 ? 'Fit' : `${Math.round(zoom * 100)}%`}
-          </span>
+          </Text>
           <Button
+            size="sm"
             variant="ghost"
             onClick={() => setZoom((current) => clampZoom(current - ZOOM_STEP))}
             disabled={zoom <= ZOOM_MIN}
@@ -147,8 +150,16 @@ export default function BuilderPage() {
           >
             −
           </Button>
+          {/* Every control in this rail is the same ghost button at the same size. It used
+              to mix 40px and 32px, and ghost with a bordered "Fit", which read as three
+              different kinds of control in a column of four. */}
           {zoom === 1 ? null : (
-            <Button size="sm" onClick={() => setZoom(1)} title="Fit the whole page to the pane">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setZoom(1)}
+              title="Fit the whole page to the pane"
+            >
               Fit
             </Button>
           )}
@@ -243,7 +254,9 @@ export default function BuilderPage() {
 
           {focus ? null : (
             <section className="flex min-h-0 flex-col gap-3 overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
-              <h2 className="text-xs font-semibold">Auto-fit</h2>
+              <Text as="h2" variant="12-semibold">
+                Auto-fit
+              </Text>
               {controls}
             </section>
           )}

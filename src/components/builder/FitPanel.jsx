@@ -1,4 +1,5 @@
 import Slider from '../ui/Slider.jsx'
+import Text from '../ui/Text.jsx'
 import Toggle from '../ui/Toggle.jsx'
 import {
   FONT_SIZE_MAX,
@@ -104,44 +105,52 @@ function Rollup({ fit, settings }) {
 
   if (settings.autoFit) {
     return (
-      <p
+      <Text
         role="status"
-        className="rounded-md bg-[var(--muted)] p-2 text-xs text-[var(--muted-foreground)]"
+        variant="12-regular"
+        tone="muted"
+        className="rounded-md bg-[var(--muted)] p-2"
       >
         Fitted at{' '}
-        <span className="font-mono tabular-nums text-[var(--foreground)]">
+        <Text as="span" variant="12-regular" mono tabular>
           {fit.fontSize.toFixed(1)}px
-        </span>{' '}
+        </Text>{' '}
         with{' '}
-        <span className="font-mono tabular-nums text-[var(--foreground)]">
+        <Text as="span" variant="12-regular" mono tabular>
           {fit.lineHeightMultiplier.toFixed(2)}×
-        </span>{' '}
+        </Text>{' '}
         line spacing.
         {pages > 1
           ? ` Even the smallest font size runs to ${pages} pages, so the page count stands.`
           : ''}
-      </p>
+      </Text>
     )
   }
 
   if (pages > 1) {
     return (
-      <p
+      <Text
         role="status"
-        className="rounded-md bg-[var(--muted)] p-2 text-xs text-[var(--muted-foreground)]"
+        variant="12-regular"
+        tone="muted"
+        className="rounded-md bg-[var(--muted)] p-2"
       >
-        <span className="font-mono tabular-nums text-[var(--foreground)]">{pages} pages</span> at{' '}
-        {settings.baseFontSize}px. Auto-fit would bring it back to one.
-      </p>
+        <Text as="span" variant="12-regular" mono tabular>
+          {pages} pages
+        </Text>{' '}
+        at {settings.baseFontSize}px. Auto-fit would bring it back to one.
+      </Text>
     )
   }
 
   return (
-    <p
+    <Text
       role="status"
-      className="rounded-md bg-[var(--muted)] p-2 text-xs text-[var(--muted-foreground)]"
+      variant="12-regular"
+      tone="muted"
+      className="rounded-md bg-[var(--muted)] p-2"
     >
       One page at {settings.baseFontSize}px, with room to spare — auto-fit would use the space.
-    </p>
+    </Text>
   )
 }

@@ -1,3 +1,5 @@
+import Text from '../ui/Text.jsx'
+
 /**
  * The markdown dialect, written down.
  *
@@ -14,7 +16,11 @@
 export default function CheatSheet() {
   return (
     <details className="group rounded-md border border-[var(--border)] bg-[var(--muted)] transition-colors open:bg-[var(--card)]">
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 text-xs font-medium marker:hidden [&::-webkit-details-marker]:hidden">
+      <Text
+        as="summary"
+        variant="12-medium"
+        className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 marker:hidden [&::-webkit-details-marker]:hidden"
+      >
         <span>Markdown cheat sheet</span>
         <svg
           viewBox="0 0 20 20"
@@ -30,48 +36,89 @@ export default function CheatSheet() {
             strokeLinejoin="round"
           />
         </svg>
-      </summary>
+      </Text>
 
       <div className="border-t border-[var(--border)] px-3 py-2.5">
-        <dl className="grid grid-cols-[auto_1fr] items-baseline gap-x-4 gap-y-2 text-xs">
-          <dt className="font-mono text-[var(--foreground)]"># Name</dt>
-          <dd className="text-[var(--muted-foreground)]">
+        <dl className="grid grid-cols-[auto_1fr] items-baseline gap-x-4 gap-y-2">
+          <Text as="dt" variant="12-regular" mono>
+            # Name
+          </Text>
+          <Text as="dd" variant="12-regular" tone="muted">
             Your name, and the title of the document
-          </dd>
+          </Text>
 
-          <dt className="font-mono text-[var(--foreground)]">City · email · site</dt>
-          <dd className="text-[var(--muted-foreground)]">
+          <Text as="dt" variant="12-regular" mono>
+            City · email · site
+          </Text>
+          <Text as="dd" variant="12-regular" tone="muted">
             Under your name: the role, then the contact line. Email and web addresses become links,
             in the preview and in the PDF.
-          </dd>
+          </Text>
 
-          <dt className="font-mono text-[var(--foreground)]">[Label](url)</dt>
-          <dd className="text-[var(--muted-foreground)]">
+          <Text as="dt" variant="12-regular" mono>
+            [Label](url)
+          </Text>
+          <Text as="dd" variant="12-regular" tone="muted">
             A link that shows the label instead of the address; the Link button drops in{' '}
-            <span className="font-mono">[label](example.com)</span> for you
-          </dd>
+            <Text as="span" variant="12-regular" mono>
+              [label](example.com)
+            </Text>{' '}
+            for you
+          </Text>
 
-          <dt className="font-mono text-[var(--foreground)]">## SECTION</dt>
-          <dd className="text-[var(--muted-foreground)]">A section heading</dd>
+          <Text as="dt" variant="12-regular" mono>
+            ## SECTION
+          </Text>
+          <Text as="dd" variant="12-regular" tone="muted">
+            A section heading
+          </Text>
 
-          <dt className="font-mono text-[var(--foreground)]">### Role — Employer</dt>
-          <dd className="text-[var(--muted-foreground)]">
+          <Text as="dt" variant="12-regular" mono>
+            ### Role — Employer
+          </Text>
+          <Text as="dd" variant="12-regular" tone="muted">
             A job or degree; the line under it is its dates
-          </dd>
+          </Text>
 
-          <dt className="font-mono text-[var(--foreground)]">- point</dt>
-          <dd className="text-[var(--muted-foreground)]">A bullet</dd>
+          <Text as="dt" variant="12-regular" mono>
+            - point
+          </Text>
+          <Text as="dd" variant="12-regular" tone="muted">
+            A bullet
+          </Text>
 
-          <dt className="font-mono text-[var(--foreground)]">---</dt>
-          <dd className="text-[var(--muted-foreground)]">A rule under the header</dd>
+          <Text as="dt" variant="12-regular" mono>
+            ---
+          </Text>
+          <Text as="dd" variant="12-regular" tone="muted">
+            A rule under the header
+          </Text>
         </dl>
 
-        <p className="mt-3 border-t border-[var(--border)] pt-2 text-[11px] leading-relaxed text-[var(--muted-foreground)]">
+        <Text
+          variant="11-regular"
+          tone="muted"
+          leading="relaxed"
+          className="mt-3 border-t border-[var(--border)] pt-2"
+        >
           Blank lines are ignored, so space things out however you like. Shortcuts:{' '}
-          <span className="font-mono">Ctrl+Z</span> undo, <span className="font-mono">Ctrl+S</span>{' '}
-          download .md, <span className="font-mono">Ctrl+P</span> export PDF,{' '}
-          <span className="font-mono">Tab</span> indent.
-        </p>
+          <Text as="span" variant="11-regular" mono>
+            Ctrl+Z
+          </Text>{' '}
+          undo,{' '}
+          <Text as="span" variant="11-regular" mono>
+            Ctrl+S
+          </Text>{' '}
+          download .md,{' '}
+          <Text as="span" variant="11-regular" mono>
+            Ctrl+P
+          </Text>{' '}
+          export PDF,{' '}
+          <Text as="span" variant="11-regular" mono>
+            Tab
+          </Text>{' '}
+          indent.
+        </Text>
       </div>
     </details>
   )

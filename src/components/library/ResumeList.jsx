@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import Button from '../ui/Button.jsx'
 import Modal from '../ui/Modal.jsx'
+import Text from '../ui/Text.jsx'
 import { isSampleResume } from '../../lib/samples.js'
 
 /**
@@ -28,9 +29,13 @@ export default function ResumeList({
 
   if (resumes.length === 0) {
     return (
-      <p className="rounded-md border border-dashed border-[var(--border)] p-4 text-xs text-[var(--muted-foreground)]">
+      <Text
+        variant="12-regular"
+        tone="muted"
+        className="rounded-md border border-dashed border-[var(--border)] p-4"
+      >
         Nothing here yet.
-      </p>
+      </Text>
     )
   }
 
@@ -59,17 +64,20 @@ export default function ResumeList({
               />
 
               {isSampleResume(resume) ? (
-                <span
-                  className="rounded-full border border-[var(--border)] px-1.5 py-0.5 text-[10px] text-[var(--muted-foreground)]"
+                <Text
+                  as="span"
+                  variant="11-regular"
+                  tone="muted"
+                  className="rounded-full border border-[var(--border)] px-1.5 py-0.5"
                   title="One of the seeded sample resumes. Delete it like any other."
                 >
                   sample
-                </span>
+                </Text>
               ) : null}
 
-              <span className="text-[11px] text-[var(--muted-foreground)]">
+              <Text as="span" variant="11-regular" tone="muted">
                 {resume.updatedAt?.slice(0, 10) ?? ''}
-              </span>
+              </Text>
 
               <Button
                 size="sm"

@@ -19,6 +19,12 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* The app's base is `14-regular`. This line exists because 32 elements in the shell were
+     rendering at the browser's inherited 16px — not because anyone chose 16px, but because
+     they said nothing at all. An element with no opinion now gets the app's own size; the
+     resume sheet has its own opinion and is untouched by this. */
+  font-size: 14px;
+  line-height: 20px;
 }
 
 /* A blue ring rather than the text colour: at these hairline borders, a black outline

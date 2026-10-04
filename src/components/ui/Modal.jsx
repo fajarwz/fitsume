@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 
 import Button from './Button.jsx'
+import Text from './Text.jsx'
 
 /**
  * A plain overlay rather than <dialog>: jsdom cannot open a native modal, so the
@@ -39,11 +40,13 @@ export default function Modal({
         aria-label={title}
         className="w-full max-w-sm rounded-lg border border-[var(--border)] bg-[var(--card)] p-5 shadow-[var(--shadow)]"
       >
-        <h2 className="text-sm font-semibold">{title}</h2>
+        <Text as="h2" variant="14-semibold">
+          {title}
+        </Text>
         {description ? (
-          <p className="mt-2 text-xs leading-relaxed text-[var(--muted-foreground)]">
+          <Text variant="12-regular" tone="muted" leading="relaxed" className="mt-2">
             {description}
-          </p>
+          </Text>
         ) : null}
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="ghost" size="sm" onClick={onCancel}>

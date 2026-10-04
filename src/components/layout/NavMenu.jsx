@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import Button from '../ui/Button.jsx'
+import Select from '../ui/Select.jsx'
+import Text from '../ui/Text.jsx'
+import { CloseIcon, MenuIcon } from '../ui/icons.jsx'
 import NavLinks from './NavLinks.jsx'
 
 /**
@@ -81,14 +84,7 @@ export default function NavMenu({
         aria-controls="topbar-menu"
         onClick={() => (open ? close() : setOpen(true))}
       >
-        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" className="h-4 w-4">
-          <path
-            d="M3 5h14M3 10h14M3 15h14"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </svg>
+        <MenuIcon className="h-4 w-4" />
       </Button>
 
       <div
@@ -115,16 +111,11 @@ export default function NavMenu({
         )}
       >
         <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold tracking-tight">Menu</span>
+          <Text as="span" variant="14-semibold" className="tracking-tight">
+            Menu
+          </Text>
           <Button size="sm" variant="ghost" aria-label="Close menu" onClick={close}>
-            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" className="h-4 w-4">
-              <path
-                d="M5 5l10 10M15 5L5 15"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            </svg>
+            <CloseIcon className="h-4 w-4" />
           </Button>
         </div>
 
@@ -137,13 +128,12 @@ export default function NavMenu({
             <label className="sr-only" htmlFor="menu-resume-switcher">
               Current resume
             </label>
-            <select
+            <Select
               id="menu-resume-switcher"
+              size="md"
+              className="w-full"
               value={resume?.id ?? ''}
               onChange={switchResume}
-              /* pr-9 leaves the forms plugin's chevron its space, the same way the bar's
-                 switcher does. */
-              className="h-9 w-full truncate rounded-md border border-[var(--border)] bg-[var(--card)] pl-2 pr-9 text-xs"
             >
               <option value="">No resume open</option>
               {resumes.map((entry) => (
@@ -151,12 +141,13 @@ export default function NavMenu({
                   {entry.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </>
         ) : null}
 
         {onNew ? (
           <Button
+            className="w-full"
             onClick={() => {
               onNew()
               close()
@@ -167,7 +158,9 @@ export default function NavMenu({
         ) : null}
 
         {secondary ? (
-          <div className="flex flex-col" onClickCapture={close}>
+          /* Whatever the page passes is rendered at the drawer's row size, so a page cannot
+             make the column inconsistent by handing over a small button. */
+          <div className="flex flex-col [&_button]:h-10 [&_button]:w-full" onClickCapture={close}>
             {secondary}
           </div>
         ) : null}
@@ -176,7 +169,7 @@ export default function NavMenu({
           <Button
             variant="primary"
             disabled={!resume}
-            className="mt-auto"
+            className="mt-auto w-full"
             onClick={() => {
               close()
               onExport()

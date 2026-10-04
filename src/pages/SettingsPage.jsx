@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 
 import TopBar from '../components/layout/TopBar.jsx'
 import Button from '../components/ui/Button.jsx'
+import Text from '../components/ui/Text.jsx'
 import { SAMPLES, sampleResumes } from '../lib/samples.js'
 import { missingSamples } from '../lib/stash.js'
 import { STARTER_MARKDOWN } from '../lib/starter.js'
@@ -41,17 +42,21 @@ export default function SettingsPage() {
 
       <main className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-4">
         <div>
-          <h1 className="text-lg font-semibold tracking-tight">Settings</h1>
-          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+          <Text as="h1" variant="18-semibold" className="tracking-tight">
+            Settings
+          </Text>
+          <Text variant="12-regular" tone="muted" className="mt-1">
             Stored in this browser. There is no account, and nothing is uploaded.
-          </p>
+          </Text>
         </div>
 
         <section className="flex flex-col gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
-          <h2 className="text-xs font-semibold">Display mode</h2>
-          <p className="text-[11px] text-[var(--muted-foreground)]">
+          <Text as="h2" variant="12-semibold">
+            Display mode
+          </Text>
+          <Text variant="11-regular" tone="muted">
             System follows your operating system, and switches with it.
-          </p>
+          </Text>
           <div className="flex flex-wrap gap-1">
             {THEMES.map(([id, label]) => (
               <Button
@@ -68,15 +73,23 @@ export default function SettingsPage() {
         </section>
 
         <section className="flex flex-col gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
-          <h2 className="text-xs font-semibold">Sample resumes</h2>
-          <p className="text-[11px] text-[var(--muted-foreground)]">
+          <Text as="h2" variant="12-semibold">
+            Sample resumes
+          </Text>
+          <Text variant="11-regular" tone="muted">
             Rename, duplicate or delete them like any other, and restore whichever you delete. Their
             contact lines link to the public record rather than to an address invented for them.
-          </p>
-          <p className="text-xs">
-            <span className="font-mono tabular-nums">{present}</span> of{' '}
-            <span className="font-mono tabular-nums">{SAMPLES.length}</span> in your library
-          </p>
+          </Text>
+          <Text variant="12-regular">
+            <Text as="span" variant="12-regular" mono tabular>
+              {present}
+            </Text>{' '}
+            of{' '}
+            <Text as="span" variant="12-regular" mono tabular>
+              {SAMPLES.length}
+            </Text>{' '}
+            in your library
+          </Text>
           <div className="flex flex-wrap gap-2">
             <Button
               size="sm"

@@ -7,8 +7,14 @@
  * the only place the near-black accent is used at size, which is what makes it read as
  * the primary action.
  */
+/**
+ * The secondary's hover used to change only its border, from one near-white grey to another
+ * — a 1px hairline going #eaeaea to #d4d4d4, on a white bar, which nobody can see. A hover
+ * that changes nothing visible reads as a dead button next to ones that respond, so it
+ * fills as well. Every variant now answers a pointer.
+ */
 const SECONDARY =
-  'border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--border-strong)]'
+  'border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--border-strong)] hover:bg-[var(--muted)]'
 
 const VARIANTS = {
   primary:
@@ -26,6 +32,23 @@ const SIZES = {
   md: 'h-10 px-4 text-sm gap-2',
 }
 
+/**
+ * The same classes, without the element, for things that have to be a link — the nav is a
+ * row of `NavLink`s that should look exactly like ghost buttons, and it used to be a
+ * hand-written copy of these strings, which is how a nav drifts away from a button.
+ */
+export function buttonClasses({ variant = 'ghost', size = 'sm', className = '' } = {}) {
+  return [
+    'inline-flex items-center justify-center rounded-md font-medium transition',
+    'disabled:cursor-not-allowed disabled:opacity-40',
+    SIZES[size] ?? SIZES.md,
+    VARIANTS[variant] ?? VARIANTS.secondary,
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ')
+}
+
 export default function Button({
   variant = 'secondary',
   size = 'md',
@@ -35,17 +58,7 @@ export default function Button({
   ...rest
 }) {
   return (
-    <button
-      type={type}
-      className={[
-        'inline-flex items-center justify-center rounded-md font-medium transition',
-        'disabled:cursor-not-allowed disabled:opacity-40',
-        SIZES[size] ?? SIZES.md,
-        VARIANTS[variant] ?? VARIANTS.secondary,
-        className,
-      ].join(' ')}
-      {...rest}
-    >
+    <button type={type} className={buttonClasses({ variant, size, className })} {...rest}>
       {children}
     </button>
   )

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
+import Text from '../ui/Text.jsx'
 import { POSITIONED_TYPE } from '../../lib/layout.js'
 import { HAIRLINE, PAGE_HEIGHT, PAGE_WIDTH } from '../../lib/page.js'
 
@@ -200,12 +201,9 @@ export default function ResumeSheet({ pages, padding, stackRef, zoom = 1 }) {
               </div>
 
               {many ? (
-                <span
-                  data-no-print
-                  className="text-[10px] tabular-nums text-[var(--muted-foreground)]"
-                >
+                <Text as="span" data-no-print variant="11-regular" tone="muted" tabular>
                   {index + 1} / {pages.length}
-                </span>
+                </Text>
               ) : null}
             </div>
           ))}

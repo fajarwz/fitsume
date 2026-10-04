@@ -1,6 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom'
 
 import Button from '../ui/Button.jsx'
+import Select from '../ui/Select.jsx'
+import Text from '../ui/Text.jsx'
 import NavLinks from './NavLinks.jsx'
 import NavMenu from './NavMenu.jsx'
 import { useMediaQuery } from '../../hooks/useMediaQuery.js'
@@ -27,9 +29,9 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
 
   return (
     <header className="flex min-h-16 flex-wrap items-center gap-3 border-b border-[var(--border)] bg-[var(--card)] px-4 py-2">
-      <Link to="/" className="mr-2 text-sm font-semibold tracking-tight">
+      <Text as={Link} to="/" variant="14-semibold" className="mr-2 tracking-tight">
         fittyresume
-      </Link>
+      </Text>
 
       {stacked ? (
         <NavMenu
@@ -50,15 +52,12 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
               <label className="sr-only" htmlFor="resume-switcher">
                 Current resume
               </label>
-              <select
+              <Select
                 id="resume-switcher"
+                size="sm"
+                className="max-w-[14rem]"
                 value={resume?.id ?? ''}
                 onChange={(event) => navigate(`/resume/${event.target.value}`)}
-                /* pr-9 rather than px-2: the chevron is drawn by the forms plugin as a
-                   background image 0.5rem from the right edge, and it reserves 2.5rem of
-                   padding for its own space. Overriding that padding with a symmetric one
-                   puts a long resume name straight through the arrow. */
-                className="h-8 max-w-[14rem] truncate rounded-md border border-[var(--border)] bg-[var(--card)] pl-2 pr-9 text-xs"
               >
                 <option value="">No resume open</option>
                 {resumes.map((entry) => (
@@ -66,7 +65,7 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
                     {entry.name}
                   </option>
                 ))}
-              </select>
+              </Select>
             </>
           ) : null}
 
@@ -88,10 +87,10 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
       )}
 
       {persistent ? null : (
-        <p className="w-full text-[11px] text-[var(--negative)]">
+        <Text variant="11-regular" tone="negative" className="w-full">
           This browser is not saving anything. Changes last for this session only — download a
           backup from the library.
-        </p>
+        </Text>
       )}
     </header>
   )

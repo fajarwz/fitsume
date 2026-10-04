@@ -1,5 +1,7 @@
 import { useId } from 'react'
 
+import Text from './Text.jsx'
+
 /** Label, control, and the value it is currently at — the settings panel is made of these. */
 export default function Slider({
   label,
@@ -19,13 +21,13 @@ export default function Slider({
   return (
     <div className={disabled ? 'opacity-50' : undefined}>
       <div className="mb-1 flex items-baseline justify-between gap-2">
-        <label htmlFor={id} className="text-xs font-medium text-[var(--muted-foreground)]">
+        <Text as="label" htmlFor={id} variant="12-medium" tone="muted">
           {label}
-        </label>
-        <span className="font-mono text-xs tabular-nums text-[var(--foreground)]">
+        </Text>
+        <Text as="span" variant="12-regular" mono tabular>
           {shown}
           {suffix}
-        </span>
+        </Text>
       </div>
       <input
         id={id}
@@ -39,7 +41,11 @@ export default function Slider({
         onChange={(event) => onChange(Number(event.target.value))}
         className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-[var(--border)] accent-[var(--accent)]"
       />
-      {hint ? <p className="mt-1 text-[11px] text-[var(--muted-foreground)]">{hint}</p> : null}
+      {hint ? (
+        <Text variant="11-regular" tone="muted" className="mt-1">
+          {hint}
+        </Text>
+      ) : null}
     </div>
   )
 }

@@ -146,9 +146,10 @@ export default function NavMenu({
             ) : null}
 
             {secondary ? (
-              // Constrain secondary controls to the drawer's row size.
+              // Constrain secondary controls to the drawer's row size — including the
+              // text size, or a size="sm" button keeps its smaller 12px label.
               <div
-                className="flex flex-col [&_button]:h-10 [&_button]:w-full"
+                className="flex flex-col [&_button]:h-10 [&_button]:w-full [&_button]:text-sm [&_button]:px-4 [&_button]:gap-2"
                 onClickCapture={close}
               >
                 {secondary}

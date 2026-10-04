@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 
 import Button from '../ui/Button.jsx'
@@ -70,98 +71,107 @@ export default function NavMenu({
         <MenuIcon className="h-4 w-4" />
       </Button>
 
-      <div
-        data-no-print
-        aria-hidden="true"
-        onClick={close}
-        className={[
-          'fixed inset-0 z-30 bg-[rgba(0,0,0,0.25)] transition-opacity duration-200',
-          open ? 'opacity-100' : 'pointer-events-none opacity-0',
-        ].join(' ')}
-      />
+      {createPortal(
+        <>
+          <div
+            data-no-print
+            aria-hidden="true"
+            onClick={close}
+            className={[
+              'fixed inset-0 z-30 bg-[rgba(0,0,0,0.25)] transition-opacity duration-200',
+              open ? 'opacity-100' : 'pointer-events-none opacity-0',
+            ].join(' ')}
+          />
 
-      <div
-        ref={panel}
-        id="topbar-menu"
-        data-no-print
-        role="dialog"
-        aria-modal="true"
-        aria-label="Menu"
-        tabIndex={-1}
-        inert={!open}
-        className={[PANEL, open ? 'translate-x-0' : 'pointer-events-none translate-x-full'].join(
-          ' ',
-        )}
-      >
-        <div className="flex items-center justify-between">
-          <Text as="span" variant="14-semibold" className="tracking-tight">
-            Menu
-          </Text>
-          <Button size="sm" variant="ghost" aria-label="Close menu" onClick={close}>
-            <CloseIcon className="h-4 w-4" />
-          </Button>
-        </div>
-
-        <nav className="flex flex-col gap-1">
-          <NavLinks block onNavigate={close} />
-        </nav>
-
-        {resume || resumes.length > 0 ? (
-          <>
-            <label className="sr-only" htmlFor="menu-resume-switcher">
-              Current resume
-            </label>
-            <Select
-              id="menu-resume-switcher"
-              size="md"
-              className="w-full"
-              value={resume?.id ?? ''}
-              onChange={switchResume}
-            >
-              {/* Placeholder, not a pickable destination — can't be unselected into a broken /resume/ route. */}
-              {!resume ? <option value="">No resume open</option> : null}
-              {resumes.map((entry) => (
-                <option key={entry.id} value={entry.id}>
-                  {entry.name}
-                </option>
-              ))}
-            </Select>
-          </>
-        ) : null}
-
-        {onNew ? (
-          <Button
-            className="w-full"
-            onClick={() => {
-              onNew()
-              close()
-            }}
+          <div
+            ref={panel}
+            id="topbar-menu"
+            data-no-print
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu"
+            tabIndex={-1}
+            inert={!open}
+            className={[
+              PANEL,
+              open ? 'translate-x-0' : 'pointer-events-none translate-x-full',
+            ].join(' ')}
           >
-            New resume
-          </Button>
-        ) : null}
+            <div className="flex items-center justify-between">
+              <Text as="span" variant="14-semibold" className="tracking-tight">
+                Menu
+              </Text>
+              <Button size="sm" variant="ghost" aria-label="Close menu" onClick={close}>
+                <CloseIcon className="h-4 w-4" />
+              </Button>
+            </div>
 
-        {secondary ? (
-          // Constrain secondary controls to the drawer's row size.
-          <div className="flex flex-col [&_button]:h-10 [&_button]:w-full" onClickCapture={close}>
-            {secondary}
+            <nav className="flex flex-col gap-1">
+              <NavLinks block onNavigate={close} />
+            </nav>
+
+            {resume || resumes.length > 0 ? (
+              <>
+                <label className="sr-only" htmlFor="menu-resume-switcher">
+                  Current resume
+                </label>
+                <Select
+                  id="menu-resume-switcher"
+                  size="md"
+                  className="w-full"
+                  value={resume?.id ?? ''}
+                  onChange={switchResume}
+                >
+                  {/* Placeholder, not a pickable destination — can't be unselected into a broken /resume/ route. */}
+                  {!resume ? <option value="">No resume open</option> : null}
+                  {resumes.map((entry) => (
+                    <option key={entry.id} value={entry.id}>
+                      {entry.name}
+                    </option>
+                  ))}
+                </Select>
+              </>
+            ) : null}
+
+            {onNew ? (
+              <Button
+                className="w-full"
+                onClick={() => {
+                  onNew()
+                  close()
+                }}
+              >
+                New resume
+              </Button>
+            ) : null}
+
+            {secondary ? (
+              // Constrain secondary controls to the drawer's row size.
+              <div
+                className="flex flex-col [&_button]:h-10 [&_button]:w-full"
+                onClickCapture={close}
+              >
+                {secondary}
+              </div>
+            ) : null}
+
+            {onExport ? (
+              <Button
+                variant="primary"
+                disabled={!resume}
+                className="mt-auto w-full"
+                onClick={() => {
+                  close()
+                  onExport()
+                }}
+              >
+                Export PDF
+              </Button>
+            ) : null}
           </div>
-        ) : null}
-
-        {onExport ? (
-          <Button
-            variant="primary"
-            disabled={!resume}
-            className="mt-auto w-full"
-            onClick={() => {
-              close()
-              onExport()
-            }}
-          >
-            Export PDF
-          </Button>
-        ) : null}
-      </div>
+        </>,
+        document.body,
+      )}
     </>
   )
 }

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import { resolveStorage } from './lib/stash.js'
 import BuilderPage from './pages/BuilderPage.jsx'
@@ -43,8 +43,6 @@ export default function App() {
             <Route path="/" element={<ResumePage />} />
             <Route path="/resume/:id" element={<BuilderPage />} />
             <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/library" element={<Navigate to="/" replace />} />
-            <Route path="/samples" element={<Navigate to="/" replace />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </BrowserRouter>

@@ -5,7 +5,7 @@ import Text from '../ui/Text.jsx'
    an example because its placement is easy to miss. */
 export default function CheatSheet() {
   return (
-    <details className="group rounded-md border border-[var(--border)] bg-[var(--muted)] transition-colors open:bg-[var(--card)]">
+    <details className="group rounded-md border border-[var(--border)] bg-[var(--glass)] backdrop-blur-xl transition-colors open:bg-[var(--glass)]">
       <Text
         as="summary"
         variant="12-medium"

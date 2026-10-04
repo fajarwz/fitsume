@@ -158,6 +158,7 @@ binary.
 ## Stack
 
 - **React 19**
+- **TypeScript** (strict)
 - **Vite**
 - **Tailwind CSS**
 - **[pretext](https://github.com/chenglou/pretext)** — DOM-free text measurement

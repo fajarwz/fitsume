@@ -8,11 +8,11 @@ export default defineConfig({
     globals: true,
     pool: 'vmThreads',
     setupFiles: ['./src/test/setup.js'],
-    include: ['src/**/*.test.{js,jsx}', 'scripts/**/*.test.js'],
+    include: ['src/**/*.test.{js,jsx,ts,tsx}', 'scripts/**/*.test.{js,ts}'],
     coverage: {
       provider: 'v8',
-      include: ['src/lib/**/*.js'],
-      exclude: ['src/**/*.test.js'],
+      include: ['src/lib/**/*.{ts,js}'],
+      exclude: ['src/**/*.test.{ts,tsx,js,jsx}'],
       // Correctness lives in lib/. Thresholds are deliberately enforced there and
       // nowhere else: component tests exist to catch behaviour regressions, not
       // to chase a number.

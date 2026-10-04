@@ -1,0 +1,457 @@
+import { normaliseSettings, type ResumeSettings } from './settings.ts'
+import { deriveTitle } from './title.ts'
+
+/**
+ * The resume library: several named resumes, stored in the browser.
+ *
+ * There is no server and no account, so this file is the whole persistence layer.
+ * Everything in it is a pure function over a plain library object — the storage
+ * object is passed in, never reached for — which is what makes corruption,
+ * migration and quota failures testable rather than hopeful.
+ *
+ * A library looks like:
+ *
+ *   { schemaVersion: 1, activeId: 'abc', resumes: [ { id, name, markdown, settings, createdAt, updatedAt } ], samplesSeeded: true }
+ *
+ * The id is the identity, never the name: renaming a resume must not orphan its
+ * data or break the active selection.
+ *
+ * `samplesSeeded` records that the sample resumes have already been handed out once.
+ * Without it, deleting every sample would bring them all back on the next reload,
+ * which is the difference between a starting point and a haunting.
+ */
+export const SCHEMA_VERSION = 1
+export const STORAGE_KEY = 'fitsume.library'
+
+export interface Resume {
+  id: string
+  name: string
+  markdown: string
+  settings: ResumeSettings
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Library {
+  schemaVersion: number
+  activeId: string | null
+  resumes: Resume[]
+  samplesSeeded?: boolean
+}
+
+/** The slice of a sample the library actually seeds with. */
+export interface SampleSeed {
+  id: string
+  name?: string
+  markdown: string
+  settings?: unknown
+}
+
+export type LibraryLoadResult = {
+  library: Library
+  status: 'unavailable' | 'empty' | 'corrupt' | 'ok' | 'migrated'
+}
+
+export interface LibrarySaveResult {
+  saved: boolean
+  reason?: 'unavailable' | 'quota' | 'failed'
+}
+
+/** The browser storage contract; the code barely uses it beyond these three reads. */
+export interface Storage {
+  getItem(key: string): string | null
+  setItem(key: string, value: string): void
+  removeItem(key: string): void
+}
+
+const isObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value)
+
+const timestamp = (): string => new Date().toISOString()
+
+export function newResumeId(): string {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
+
+  return `resume-${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`
+}
+
+/**
+ * Used when the browser refuses to give us storage at all — private mode, a
+ * blocked third-party context, a hardened profile. The app still works for the
+ * session; it just says so.
+ */
+export function createMemoryStorage(): Storage {
+  const entries = new Map<string, string>()
+
+  return {
+    getItem: (key) => entries.get(key) ?? null,
+    setItem: (key, value) => {
+      entries.set(key, String(value))
+    },
+    removeItem: (key) => {
+      entries.delete(key)
+    },
+  }
+}
+
+export function resolveStorage(candidate?: Storage | null): {
+  storage: Storage
+  persistent: boolean
+} {
+  let storage: Storage | null | undefined = candidate
+
+  if (storage === undefined) {
+    try {
+      storage = globalThis.localStorage ?? null
+    } catch {
+      storage = null
+    }
+  }
+
+  if (!storage) return { storage: createMemoryStorage(), persistent: false }
+
+  try {
+    const probe = `${STORAGE_KEY}.probe`
+
+    storage.setItem(probe, '1')
+    storage.removeItem(probe)
+
+    return { storage, persistent: true }
+  } catch {
+    return { storage: createMemoryStorage(), persistent: false }
+  }
+}
+
+export function createLibrary(): Library {
+  return { schemaVersion: SCHEMA_VERSION, activeId: null, resumes: [], samplesSeeded: false }
+}
+
+export interface CreateResumeInput {
+  id?: string
+  name?: string
+  markdown?: string
+  settings?: unknown
+  now?: string
+}
+
+export function createResume({ id, name, markdown = '', settings, now }: CreateResumeInput = {}): Resume {
+  const at = now ?? timestamp()
+
+  return {
+    id: id ?? newResumeId(),
+    name: name ?? deriveTitle(markdown),
+    markdown,
+    settings: normaliseSettings(settings),
+    createdAt: at,
+    updatedAt: at,
+  }
+}
+
+export function findResume(library: Library, id: string | null | undefined): Resume | null {
+  return library.resumes.find((resume) => resume.id === id) ?? null
+}
+
+/**
+ * Display order for every surface that lists resumes — the top-bar switcher and the
+ * library page alike — so the two never disagree. Most recently updated first: the
+ * resume someone is actually working on is the one they want at the top. Storage
+ * order is left alone, though: what the backup file holds is not the same question
+ * as what the list shows.
+ */
+export function sortResumesByRecency<T extends { updatedAt?: string | null }>(resumes: T[]): T[] {
+  return [...resumes].sort(
+    (a, b) => new Date(b.updatedAt ?? 0).getTime() - new Date(a.updatedAt ?? 0).getTime(),
+  )
+}
+
+export function activeResume(library: Library): Resume | null {
+  return findResume(library, library.activeId)
+}
+
+export function addResume(library: Library, resume: Resume): Library {
+  return {
+    ...library,
+    resumes: [...library.resumes, resume],
+    activeId: resume.id,
+  }
+}
+
+export function updateResume(
+  library: Library,
+  id: string,
+  patch: {
+    id?: string
+    name?: string
+    markdown?: string
+    settings?: Partial<ResumeSettings>
+  },
+  { now }: { now?: string } = {},
+): Library {
+  return {
+    ...library,
+    resumes: library.resumes.map((resume) =>
+      resume.id === id
+        ? ({
+            ...resume,
+            ...patch,
+            ...(patch.settings ? { settings: normaliseSettings(patch.settings) } : {}),
+            updatedAt: now ?? timestamp(),
+          } as Resume)
+        : resume,
+    ),
+  }
+}
+
+export function renameResume(library: Library, id: string, name: string): Library {
+  return updateResume(library, id, { name })
+}
+
+/** Removing the active resume selects its neighbour, so the editor is never left empty. */
+export function removeResume(library: Library, id: string): Library {
+  const index = library.resumes.findIndex((resume) => resume.id === id)
+
+  if (index === -1) return library
+
+  const resumes = library.resumes.filter((resume) => resume.id !== id)
+  const activeId: string | null =
+    library.activeId === id
+      ? ((resumes[index] ?? resumes[index - 1] ?? null)?.id ?? null)
+      : library.activeId
+
+  return { ...library, resumes, activeId }
+}
+
+export function setActiveResume(library: Library, id: string): Library {
+  return findResume(library, id) ? { ...library, activeId: id } : library
+}
+
+/**
+ * Removes several resumes at once — the bulk action behind the library's
+ * selection toolbar. Same neighbour rule as `removeResume`: if the active one
+ * goes, whatever now sits at its old spot (or just before it) takes over, so
+ * the editor is never left pointing at a deleted resume.
+ */
+export function removeManyResume(library: Library, ids: string[]): Library {
+  const wanted = new Set(ids.filter(Boolean))
+
+  if (wanted.size === 0) return library
+
+  const removedIndexes: number[] = []
+  const resumes = library.resumes.filter((resume, index) => {
+    const drop = wanted.has(resume.id)
+
+    if (drop) removedIndexes.push(index)
+
+    return !drop
+  })
+
+  if (removedIndexes.length === 0) return library
+
+  let activeId: string | null = library.activeId
+
+  if (wanted.has(activeId as string)) {
+    const firstGap = removedIndexes[0]
+    activeId = (resumes[firstGap] ?? resumes[firstGap - 1] ?? null)?.id ?? null
+  }
+
+  return { ...library, resumes, activeId }
+}
+
+/**
+ * The sample resumes, as resumes.
+ *
+ * They are seeded into the library rather than offered as templates: once they are
+ * here they are ordinary entries — renameable, duplicatable, deletable — which is what
+ * they are meant to demonstrate. Identity is the stable id the caller supplies, so
+ * "restore" can tell which ones are missing instead of adding a second copy of each.
+ */
+export function missingSamples(library: Library, samples: SampleSeed[]): SampleSeed[] {
+  return samples.filter((sample) => !findResume(library, sample.id))
+}
+
+function withSamples(library: Library, samples: SampleSeed[]): Library {
+  // One shared timestamp, so the recency sort's tie keeps the samples in SAMPLE_ORDER.
+  const at = timestamp()
+  const added = missingSamples(library, samples).map((sample) =>
+    createResume({ ...sample, now: at }),
+  )
+
+  if (added.length === 0 && library.samplesSeeded) return library
+
+  return {
+    ...library,
+    samplesSeeded: true,
+    resumes: [...library.resumes, ...added],
+    activeId: library.activeId ?? added[0]?.id ?? null,
+  }
+}
+
+/** First run only: hands out the sample resumes once. */
+export function seedLibrary(library: Library, samples: SampleSeed[]): Library {
+  return library.samplesSeeded ? library : withSamples(library, samples)
+}
+
+/** Brings back whichever samples were deleted, and never duplicates the ones that were not. */
+export function restoreSamples(library: Library, samples: SampleSeed[]): Library {
+  return withSamples(library, samples)
+}
+
+export function uniqueResumeName(library: Pick<Library, 'resumes'>, base: string): string {
+  const taken = new Set(library.resumes.map((resume) => resume.name))
+
+  if (!taken.has(base)) return base
+
+  for (let index = 2; index < 1000; index += 1) {
+    const candidate = `${base} ${index}`
+
+    if (!taken.has(candidate)) return candidate
+  }
+
+  return base
+}
+
+/** Copying a copy should not produce "Ada Lovelace copy copy". */
+function copyName(library: Library, name: string): string {
+  const stem = name.replace(/ copy( \d+)?$/, '')
+
+  return uniqueResumeName(library, `${stem} copy`)
+}
+
+/** The copy lands directly after its original, which is where people look for it. */
+export function duplicateResume(library: Library, id: string, { now }: { now?: string } = {}): Library {
+  const index = library.resumes.findIndex((resume) => resume.id === id)
+
+  if (index === -1) return library
+
+  const original = library.resumes[index]
+  const copy: Resume = {
+    ...original,
+    id: newResumeId(),
+    name: copyName(library, original.name),
+    settings: normaliseSettings(original.settings),
+    createdAt: now ?? timestamp(),
+    updatedAt: now ?? timestamp(),
+  }
+
+  const resumes = [...library.resumes]
+
+  resumes.splice(index + 1, 0, copy)
+
+  return { ...library, resumes, activeId: copy.id }
+}
+
+const isValidResume = (value: unknown): value is { id: string; markdown: string } =>
+  isObject(value) &&
+  typeof value.id === 'string' &&
+  value.id.length > 0 &&
+  typeof value.markdown === 'string'
+
+function normaliseResume(raw: Record<string, unknown>): Resume {
+  const at = timestamp()
+
+  return {
+    id: typeof raw.id === 'string' && raw.id ? raw.id : newResumeId(),
+    name: typeof raw.name === 'string' && raw.name.trim() ? raw.name : deriveTitle(raw.markdown),
+    markdown: raw.markdown as string,
+    settings: normaliseSettings(raw.settings),
+    createdAt: typeof raw.createdAt === 'string' ? raw.createdAt : at,
+    updatedAt: typeof raw.updatedAt === 'string' ? raw.updatedAt : at,
+  }
+}
+
+/**
+ * Repairs what it can and rejects what it cannot.
+ *
+ * Individual broken entries are dropped rather than failing the whole library:
+ * losing one resume beats losing all of them.
+ */
+export function validateLibrary(value: unknown): Library | null {
+  if (!isObject(value) || !Array.isArray(value.resumes)) return null
+
+  const resumes = value.resumes.filter(isValidResume).map(normaliseResume)
+  const activeId: string | null = resumes.some((resume) => resume.id === value.activeId)
+    ? (value.activeId as string)
+    : (resumes[0]?.id ?? null)
+
+  // A library with resumes in it but no flag predates the flag, and its owner has
+  // already been handed their starting point: seeding is for empty libraries only.
+  const samplesSeeded =
+    typeof value.samplesSeeded === 'boolean' ? value.samplesSeeded : resumes.length > 0
+
+  return { schemaVersion: SCHEMA_VERSION, activeId, resumes, samplesSeeded }
+}
+
+/**
+ * Version 0 was a single resume document, with the markdown at the top level.
+ * Anything without a `resumes` array is treated as that shape.
+ */
+export function migrateLibrary(value: unknown): unknown {
+  if (!isObject(value)) return value
+  if (Array.isArray(value.resumes)) return value
+
+  if (typeof value.markdown === 'string') {
+    const resume = normaliseResume(value)
+
+    return { schemaVersion: SCHEMA_VERSION, activeId: resume.id, resumes: [resume] }
+  }
+
+  return value
+}
+
+export function loadLibrary(storage: unknown): LibraryLoadResult {
+  if (!storage || typeof (storage as Partial<Storage>).getItem !== 'function') {
+    return { library: createLibrary(), status: 'unavailable' }
+  }
+
+  const s = storage as Storage
+
+  let raw: string | null | undefined
+
+  try {
+    raw = s.getItem(STORAGE_KEY)
+  } catch {
+    return { library: createLibrary(), status: 'unavailable' }
+  }
+
+  if (raw === null || raw === undefined || raw === '') {
+    return { library: createLibrary(), status: 'empty' }
+  }
+
+  let parsed: unknown
+
+  try {
+    parsed = JSON.parse(raw)
+  } catch {
+    return { library: createLibrary(), status: 'corrupt' }
+  }
+
+  const migrated = migrateLibrary(parsed)
+  const library = validateLibrary(migrated)
+
+  if (!library) return { library: createLibrary(), status: 'corrupt' }
+
+  return { library, status: migrated === parsed ? 'ok' : 'migrated' }
+}
+
+export function saveLibrary(storage: unknown, library: Library): LibrarySaveResult {
+  if (
+    storage === null ||
+    storage === undefined ||
+    typeof (storage as Partial<Storage>).setItem !== 'function'
+  ) {
+    return { saved: false, reason: 'unavailable' }
+  }
+
+  const s = storage as Storage
+
+  try {
+    s.setItem(STORAGE_KEY, JSON.stringify(library))
+
+    return { saved: true }
+  } catch (error) {
+    return {
+      saved: false,
+      reason: (error as { name?: string })?.name === 'QuotaExceededError' ? 'quota' : 'failed',
+    }
+  }
+}

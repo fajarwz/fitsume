@@ -1,4 +1,6 @@
 import js from '@eslint/js'
+import tseslint from '@typescript-eslint/eslint-plugin'
+import tsParser from '@typescript-eslint/parser'
 import globals from 'globals'
 import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
@@ -25,7 +27,27 @@ export default [
   { ignores: ['dist/**', 'coverage/**', 'node_modules/**'] },
   js.configs.recommended,
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      ecmaVersion: 2023,
+      sourceType: 'module',
+      globals: { ...globals.browser, ...globals.node },
+      parser: tsParser,
+      parserOptions: { ecmaFeatures: { jsx: true } },
+    },
+    plugins: { '@typescript-eslint': tseslint },
+    rules: {
+      ...tseslint.configs.recommended.rules,
+      // The pretext measurement lib ships no types; its surface is inherently `any`.
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+    },
+  },
+  {
+    files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2023,
       sourceType: 'module',
@@ -38,18 +60,17 @@ export default [
       ...react.configs.flat.recommended.rules,
       ...reactHooks.configs.recommended.rules,
       ...jsxA11y.configs.recommended.rules,
-      // React 19 with the automatic JSX runtime: no React import needed in scope.
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'no-unused-vars': 'off',
     },
   },
   {
-    files: ['src/lib/**/*.js'],
+    files: ['src/lib/**/*.{js,ts}'],
     rules: { 'no-restricted-imports': ['error', { patterns: LIB_FORBIDDEN_IMPORTS }] },
   },
   {
-    files: ['src/**/*.test.{js,jsx}', 'src/test/**/*.js'],
+    files: ['src/**/*.test.{js,jsx,ts,tsx}', 'src/test/**/*.{js,ts}'],
     languageOptions: { globals: { ...globals.vitest } },
   },
   prettier,

@@ -9,7 +9,7 @@ export default function NotFoundPage() {
         Page not found
       </Text>
       <Text variant="14-regular" className="opacity-70">
-        That route does not exist in fittyresume.
+        That route does not exist in Fitsume.
       </Text>
       <Text variant="14-regular">
         <Link to="/" className="underline underline-offset-2 hover:opacity-80">

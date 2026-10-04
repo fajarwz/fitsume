@@ -41,7 +41,7 @@ describe('naming files', () => {
 
   it('dates the library backup so older copies are recognisable', () => {
     expect(markdownFilename('Ada Lovelace')).toBe('ada-lovelace.md')
-    expect(libraryFilename(NOW)).toBe('fittyresume-resumes-2026-03-04.json')
+    expect(libraryFilename(NOW)).toBe('fitsume-resumes-2026-03-04.json')
   })
 })
 

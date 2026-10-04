@@ -17,7 +17,7 @@ import App from './App.jsx'
  */
 const editor = () => screen.getByLabelText(/resume markdown/i)
 
-describe('fittyresume', () => {
+describe('Fitsume', () => {
   beforeEach(() => {
     window.localStorage.clear()
     window.location.hash = ''

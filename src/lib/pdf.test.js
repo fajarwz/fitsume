@@ -45,7 +45,7 @@ describe('exportToPdf', () => {
   beforeEach(() => {
     dom = buildDom()
     print = vi.fn()
-    document.title = 'fittyresume'
+    document.title = 'Fitsume'
   })
 
   it('does nothing without a sheet to print', () => {
@@ -75,7 +75,7 @@ describe('exportToPdf', () => {
 
     expect(titles).toEqual(['Ada Lovelace Resume', 'Rizky Pratama Resume'])
     // ...and the app's own title comes back afterwards.
-    expect(document.title).toBe('fittyresume')
+    expect(document.title).toBe('Fitsume')
   })
 
   it('hides the rest of the app while printing, and brings it back', () => {
@@ -83,7 +83,7 @@ describe('exportToPdf', () => {
 
     expect(dom.chrome.style.display).toBe('')
     expect(dom.shell.style.overflow).toBe('')
-    expect(document.title).toBe('fittyresume')
+    expect(document.title).toBe('Fitsume')
   })
 
   it('flattens and un-scales the wrappers around the sheet', () => {
@@ -149,7 +149,7 @@ describe('exportToPdf', () => {
 
     expect(dom.chrome.style.display).toBe('')
     expect(dom.page.style.position).toBe('')
-    expect(document.title).toBe('fittyresume')
+    expect(document.title).toBe('Fitsume')
   })
 
   it('never touches <head> or <html>', () => {
@@ -173,6 +173,6 @@ describe('exportToPdf', () => {
 
     expect(typeof afterPrint).toBe('function')
     expect(() => afterPrint()).not.toThrow()
-    expect(document.title).toBe('fittyresume')
+    expect(document.title).toBe('Fitsume')
   })
 })

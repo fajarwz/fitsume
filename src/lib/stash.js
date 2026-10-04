@@ -21,7 +21,7 @@ import { deriveTitle } from './title.js'
  * which is the difference between a starting point and a haunting.
  */
 export const SCHEMA_VERSION = 1
-export const STORAGE_KEY = 'fittyresume.library'
+export const STORAGE_KEY = 'fitsume.library'
 
 const isObject = (value) => typeof value === 'object' && value !== null && !Array.isArray(value)
 

@@ -42,7 +42,7 @@ export function markdownFilename(name) {
 export function libraryFilename(now = new Date()) {
   const date = now.toISOString().slice(0, 10)
 
-  return `fittyresume-resumes-${date}.json`
+  return `fitsume-resumes-${date}.json`
 }
 
 export function exportResumeMarkdown(resume) {

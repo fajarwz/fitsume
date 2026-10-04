@@ -16,7 +16,7 @@ import { useMediaQuery } from '../hooks/useMediaQuery.js'
  * The resolved theme lands on `data-theme` on <html> — the only place the CSS
  * looks — so a theme change is one attribute, not a re-render of every component.
  */
-const THEME_KEY = 'fittyresume.theme'
+const THEME_KEY = 'fitsume.theme'
 
 const ThemeContext = createContext(null)
 

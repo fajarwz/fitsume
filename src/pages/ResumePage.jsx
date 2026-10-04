@@ -119,7 +119,7 @@ export default function ResumePage() {
     })
 
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--background)] text-[var(--foreground)]">
+    <div className="flex min-h-screen flex-col text-[var(--foreground)]">
       <TopBar
         resume={resumes.find((resume) => resume.id === activeId) ?? null}
         onNew={() => open(actions.create({ name: 'New resume', markdown: STARTER_MARKDOWN }).id)}
@@ -263,7 +263,7 @@ export default function ResumePage() {
           />
         ) : null}
 
-        <section className="flex flex-wrap items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
+        <section className="flex flex-wrap items-center gap-2 rounded-lg glass p-3">
           <Text as="h2" variant="12-semibold" className="w-full">
             Move work in and out
           </Text>

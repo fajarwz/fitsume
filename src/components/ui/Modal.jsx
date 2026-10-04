@@ -34,7 +34,7 @@ export default function Modal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="w-full max-w-sm rounded-lg border border-[var(--border)] bg-[var(--card)] p-5 shadow-[var(--shadow)]"
+        className="w-full max-w-sm rounded-lg glass p-5"
       >
         <Text as="h2" variant="14-semibold">
           {title}

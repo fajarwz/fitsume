@@ -29,7 +29,7 @@ export default function SettingsPage() {
   const present = SAMPLES.length - missing.length
 
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--background)] text-[var(--foreground)]">
+    <div className="flex min-h-screen flex-col text-[var(--foreground)]">
       <TopBar
         onNew={() =>
           navigate(
@@ -46,7 +46,7 @@ export default function SettingsPage() {
           />
         </PageHeader>
 
-        <section className="flex flex-col gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
+        <section className="flex flex-col gap-2 rounded-lg glass p-3">
           <Text as="h2" variant="12-semibold">
             Display mode
           </Text>
@@ -68,7 +68,7 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        <section className="flex flex-col gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
+        <section className="flex flex-col gap-2 rounded-lg glass p-3">
           <Text as="h2" variant="12-semibold">
             Sample resumes
           </Text>

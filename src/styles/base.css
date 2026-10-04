@@ -9,6 +9,13 @@ body,
 
 body {
   background-color: var(--background);
+  /* A soft mesh so the frosted panels have real colour to blur. Balanced to stay behind
+     the text: the panels and the paper are the readable parts, this is atmosphere. */
+  background-image:
+    radial-gradient(1000px 620px at 12% -6%, rgba(59, 130, 246, 0.16), transparent 60%),
+    radial-gradient(820px 520px at 96% 8%, rgba(168, 85, 247, 0.12), transparent 55%),
+    radial-gradient(920px 620px at 52% 114%, rgba(14, 165, 233, 0.12), transparent 55%);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family:
     'Geist Variable',
@@ -32,4 +39,23 @@ body {
 *:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
+}
+
+/* The frosted chrome: translucent fill, a blur of whatever sits behind, a light edge
+   and a touch of shadow so a panel reads as lifted rather than painted over. */
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    var(--glass-shadow);
+}
+
+[data-theme='dark'] body {
+  background-image:
+    radial-gradient(1000px 620px at 10% -8%, rgba(59, 130, 246, 0.22), transparent 60%),
+    radial-gradient(820px 520px at 96% 6%, rgba(168, 85, 247, 0.18), transparent 55%),
+    radial-gradient(920px 620px at 52% 112%, rgba(14, 165, 233, 0.16), transparent 55%);
 }

@@ -117,7 +117,7 @@ export default function ResumeList({
                   <div className="fixed inset-0 z-10" onClick={closeMenu} aria-hidden="true" />
                   <div
                     role="menu"
-                    className="absolute right-0 top-full z-20 mt-1 flex min-w-[9rem] flex-col gap-0.5 rounded-md border border-[var(--border-strong)] bg-[var(--card)] p-1 shadow-lg"
+                    className="absolute right-0 top-full z-20 mt-1 flex min-w-[9rem] flex-col gap-0.5 rounded-md glass p-1"
                   >
                     <button
                       type="button"

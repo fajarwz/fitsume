@@ -9,7 +9,7 @@ import NavLinks from './NavLinks.jsx'
 
 /** Narrow-screen drawer: same controls as the bar, kept mounted and parked off-screen so it slides rather than repaints. */
 const PANEL =
-  'fixed inset-y-0 right-0 z-40 flex w-72 max-w-[85vw] flex-col gap-3 overflow-y-auto border-l border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow)] outline-none transition-transform duration-200 ease-out'
+  'fixed inset-y-0 right-0 z-40 flex w-72 max-w-[85vw] flex-col gap-3 overflow-y-auto border-l border-[var(--glass-border)] bg-[var(--glass)] p-4 shadow-[var(--shadow)] backdrop-blur-xl outline-none transition-transform duration-200 ease-out'
 
 export default function NavMenu({
   resumes = [],

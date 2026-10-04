@@ -41,6 +41,15 @@
   --negative: #ee0000;
   --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
   /*
+   * Glass panels: the frosted chrome (top bar, cards, menus). The --card colour stays
+   * solid underneath everything — and on the sheet — while these are the translucent
+   * surfaces that blur the mesh behind them.
+   */
+  --glass: rgba(255, 255, 255, 0.66);
+  --glass-border: rgba(255, 255, 255, 0.72);
+  --glass-highlight: rgba(255, 255, 255, 0.85);
+  --glass-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+  /*
    * Elevation for the A4 sheet, which is a different problem from an overlay: a white
    * page on a light canvas needs its *edge* defined, and a shadow alone cannot do that
    * at hairlines. So it is a ring plus a soft shadow, and the ring is the part that
@@ -75,6 +84,10 @@
   --positive: #0cce6b;
   --negative: #ff6369;
   --shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-highlight: rgba(255, 255, 255, 0.09);
+  --glass-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
   /*
    * On a #000 canvas a black shadow casts nothing, whatever its alpha, so in dark mode
    * the sheet's edge is the ring and the shadow is only there for the sense of the page

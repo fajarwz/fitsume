@@ -166,7 +166,7 @@ export default function BuilderPage() {
   )
 
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--background)] text-[var(--foreground)]">
+    <div className="flex min-h-screen flex-col text-[var(--foreground)]">
       <TopBar
         resume={resume}
         onNew={() =>
@@ -192,7 +192,7 @@ export default function BuilderPage() {
               </Button>
             ))}
           </div>
-          <section className="flex min-h-0 flex-1 flex-col rounded-lg border border-[var(--border)] bg-[var(--card)] p-3 print:border-0 print:bg-transparent print:p-0">
+          <section className="flex min-h-0 flex-1 flex-col rounded-lg border border-[var(--border)] bg-[var(--glass)] p-3 backdrop-blur-xl print:border-0 print:bg-transparent print:p-0">
             <div className={tab === 'write' ? 'contents' : 'hidden'}>{editor}</div>
             <div className={tab === 'preview' ? 'flex min-h-0 flex-1 flex-col' : 'hidden'}>
               {preview}
@@ -211,7 +211,7 @@ export default function BuilderPage() {
           {focus ? null : (
             <section
               data-no-print
-              className="flex min-h-0 flex-col rounded-lg border border-[var(--border)] bg-[var(--card)] p-3"
+              className="flex min-h-0 flex-col rounded-lg border border-[var(--border)] bg-[var(--glass)] p-3 backdrop-blur-xl"
             >
               {editor}
             </section>
@@ -224,7 +224,7 @@ export default function BuilderPage() {
           {focus ? null : (
             <section
               data-no-print
-              className="flex min-h-0 flex-col gap-3 overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--card)] p-3"
+              className="flex min-h-0 flex-col gap-3 overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--glass)] p-3 backdrop-blur-xl"
             >
               <Text as="h2" variant="12-semibold">
                 Auto-fit

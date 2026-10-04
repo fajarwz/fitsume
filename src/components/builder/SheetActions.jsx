@@ -72,7 +72,7 @@ export default function SheetActions({
         />
       ) : null}
 
-      <div data-no-print className="absolute right-3 top-3 z-20 flex items-center gap-1.5">
+      <div data-no-print className="absolute right-5 top-4 z-20 flex items-center gap-1.5">
         {/* Full screen wants an obvious way out, not a control hidden in the dots: the
             exit is the whole point of that mode, so it gets the primary colour and Export
             steps down to secondary until the page is on its own again. Escape exits too

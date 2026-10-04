@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import Button from '../ui/Button.jsx'
 import Modal from '../ui/Modal.jsx'
 import Text from '../ui/Text.jsx'
-import { MoreIcon } from '../ui/icons.jsx'
+import { CloseIcon, MoreIcon } from '../ui/icons.jsx'
 import { isSampleResume } from '../../lib/samples.js'
 
 /** One visible control per row (Open); the rest hide behind More. Delete asks first — there is no server copy, only a user-downloaded backup. */
@@ -109,7 +109,7 @@ export default function ResumeList({
                 aria-expanded={menuOpen}
                 onClick={() => (menuOpen ? closeMenu() : setOpenMenuId(resume.id))}
               >
-                <MoreIcon className="h-4 w-4" />
+                {menuOpen ? <CloseIcon className="h-4 w-4" /> : <MoreIcon className="h-4 w-4" />}
               </Button>
 
               {menuOpen ? (

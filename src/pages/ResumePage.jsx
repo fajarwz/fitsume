@@ -5,6 +5,7 @@ import ResumeList from '../components/library/ResumeList.jsx'
 import TopBar from '../components/layout/TopBar.jsx'
 import Button from '../components/ui/Button.jsx'
 import Modal from '../components/ui/Modal.jsx'
+import PageTitle from '../components/ui/PageTitle.jsx'
 import Text from '../components/ui/Text.jsx'
 import Toggle from '../components/ui/Toggle.jsx'
 import { STARTER_MARKDOWN } from '../lib/starter.js'
@@ -156,15 +157,10 @@ export default function ResumePage() {
               </div>
             </div>
           ) : (
-            <div>
-              <Text as="h1" variant="18-semibold" className="tracking-tight">
-                Resume
-              </Text>
-              <Text variant="12-regular" tone="muted" className="mt-1">
-                All of this is in your browser. Nothing is uploaded, and there is no account — so
-                a backup file is the only copy that survives clearing your browser data.
-              </Text>
-            </div>
+            <PageTitle
+              title="Resume"
+              subtitle="All of this is in your browser. Nothing is uploaded, and there is no account — so a backup file is the only copy that survives clearing your browser data."
+            />
           )}
         </div>
 

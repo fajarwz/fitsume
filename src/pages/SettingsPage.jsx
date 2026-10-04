@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 
 import TopBar from '../components/layout/TopBar.jsx'
 import Button from '../components/ui/Button.jsx'
+import PageTitle from '../components/ui/PageTitle.jsx'
 import Text from '../components/ui/Text.jsx'
 import { SAMPLES, sampleResumes } from '../lib/samples.js'
 import { missingSamples } from '../lib/stash.js'
@@ -40,15 +41,11 @@ export default function SettingsPage() {
         }
       />
 
-      <main className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-4">
-        <div>
-          <Text as="h1" variant="18-semibold" className="tracking-tight">
-            Settings
-          </Text>
-          <Text variant="12-regular" tone="muted" className="mt-1">
-            Stored in this browser. There is no account, and nothing is uploaded.
-          </Text>
-        </div>
+      <main className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4">
+        <PageTitle
+          title="Settings"
+          subtitle="Stored in this browser. There is no account, and nothing is uploaded."
+        />
 
         <section className="flex flex-col gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
           <Text as="h2" variant="12-semibold">

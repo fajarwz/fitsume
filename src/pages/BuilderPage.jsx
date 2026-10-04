@@ -4,6 +4,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import FitPanel from '../components/builder/FitPanel.jsx'
 import MarkdownEditor from '../components/builder/MarkdownEditor.jsx'
 import ResumeSheet from '../components/builder/ResumeSheet.jsx'
+import SheetActions from '../components/builder/SheetActions.jsx'
 import TopBar from '../components/layout/TopBar.jsx'
 import Button from '../components/ui/Button.jsx'
 import Text from '../components/ui/Text.jsx'
@@ -64,6 +65,20 @@ export default function BuilderPage() {
     if (activeId) actions.select(activeId)
   }, [activeId, actions])
 
+  // Escape leaves full screen, alongside the always-visible Exit button in the palette —
+  // a mode that hides everything else should not need the menu to leave it.
+  useEffect(() => {
+    if (!focus) return undefined
+
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') setFocus(false)
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [focus])
+
   const markdown = resume?.markdown ?? ''
   const settings = resume?.settings ?? DEFAULT_RESUME_SETTINGS
   const settled = useDebouncedValue(markdown, 160)
@@ -91,84 +106,41 @@ export default function BuilderPage() {
   )
 
   const preview = (
-    // flex-1 rather than h-full: in the stacked layout this is a flex item of a column,
-    // and a percentage height against a flex item does not resolve — which is how the
-    // preview collapsed to the height of the little zoom rail (135px on a phone) and the
-    // page fitted itself into that strip. flex-1 grows in a column and is ignored in a
-    // grid cell, where stretching already fills the row.
+    // The actions float on the page (SheetActions) rather than running down its edge;
+    // a rail costs the page the height/width it is short of. flex-1 rather than h-full:
+    // in the stacked layout this is a flex item of a column, and a percentage height
+    // against a flex item does not resolve — which is how the preview collapsed to the
+    // height of the little zoom rail (135px on a phone) and the page fitted itself into
+    // that strip. flex-1 grows in a column and is ignored in a grid cell, where
+    // stretching already fills the row.
     <div
       className={
-        stacked ? 'flex min-h-0 flex-1 w-full flex-col gap-2' : 'flex min-h-0 flex-1 w-full'
+        stacked
+          ? 'relative flex min-h-0 flex-1 w-full flex-col'
+          : 'relative flex min-h-0 flex-1 w-full'
       }
     >
-      {/* The controls run down the left edge rather than across the top: a toolbar costs
-          the page its height, and height is the axis this page is short of. On a phone it
-          is the opposite — the width is what is short — so there the rail lies flat. */}
-      <div
-        data-no-print
-        className={
-          stacked
-            ? 'flex w-full shrink-0 flex-row items-center gap-2'
-            : 'flex w-16 shrink-0 flex-col gap-1 p-3'
+      <ResumeSheet
+        pages={fit.pages}
+        padding={settings.padding}
+        stackRef={sheet}
+        zoom={zoom}
+        onWheelZoom={(direction) =>
+          setZoom((current) => clampZoom(current + direction * ZOOM_STEP))
         }
-      >
-        {stacked ? null : (
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => setFocus((current) => !current)}
-            aria-pressed={focus}
-            title={
-              focus ? 'Show the editor and the fit controls again' : 'Hide everything but the page'
-            }
-          >
-            {focus ? 'Exit' : 'Full'}
-          </Button>
-        )}
+      />
 
-        <div className={stacked ? 'flex flex-row items-center gap-1' : 'mt-2 flex flex-col gap-1'}>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => setZoom((current) => clampZoom(current + ZOOM_STEP))}
-            disabled={zoom >= ZOOM_MAX}
-            aria-label="Zoom in"
-            title="Zoom in"
-          >
-            +
-          </Button>
-          <Text as="span" variant="11-regular" tone="muted" tabular className="text-center">
-            {zoom === 1 ? 'Fit' : `${Math.round(zoom * 100)}%`}
-          </Text>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => setZoom((current) => clampZoom(current - ZOOM_STEP))}
-            disabled={zoom <= ZOOM_MIN}
-            aria-label="Zoom out"
-            title="Zoom out"
-          >
-            −
-          </Button>
-          {/* Every control in this rail is the same ghost button at the same size. It used
-              to mix 40px and 32px, and ghost with a bordered "Fit", which read as three
-              different kinds of control in a column of four. */}
-          {zoom === 1 ? null : (
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => setZoom(1)}
-              title="Fit the whole page to the pane"
-            >
-              Fit
-            </Button>
-          )}
-        </div>
-      </div>
-
-      <div className="flex min-h-0 flex-1 flex-col">
-        <ResumeSheet pages={fit.pages} padding={settings.padding} stackRef={sheet} zoom={zoom} />
-      </div>
+      <SheetActions
+        onExport={exportPdf}
+        onZoomIn={() => setZoom((current) => clampZoom(current + ZOOM_STEP))}
+        onZoomOut={() => setZoom((current) => clampZoom(current - ZOOM_STEP))}
+        onFit={() => setZoom(1)}
+        onFull={() => setFocus((current) => !current)}
+        full={focus}
+        showFull={!stacked}
+        zoom={zoom}
+        onDownloadMarkdown={downloadMarkdown}
+      />
     </div>
   )
 
@@ -193,22 +165,11 @@ export default function BuilderPage() {
             `/resume/${actions.create({ name: 'New resume', markdown: STARTER_MARKDOWN }).id}`,
           )
         }
-        onExport={exportPdf}
-        secondary={
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={downloadMarkdown}
-            title="Download .md (Ctrl+S)"
-          >
-            .md
-          </Button>
-        }
       />
 
       {stacked ? (
         <div className="flex min-h-0 flex-1 flex-col gap-3 p-3">
-          <div className="flex gap-1" role="tablist" aria-label="Editor, preview or fit">
+          <div className="flex gap-1 print:hidden" role="tablist" aria-label="Editor, preview or fit">
             {TABS.map(([id, label]) => (
               <Button
                 key={id}
@@ -222,7 +183,7 @@ export default function BuilderPage() {
               </Button>
             ))}
           </div>
-          <section className="flex min-h-0 flex-1 flex-col rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
+          <section className="flex min-h-0 flex-1 flex-col rounded-lg border border-[var(--border)] bg-[var(--card)] p-3 print:border-0 print:bg-transparent print:p-0">
             <div className={tab === 'write' ? 'contents' : 'hidden'}>{editor}</div>
             <div className={tab === 'preview' ? 'flex min-h-0 flex-1 flex-col' : 'hidden'}>
               {preview}
@@ -239,7 +200,10 @@ export default function BuilderPage() {
           }
         >
           {focus ? null : (
-            <section className="flex min-h-0 flex-col rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
+            <section
+              data-no-print
+              className="flex min-h-0 flex-col rounded-lg border border-[var(--border)] bg-[var(--card)] p-3"
+            >
               {editor}
             </section>
           )}
@@ -248,12 +212,15 @@ export default function BuilderPage() {
               in both directions, so the taller this column, the bigger the page —
               which is why the fit controls sit off to the right instead of under the
               editor. */}
-          <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)]">
+          <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)] print:border-0 print:bg-transparent">
             {preview}
           </section>
 
           {focus ? null : (
-            <section className="flex min-h-0 flex-col gap-3 overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
+            <section
+              data-no-print
+              className="flex min-h-0 flex-col gap-3 overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--card)] p-3"
+            >
               <Text as="h2" variant="12-semibold">
                 Auto-fit
               </Text>

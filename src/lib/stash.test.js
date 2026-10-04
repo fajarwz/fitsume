@@ -15,6 +15,7 @@ import {
   loadLibrary,
   migrateLibrary,
   removeResume,
+  removeManyResume,
   renameResume,
   resolveStorage,
   saveLibrary,
@@ -155,6 +156,66 @@ describe('library operations', () => {
       'Ada Lovelace copy',
       'Ada Lovelace copy 2',
     ])
+  })
+})
+
+describe('removeManyResume', () => {
+  it('removes every requested resume', () => {
+    const library = removeManyResume(
+      libraryWith(resume(), resume({ id: 'r2' }), resume({ id: 'r3' })),
+      ['r1', 'r3'],
+    )
+
+    expect(library.resumes.map((entry) => entry.id)).toEqual(['r2'])
+  })
+
+  it('selects the next survivor when the active one is removed', () => {
+    const library = removeManyResume(
+      libraryWith(resume(), resume({ id: 'r2' }), resume({ id: 'r3' })),
+      ['r1', 'r3'],
+    )
+
+    expect(library.activeId).toBe('r2')
+  })
+
+  it('selects the previous survivor when everything after the active one goes', () => {
+    const library = removeManyResume(
+      libraryWith(resume(), resume({ id: 'r2' }), resume({ id: 'r3' })),
+      ['r2', 'r3'],
+    )
+
+    expect(library.activeId).toBe('r1')
+  })
+
+  it('leaves the active selection alone when it survives', () => {
+    const library = removeManyResume(
+      libraryWith(resume(), resume({ id: 'r2' }), resume({ id: 'r3' })),
+      ['r2'],
+    )
+
+    expect(library.activeId).toBe('r3')
+  })
+
+  it('ends up with nothing active when everything is removed', () => {
+    const library = removeManyResume(
+      libraryWith(resume(), resume({ id: 'r2' }), resume({ id: 'r3' })),
+      ['r1', 'r2', 'r3'],
+    )
+
+    expect(library.resumes).toEqual([])
+    expect(library.activeId).toBeNull()
+  })
+
+  it('leaves the library alone when none of the ids are present', () => {
+    const library = libraryWith(resume(), resume({ id: 'r2' }))
+
+    expect(removeManyResume(library, ['nope', ''])).toEqual(library)
+  })
+
+  it('leaves the library alone when asked to remove nothing', () => {
+    const library = libraryWith(resume())
+
+    expect(removeManyResume(library, [])).toEqual(library)
   })
 })
 

@@ -1,31 +1,53 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Button from '../ui/Button.jsx'
 import Modal from '../ui/Modal.jsx'
 import Text from '../ui/Text.jsx'
+import { MoreIcon } from '../ui/icons.jsx'
 import { isSampleResume } from '../../lib/samples.js'
 
 /**
- * The library list: rename, open, copy, take away, delete.
+ * The library list: rename, open, and — behind a three-dot menu — copy, take away,
+ * delete. Selection is owned by the page, which shows the bulk controls on the
+ * title line; the list just reports which rows are in or out.
  *
- * Every row has the same controls, and Open is always a real button. Which resume was
- * last open is shown by the row itself — a marker down its left edge — rather than by
- * turning that row's Open button into text, because a control that looks clickable and
- * is not is worse than no control at all.
+ * Every row keeps one visible control, Open: it is what a row is for, so it stays
+ * where a tap expects it. Duplicate, the .md export and Delete hide behind the
+ * More button, which is how a row goes from a toolbar back to a row. Which resume
+ * was last open is shown by the row itself — a marker down its left edge — rather
+ * than by turning the Open button into text.
  *
- * Deleting asks first, and says what is being deleted, because there is no server
- * copy to restore from — the only backup is a file the user downloaded themselves.
+ * Deleting asks first, and says what is going, because there is no server copy to
+ * restore from: the only backup is a file the user downloaded themselves.
  */
 export default function ResumeList({
   resumes,
   activeId,
+  selected,
   onOpen,
   onRename,
   onDuplicate,
   onExport,
   onDelete,
+  onToggle,
 }) {
+  const [openMenuId, setOpenMenuId] = useState(null)
   const [pendingDelete, setPendingDelete] = useState(null)
+
+  const closeMenu = () => setOpenMenuId(null)
+
+  // The popover closes on Escape, like the modal it shares the screen with.
+  useEffect(() => {
+    if (openMenuId === null) return undefined
+
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') closeMenu()
+    }
+
+    document.addEventListener('keydown', onKeyDown)
+
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [openMenuId])
 
   if (resumes.length === 0) {
     return (
@@ -44,15 +66,25 @@ export default function ResumeList({
       <ul className="flex flex-col gap-2">
         {resumes.map((resume) => {
           const isActive = resume.id === activeId
+          const isChecked = selected.has(resume.id)
+          const menuOpen = openMenuId === resume.id
 
           return (
             <li
               key={resume.id}
               aria-current={isActive ? 'true' : undefined}
-              className={`flex flex-wrap items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--card)] p-3 ${
+              className={`relative flex flex-wrap items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--card)] p-3 ${
                 isActive ? 'border-l-2 border-l-[var(--accent)]' : ''
               }`}
             >
+              <input
+                type="checkbox"
+                aria-label={`Select ${resume.name}`}
+                checked={isChecked}
+                onChange={() => onToggle(resume.id)}
+                className="h-4 w-4 accent-[var(--accent)]"
+              />
+
               <label className="sr-only" htmlFor={`name-${resume.id}`}>
                 Resume name
               </label>
@@ -79,23 +111,66 @@ export default function ResumeList({
                 {resume.updatedAt?.slice(0, 10) ?? ''}
               </Text>
 
-              <Button
-                size="sm"
-                onClick={() => onOpen(resume.id)}
-                aria-label={`Open ${resume.name}`}
-              >
+              <Button size="sm" onClick={() => onOpen(resume.id)} aria-label={`Open ${resume.name}`}>
                 Open
               </Button>
 
-              <Button size="sm" variant="ghost" onClick={() => onDuplicate(resume.id)}>
-                Duplicate
+              <Button
+                size="sm"
+                variant="ghost"
+                aria-label={`Actions for ${resume.name}`}
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                onClick={() => (menuOpen ? closeMenu() : setOpenMenuId(resume.id))}
+              >
+                <MoreIcon className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => onExport(resume)}>
-                .md
-              </Button>
-              <Button size="sm" variant="danger" onClick={() => setPendingDelete(resume)}>
-                Delete
-              </Button>
+
+              {menuOpen ? (
+                <>
+                  {/* A scrim the width of the page: the first tap anywhere outside the
+                      menu closes it, rather than doing whatever that point is for. */}
+                  <div className="fixed inset-0 z-10" onClick={closeMenu} aria-hidden="true" />
+                  <div
+                    role="menu"
+                    className="absolute right-0 top-full z-20 mt-1 flex min-w-[9rem] flex-col gap-0.5 rounded-md border border-[var(--border)] bg-[var(--card)] p-1 shadow-[var(--shadow)]"
+                  >
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        closeMenu()
+                        onDuplicate(resume.id)
+                      }}
+                      className="flex items-center justify-start gap-2 rounded px-2 py-1.5 text-left text-xs font-medium text-[var(--foreground)] hover:bg-[var(--muted)]"
+                    >
+                      Duplicate
+                    </button>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        closeMenu()
+                        onExport(resume)
+                      }}
+                      className="flex items-center justify-start gap-2 rounded px-2 py-1.5 text-left text-xs font-medium text-[var(--foreground)] hover:bg-[var(--muted)]"
+                    >
+                      Export .md
+                    </button>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        closeMenu()
+                        setPendingDelete(resume)
+                      }}
+                      className="flex items-center justify-start gap-2 rounded px-2 py-1.5 text-left text-xs font-medium text-[var(--negative)] hover:bg-[var(--muted)]"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </>
+              ) : null}
             </li>
           )
         })}

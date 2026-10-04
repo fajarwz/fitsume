@@ -32,6 +32,7 @@ export default function FitPanel({ settings, fit, onChange }) {
         checked={auto}
         onChange={(value) => set({ autoFit: value })}
         hint="Finds the largest font size and line spacing that still fits."
+        className="w-full"
       />
 
       <Rollup fit={fit} settings={settings} />

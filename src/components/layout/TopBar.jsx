@@ -28,7 +28,10 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
   const stacked = useMediaQuery(STACKED)
 
   return (
-    <header className="flex min-h-16 flex-wrap items-center gap-3 border-b border-[var(--border)] bg-[var(--card)] px-4 py-2">
+    <header
+      data-no-print
+      className="flex min-h-16 flex-wrap items-center gap-3 border-b border-[var(--border)] bg-[var(--card)] px-4 py-2"
+    >
       <Text as={Link} to="/" variant="14-semibold" className="mr-2 tracking-tight">
         fittyresume
       </Text>
@@ -89,7 +92,7 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
       {persistent ? null : (
         <Text variant="11-regular" tone="negative" className="w-full">
           This browser is not saving anything. Changes last for this session only — download a
-          backup from the library.
+          backup from your resume list.
         </Text>
       )}
     </header>

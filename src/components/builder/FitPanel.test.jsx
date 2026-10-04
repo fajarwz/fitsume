@@ -43,7 +43,7 @@ describe('FitPanel', () => {
     const user = userEvent.setup()
     const { onChange } = setup()
 
-    await user.click(screen.getByRole('checkbox', { name: /auto-fit/i }))
+    await user.click(screen.getByRole('button', { name: /auto-fit/i }))
 
     expect(onChange).toHaveBeenCalledWith({ autoFit: false })
   })

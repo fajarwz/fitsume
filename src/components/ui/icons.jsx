@@ -44,3 +44,29 @@ export function MenuIcon({ className = '' }) {
     </svg>
   )
 }
+
+/** A check mark, for signalling a toggle is on. */
+export function CheckIcon({ className = '' }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" className={className}>
+      <path
+        d="M4 10.5l4 4L16 6"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+/** Three dots: the actions that are one tap further away. */
+export function MoreIcon({ className = '' }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" className={className}>
+      <circle cx="5" cy="10" r="1.5" fill="currentColor" />
+      <circle cx="10" cy="10" r="1.5" fill="currentColor" />
+      <circle cx="15" cy="10" r="1.5" fill="currentColor" />
+    </svg>
+  )
+}

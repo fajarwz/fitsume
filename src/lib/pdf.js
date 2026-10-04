@@ -43,6 +43,8 @@ const PAGE_STYLE_PROPS = [
   'transform',
   'transformOrigin',
   'boxShadow',
+  'outline',
+  'border',
   'background',
 ]
 
@@ -53,6 +55,8 @@ const ANCESTOR_STYLE_PROPS = [
   'visibility',
   'background',
   'boxShadow',
+  'outline',
+  'border',
 ]
 
 /** The browser names a downloaded PDF after the document title. */

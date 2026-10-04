@@ -46,8 +46,9 @@ const FIT_SLACK = 0.92
 /** Below this, the box is not a real pane (a hidden tab measures zero). */
 const MIN_USABLE_HEIGHT = 40
 
-export default function ResumeSheet({ pages, padding, stackRef, zoom = 1 }) {
+export default function ResumeSheet({ pages, padding, stackRef, zoom = 1, onWheelZoom = null }) {
   const frame = useRef(null)
+  const scrollRef = useRef(null)
   const [fit, setFit] = useState(1)
 
   useEffect(() => {
@@ -92,24 +93,29 @@ export default function ResumeSheet({ pages, padding, stackRef, zoom = 1 }) {
     return () => observer.disconnect()
   }, [stackRef])
 
+  // Ctrl+scroll (and a trackpad pinch, which arrives as Ctrl+wheel) zooms the page
+  useEffect(() => {
+    const element = scrollRef.current
+
+    if (!element || !onWheelZoom) return undefined
+
+    const onWheel = (event) => {
+      if (!event.ctrlKey && !event.metaKey) return
+      event.preventDefault()
+      onWheelZoom(event.deltaY < 0 ? 1 : -1)
+    }
+
+    element.addEventListener('wheel', onWheel, { passive: false })
+
+    return () => element.removeEventListener('wheel', onWheel)
+  }, [onWheelZoom])
+
   const scale = fit * zoom
   const many = pages.length > 1
 
   return (
-    // flex-1 and not h-full: the parent is a flex column, and a percentage height against
-    // a flex-sized box does not resolve — that is how this box measured 0 tall on a small
-    // phone, with the pane inside it collapsing and the fit left guessing.
     <div ref={frame} className="relative min-h-0 w-full flex-1">
-      {/* The box that gets measured is this outer element, and its size comes from the
-          layout above. The scroll layer is inside it and absolutely positioned, so a
-          scrollbar appearing when zoomed in cannot change what was measured — that
-          feedback loop is what let the page change size without a click. */}
-      {/* The pane is the surface the page sits on, and it is one step darker than the
-          shell so the paper reads as paper. It clips, which is why the stack below
-          keeps padding: that padding is the room the shadow casts into. */}
-      <div className="absolute inset-0 flex overflow-auto bg-[var(--canvas)]">
-        {/* margin:auto centres the stack while it fits and stops centring once it does
-            not, which is the one arrangement that both centres and scrolls. */}
+      <div ref={scrollRef} className="absolute inset-0 flex overflow-auto bg-[var(--canvas)]">
         <div
           ref={stackRef}
           data-sheet-stack
@@ -118,14 +124,8 @@ export default function ResumeSheet({ pages, padding, stackRef, zoom = 1 }) {
         >
           {pages.map((page, index) => (
             <div key={index} className="flex shrink-0 flex-col items-center gap-1">
-              {/**
-               * The elevation sits here, on the unscaled wrapper, and not on the sheet
-               * itself. The sheet is drawn through `transform: scale()`, and the fit
-               * lands well under 1, so a 1px ring on it renders three-quarters of a
-               * pixel wide and anti-aliases away to nothing. On this box the ring and
-               * the shadow are real CSS pixels at every zoom level.
-               */}
               <div
+                data-page-wrap
                 className="relative rounded-sm shadow-[var(--shadow-page)]"
                 style={{ width: PAGE_WIDTH * scale, height: PAGE_HEIGHT * scale }}
               >

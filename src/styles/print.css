@@ -30,6 +30,15 @@
     box-shadow: none !important;
   }
 
+  /* The elevation wrapper casts the page's on-screen ring and shadow; in the exported
+     sheet none of that should survive — a `0 0 0 1px` ring would otherwise print as a
+     hairline clipped to the top and left of the page. Killed here, by attribute, so it
+     no longer depends on the JS flatten step in lib/pdf.js. */
+  [data-page-wrap] {
+    box-shadow: none !important;
+    outline: none;
+  }
+
   /* Every sheet but the last is a printed page of its own. */
   [data-page-break='after'] {
     break-after: page;

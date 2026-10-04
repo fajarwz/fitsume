@@ -1,10 +1,12 @@
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import ResumeList from '../components/library/ResumeList.jsx'
 import TopBar from '../components/layout/TopBar.jsx'
 import Button from '../components/ui/Button.jsx'
+import Modal from '../components/ui/Modal.jsx'
 import Text from '../components/ui/Text.jsx'
+import Toggle from '../components/ui/Toggle.jsx'
 import { STARTER_MARKDOWN } from '../lib/starter.js'
 import {
   MERGE_MODES,
@@ -32,8 +34,34 @@ export default function LibraryPage() {
   const navigate = useNavigate()
   const [mode, setMode] = useState(MERGE_MODES.merge)
   const [notice, setNotice] = useState(null)
+  const [selected, setSelected] = useState(() => new Set())
+  const [confirmingMany, setConfirmingMany] = useState(false)
   const markdownInput = useRef(null)
   const backupInput = useRef(null)
+
+  // Selection lives here, not in the list, so the bulk controls can sit on the title
+  // line: a bar that appears between the title and the list would shove the list down
+  // every time someone ticks a row, and that hop is worse than the bar is worth.
+  const selectedIds = useMemo(
+    () => resumes.filter((resume) => selected.has(resume.id)).map((resume) => resume.id),
+    [resumes, selected],
+  )
+  const allSelected = resumes.length > 0 && selectedIds.length === resumes.length
+
+  const toggleSelection = (id) =>
+    setSelected((current) => {
+      const next = new Set(current)
+
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+
+      return next
+    })
+
+  const toggleAll = () =>
+    setSelected(allSelected ? new Set() : new Set(resumes.map((resume) => resume.id)))
+
+  const clearSelection = () => setSelected(() => new Set())
 
   const open = (id) => navigate(`/resume/${id}`)
   const startBlank = () =>
@@ -68,7 +96,7 @@ export default function LibraryPage() {
     if (!incoming) {
       setNotice({
         kind: 'error',
-        text: `That file could not be read as a library backup (${parseStatus}).`,
+        text: `That file could not be read as a resume backup (${parseStatus}).`,
       })
 
       return
@@ -82,7 +110,7 @@ export default function LibraryPage() {
       kind: 'ok',
       text:
         mode === MERGE_MODES.replace
-          ? `Replaced the library with ${incoming.resumes.length} resume${incoming.resumes.length === 1 ? '' : 's'}.`
+          ? `Replaced your resumes with ${incoming.resumes.length} resume${incoming.resumes.length === 1 ? '' : 's'}.`
           : `Merged: ${next.resumes.length - before} added, ${before} kept.`,
     })
   }
@@ -101,20 +129,43 @@ export default function LibraryPage() {
         onNew={() => open(actions.create({ name: 'New resume', markdown: STARTER_MARKDOWN }).id)}
         secondary={
           <Button size="sm" variant="secondary" onClick={backup}>
-            Back up library
+            Back up resumes
           </Button>
         }
       />
 
       <main className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4">
-        <div>
-          <Text as="h1" variant="18-semibold" className="tracking-tight">
-            Library
-          </Text>
-          <Text variant="12-regular" tone="muted" className="mt-1">
-            All of this is in your browser. Nothing is uploaded, and there is no account — so a
-            backup file is the only copy that survives clearing your browser data.
-          </Text>
+        {/* A fixed-height slot for the heading: whether it shows the title or the
+            bulk controls, it claims the same vertical room, so the list below never
+            hops when a selection begins or ends. */}
+        <div className="min-h-[3.5rem]">
+          {selectedIds.length > 0 ? (
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+              <Text as="h1" variant="18-semibold" className="tracking-tight">
+                {allSelected
+                  ? `${selectedIds.length} of ${resumes.length} selected`
+                  : `${selectedIds.length} selected`}
+              </Text>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button size="sm" variant="ghost" onClick={toggleAll}>
+                  {allSelected ? 'Clear selection' : 'Select all'}
+                </Button>
+                <Button size="sm" variant="danger" onClick={() => setConfirmingMany(true)}>
+                  Delete selected
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <Text as="h1" variant="18-semibold" className="tracking-tight">
+                Resume
+              </Text>
+              <Text variant="12-regular" tone="muted" className="mt-1">
+                All of this is in your browser. Nothing is uploaded, and there is no account — so
+                a backup file is the only copy that survives clearing your browser data.
+              </Text>
+            </div>
+          )}
         </div>
 
         {!persistent ? (
@@ -131,7 +182,7 @@ export default function LibraryPage() {
 
         {status === 'migrated' ? (
           <Text role="status" variant="12-regular" className="rounded-md bg-[var(--card)] p-2">
-            An older saved document was upgraded into the new library format.
+            An older saved document was upgraded into the new resume format.
           </Text>
         ) : null}
 
@@ -193,10 +244,12 @@ export default function LibraryPage() {
           <ResumeList
             resumes={resumes}
             activeId={activeId}
+            selected={selected}
             onOpen={open}
             onRename={actions.rename}
             onDuplicate={actions.duplicate}
             onDelete={actions.remove}
+            onToggle={toggleSelection}
             onExport={(resume) =>
               downloadText({
                 filename: markdownFilename(resume.name),
@@ -205,6 +258,21 @@ export default function LibraryPage() {
             }
           />
         )}
+
+        {confirmingMany ? (
+          <Modal
+            open
+            title={`Delete ${selectedIds.length} resume${selectedIds.length === 1 ? '' : 's'}?`}
+            description="This is irreversible."
+            confirmLabel="Delete"
+            onCancel={() => setConfirmingMany(false)}
+            onConfirm={() => {
+              actions.removeMany(selectedIds)
+              setConfirmingMany(false)
+              clearSelection()
+            }}
+          />
+        ) : null}
 
         <section className="flex flex-wrap items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
           <Text as="h2" variant="12-semibold" className="w-full">
@@ -233,22 +301,11 @@ export default function LibraryPage() {
             onChange={importBackup}
           />
 
-          <Text
-            as="label"
-            variant="11-regular"
-            tone="muted"
-            className="ml-1 flex items-center gap-2"
-          >
-            <input
-              type="checkbox"
-              checked={mode === MERGE_MODES.replace}
-              onChange={(event) =>
-                setMode(event.target.checked ? MERGE_MODES.replace : MERGE_MODES.merge)
-              }
-              className="h-3.5 w-3.5 accent-[var(--accent)]"
-            />
-            Replace everything instead of merging
-          </Text>
+          <Toggle
+            label="Replace everything instead of merging"
+            checked={mode === MERGE_MODES.replace}
+            onChange={(replace) => setMode(replace ? MERGE_MODES.replace : MERGE_MODES.merge)}
+          />
         </section>
       </main>
     </div>

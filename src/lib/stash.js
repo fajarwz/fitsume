@@ -150,6 +150,38 @@ export function setActiveResume(library, id) {
 }
 
 /**
+ * Removes several resumes at once — the bulk action behind the library's
+ * selection toolbar. Same neighbour rule as `removeResume`: if the active one
+ * goes, whatever now sits at its old spot (or just before it) takes over, so
+ * the editor is never left pointing at a deleted resume.
+ */
+export function removeManyResume(library, ids) {
+  const wanted = new Set(ids.filter(Boolean))
+
+  if (wanted.size === 0) return library
+
+  const removedIndexes = []
+  const resumes = library.resumes.filter((resume, index) => {
+    const drop = wanted.has(resume.id)
+
+    if (drop) removedIndexes.push(index)
+
+    return !drop
+  })
+
+  if (removedIndexes.length === 0) return library
+
+  let activeId = library.activeId
+
+  if (wanted.has(activeId)) {
+    const firstGap = removedIndexes[0]
+    activeId = (resumes[firstGap] ?? resumes[firstGap - 1] ?? null)?.id ?? null
+  }
+
+  return { ...library, resumes, activeId }
+}
+
+/**
  * The sample resumes, as resumes.
  *
  * They are seeded into the library rather than offered as templates: once they are

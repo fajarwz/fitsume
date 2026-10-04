@@ -88,7 +88,7 @@ export default function SettingsPage() {
             <Text as="span" variant="12-regular" mono tabular>
               {SAMPLES.length}
             </Text>{' '}
-            in your library
+            in your resume list
           </Text>
           <div className="flex flex-wrap gap-2">
             <Button

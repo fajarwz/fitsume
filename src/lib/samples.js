@@ -27,13 +27,17 @@
  *    so the samples demonstrate the shape the tool is for. The parser keys off
  *    `## `, so heading text stays free.
  *
- * Length is deliberate, not decorative. Together these six are the fixture set for
+ * Length is deliberate, not decorative. Together these three are the fixture set for
  * the auto-fit engine:
  *
- *   minimal  fonts should grow up to the cap        Zewail
- *   normal   fill the page comfortably              Salam, Abdurrahman, Fatima
- *   dense    a lot of content, still one page       Al-Khwarizmi
+ *   minimal  fonts should grow up to the cap        Fatima
+ *   normal   fill the page comfortably              Al-Khwarizmi
  *   long     the fullest one-pager                  Habibie
+ *
+ * Style is, too. Each of the three ships with different `settings`, so a visitor
+ * can see the (compact, airy, ordinary) directions a resume's layout can go
+ * without touching a slider: Al-Khwarizmi is packed tight, Fatima is spread
+ * loose, and Habibie stays on the defaults.
  *
  * Display order is not declaration order: SAMPLE_ORDER below puts the most ordinary
  * career first. The first card is what a first-time visitor judges the tool by, and a
@@ -68,9 +72,15 @@ const SAMPLE_LIBRARY = [
     id: 'al-khwarizmi',
     category: 'historical',
     label: 'Al-Khwarizmi, mathematician',
-    length: 'dense',
+    length: 'normal',
     note: 'Little is recorded of his life, so roles and dates are approximate.',
     source: 'https://en.wikipedia.org/wiki/Al-Khwarizmi',
+    settings: {
+      baseFontSize: 14,
+      lineHeightMultiplier: 1.35,
+      padding: 30,
+      spacing: { section: 12, item: 6, separator: 10 },
+    },
     markdown: `# Al-Khwarizmi
 Mathematician, astronomer and geographer
 Baghdad, Abbasid Caliphate · House of Wisdom · c. 780 – c. 850 CE · wikipedia.org
@@ -121,60 +131,17 @@ Algebra · arithmetic · astronomy · geography · trigonometry · calendrical c
   },
 
   {
-    id: 'abdurrahman-bin-auf',
-    category: 'historical',
-    label: 'Abdurrahman bin Auf, merchant',
-    length: 'normal',
-    note: 'Dates are approximate; the entries follow the historical accounts.',
-    source: 'https://en.wikipedia.org/wiki/Abd_al-Rahman_ibn_Awf',
-    markdown: `# Abdurrahman bin Auf
-Merchant · Companion of the Prophet ﷺ
-Mecca and Medina · c. 581 – 653 CE · wikipedia.org
-
----
-
-Merchant of the Banu Zuhrah clan of the Quraysh. Accepted Islam early, migrated twice, and arrived in Medina with no capital at all. Declined half of his host's wealth and asked only to be shown the market; rebuilt a fortune through trade, and gave it away as quickly as he earned it.
-
-## EXPERIENCE
-
-### Merchant — Medina
-622 – 653
-- Arrived with no capital; paired with Sa'd bin Rabi' of the Ansar
-- Declined the offer of half of his host's wealth and property, asking only to be shown the market
-- Traded in the market of Qaynuqa and became one of the wealthiest of the Companions
-- Funded the Tabuk expedition, equipping a large share of its mounts and provision from his own wealth
-
-### Merchant — Mecca
-before 622
-- Traded as part of the Quraysh merchant class
-- Accepted Islam early in the mission, at the invitation of Abu Bakr
-- Joined the first migration to Abyssinia, and later the migration to Medina in 622
-
-## SERVICE
-
-- Took part in Badr, Uhud and the Battle of the Trench
-- Among the six Companions appointed to the council that chose the next caliph; his advocacy settled it on Uthman
-
-## EDUCATION
-
-- Memorised and narrated hadith from the Prophet ﷺ; his narrations are recorded in the collections
-
-## HONOURS
-
-- Named one of the ten Companions given the glad tidings of Paradise in their lifetime
-
-## SKILLS
-
-Trade · negotiation · capital and liquidity management · honest dealing · charitable distribution · counsel`,
-  },
-
-  {
     id: 'fatima-al-fihri',
     category: 'historical',
-    label: 'Fatima al-Fihri, founder',
-    length: 'normal',
+    length: 'minimal',
     note: 'Barely documented in her own right; drawn from the history of al-Qarawiyyin.',
     source: 'https://en.wikipedia.org/wiki/Fatima_al-Fihri',
+    settings: {
+      baseFontSize: 14,
+      lineHeightMultiplier: 1.62,
+      padding: 54,
+      spacing: { section: 26, item: 14, separator: 24 },
+    },
     markdown: `# Fatima al-Fihri
 Founder and endower of al-Qarawiyyin
 Fez, Morocco · c. 800 – c. 880 CE · wikipedia.org
@@ -270,121 +237,6 @@ Awarded cum laude
 
 Structural analysis · lightweight and composite aircraft structures · aerospace programme leadership · research and technology policy · technical education at scale`,
   },
-
-  {
-    id: 'abdus-salam',
-    category: 'modern',
-    label: 'Abdus Salam, theoretical physicist',
-    length: 'normal',
-    note: 'Roles and dates follow the Nobel Foundation biography.',
-    source: 'https://www.nobelprize.org/prizes/physics/1979/salam/biographical/',
-    markdown: `# Abdus Salam
-Theoretical physicist · Nobel laureate
-Jhang, Punjab · Imperial College London · 1926 – 1996 · nobelprize.org
-
----
-
-Theoretical physicist who helped unify the weak and electromagnetic interactions, and then spent thirty years building the institutions that let physicists from developing countries do research without leaving home.
-
-## EXPERIENCE
-
-### Director — International Centre for Theoretical Physics (ICTP), Trieste
-from 1964
-- Created the Centre and its Associateships, which brought young physicists from developing countries to Trieste each year and sent them home for the academic year
-- Held alongside the professorship at Imperial College
-
-### Professor of Theoretical Physics — Imperial College, London
-from 1957
-- Professor of theoretical physics for nearly four decades
-
-### Chief Scientific Adviser to the President of Pakistan
-1961 – 1974
-- Member of the Pakistan Atomic Energy Commission, and of the Scientific Commission of Pakistan
-
-### Lecturer — Cambridge
-1954
-
-### Lecturer in Mathematics — Government College, Lahore, and Head of Mathematics, University of the Punjab
-1951 – 1954
-- Returned to Pakistan intending to found a school of research, and found there was no way to pursue theoretical physics there at the time
-
-## EDUCATION
-
-### St John's College, Cambridge — PhD, theoretical physics
-1951
-Thesis in quantum electrodynamics; BA with a double First in mathematics and physics, 1949; Smith's Prize, 1950
-
-### Government College, University of the Punjab — MA
-1946
-Admitted on a scholarship, having recorded the highest marks then seen in the University's matriculation examination
-
-## HONOURS
-
-### Nobel Prize in Physics
-1979
-Awarded with Sheldon Glashow and Steven Weinberg for contributions to the theory of the unified weak and electromagnetic interaction between elementary particles, including the prediction of the weak neutral current. Nobel lecture: "Gauge Unification of Fundamental Forces"
-
-### Atoms for Peace Medal and Award
-Used the prize money to fund visits by young Pakistani physicists to the ICTP
-
-## SKILLS
-
-Quantum field theory · electroweak unification · gauge theory · institution building for science in developing countries · scientific advice to government`,
-  },
-
-  {
-    id: 'ahmed-zewail',
-    category: 'modern',
-    label: 'Ahmed Zewail, chemist',
-    length: 'minimal',
-    note: 'Roles and dates follow the Caltech and Nobel Foundation record.',
-    source: 'https://www.caltech.edu/about/news/ahmed-zewail-1946-2016-51594',
-    markdown: `# Ahmed Zewail
-Chemist · Nobel laureate
-Damanhur, Egypt · California Institute of Technology · 1946 – 2016 · caltech.edu
-
----
-
-Chemist who founded femtochemistry: using laser flashes a few femtoseconds long to watch chemical reactions as they happen, rather than inferring them afterwards.
-
-## EXPERIENCE
-
-### Linus Pauling Professor of Chemistry — California Institute of Technology
-1997 – 2016
-- Professor of physics from 1995; Linus Pauling Professor of Chemical Physics, 1990 – 1997; professor from 1982; joined the faculty in 1976
-- Director of the Physical Biology Center for Ultrafast Science and Technology
-
-### First chair of the Board of Trustees — Zewail City of Science and Technology, Egypt
-from 2011
-
-### Science adviser — United States and United Nations
-- Appointed to the President's Council of Advisors on Science and Technology, 2009, and the first U.S. Science Envoy to the Middle East
-- United Nations Scientific Advisory Board, 2013
-
-### IBM postdoctoral fellow — University of California, Berkeley
-1974 – 1976
-
-## EDUCATION
-
-### University of Pennsylvania — PhD
-1974
-
-### Alexandria University — BSc and MSc
-1967, 1969
-
-## HONOURS
-
-### Nobel Prize in Chemistry
-1999
-Sole recipient, for studies of the transition states of chemical reactions using femtosecond spectroscopy
-
-### Further awards
-Wolf Prize · King Faisal Prize · Albert Einstein World Award · Benjamin Franklin Medal · Robert A. Welch Award · Priestley Gold Medal · Order of Merit, First Class, Egypt, 1995 · elected to the U.S. National Academy of Sciences
-
-## SKILLS
-
-Femtosecond spectroscopy · ultrafast laser science · reaction dynamics · physical biology · scientific diplomacy`,
-  },
 ]
 
 /**
@@ -392,14 +244,7 @@ Femtosecond spectroscopy · ultrafast laser science · reaction dynamics · phys
  * the historical ones. Declarations stay grouped by category above for readability;
  * this is the one place that decides what a visitor sees in what order.
  */
-export const SAMPLE_ORDER = [
-  'bj-habibie',
-  'abdus-salam',
-  'ahmed-zewail',
-  'al-khwarizmi',
-  'abdurrahman-bin-auf',
-  'fatima-al-fihri',
-]
+export const SAMPLE_ORDER = ['bj-habibie', 'al-khwarizmi', 'fatima-al-fihri']
 
 export const SAMPLES = SAMPLE_ORDER.map((id) => SAMPLE_LIBRARY.find((sample) => sample.id === id))
 
@@ -407,12 +252,18 @@ export const SAMPLES = SAMPLE_ORDER.map((id) => SAMPLE_LIBRARY.find((sample) => 
 export const DEFAULT_SAMPLE_ID = SAMPLE_ORDER[0]
 
 /**
- * The samples as library records: a stable id, and the markdown the library derives a
- * name and settings from. Nothing here is a template — these go straight into the
- * library as ordinary resumes.
+ * The samples as library records: a stable id, the settings that make its style,
+ * and the markdown the library derives a name from. Each sample's `settings` are
+ * seeded too, which is how the three arrive visually distinct — compact, airy,
+ * and on the defaults — without the visitor touching a slider. Nothing here is a
+ * template; these go straight into the library as ordinary resumes.
  */
 export function sampleResumes() {
-  return SAMPLES.map((sample) => ({ id: sampleResumeId(sample), markdown: sample.markdown }))
+  return SAMPLES.map((sample) => ({
+    id: sampleResumeId(sample),
+    markdown: sample.markdown,
+    settings: sample.settings,
+  }))
 }
 
 export function getSample(id) {

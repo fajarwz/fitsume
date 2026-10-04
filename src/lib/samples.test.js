@@ -45,7 +45,6 @@ describe('samples', () => {
 
     expect(lengths).toContain('minimal') // font grows up to the cap
     expect(lengths).toContain('normal')
-    expect(lengths).toContain('dense')
     expect(lengths).toContain('long') // the fullest one-pager the set ships
   })
 

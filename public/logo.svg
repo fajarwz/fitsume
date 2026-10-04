@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Fitsume">
+  <!-- A4 sheet -->
+  <rect x="20" y="10" width="88" height="108" rx="10" fill="none" stroke="currentColor" stroke-width="6"/>
+  <!-- heading (accent) -->
+  <rect x="34" y="34" width="46" height="9" rx="4.5" fill="currentColor"/>
+  <!-- body lines: each fills the page tight, hinting "it fits perfectly" -->
+  <rect x="34" y="56" width="60" height="7" rx="3.5" fill="currentColor" opacity="0.92"/>
+  <rect x="34" y="74" width="60" height="7" rx="3.5" fill="currentColor" opacity="0.92"/>
+  <rect x="34" y="92" width="60" height="7" rx="3.5" fill="currentColor" opacity="0.92"/>
+  <!-- trailing marker: the last line ends flush with the text above -->
+  <rect x="34" y="104" width="38" height="7" rx="3.5" fill="currentColor" opacity="0.6"/>
+</svg>

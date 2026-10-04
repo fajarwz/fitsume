@@ -1,4 +1,4 @@
-# Fitsume
+# <img src="public/favicon.svg" alt="" width="28" height="28" style="vertical-align: -6px; display: inline-block" /> Fitsume
 
 Write a resume in markdown. The preview finds the largest font size and line
 spacing that still fits everything on exactly one A4 page.

@@ -2,10 +2,12 @@ import { Link, useNavigate } from 'react-router-dom'
 import type { ReactNode } from 'react'
 
 import Button from '../ui/Button.tsx'
+import { buttonClasses } from '../ui/Button.tsx'
 import Select from '../ui/Select.tsx'
 import Text from '../ui/Text.tsx'
 import NavLinks from './NavLinks.tsx'
 import NavMenu from './NavMenu.tsx'
+import { GitHubIcon } from '../ui/icons.tsx'
 import { useMediaQuery } from '../../hooks/useMediaQuery.ts'
 import { useStashContext } from '../../state/StashProvider.tsx'
 import type { Resume } from '../../lib/stash.ts'
@@ -81,6 +83,15 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
 
           <div className="ml-auto flex items-center gap-2">
             {secondary}
+            <a
+              href="https://github.com/fajarwz/fitsume"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={buttonClasses({ variant: 'ghost', size: 'sm' })}
+              aria-label="Fitsume on GitHub"
+            >
+              <GitHubIcon className="h-4 w-4" />
+            </a>
             {onExport ? (
               <Button size="sm" variant="primary" onClick={onExport} disabled={!resume}>
                 Export PDF

@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom'
 import Button from '../ui/Button.tsx'
 import Select from '../ui/Select.tsx'
 import Text from '../ui/Text.tsx'
-import { CloseIcon, MenuIcon } from '../ui/icons.tsx'
+import { CloseIcon, GitHubIcon, MenuIcon } from '../ui/icons.tsx'
+import { buttonClasses } from '../ui/Button.tsx'
 import NavLinks from './NavLinks.tsx'
 import type { Resume } from '../../lib/stash.ts'
 
@@ -111,9 +112,21 @@ export default function NavMenu({
               <Text as="span" variant="14-semibold" className="tracking-tight">
                 Menu
               </Text>
-              <Button size="sm" variant="ghost" aria-label="Close menu" onClick={close}>
-                <CloseIcon className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center">
+                <a
+                  href="https://github.com/fajarwz/fitsume"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={buttonClasses({ variant: 'ghost', size: 'sm' })}
+                  aria-label="Fitsume on GitHub"
+                  onClick={close}
+                >
+                  <GitHubIcon className="h-4 w-4" />
+                </a>
+                <Button size="sm" variant="ghost" aria-label="Close menu" onClick={close}>
+                  <CloseIcon className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
             <nav className="flex flex-col gap-1">

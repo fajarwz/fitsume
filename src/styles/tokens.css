@@ -49,6 +49,9 @@
   --glass-border: rgba(255, 255, 255, 0.72);
   --glass-highlight: rgba(255, 255, 255, 0.85);
   --glass-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+  /* Overlays (menus, popovers) sit on top of other content, so they favour legibility
+     over transparency: near-opaque, blurred, still a light edge. */
+  --glass-strong: rgba(255, 255, 255, 0.92);
   /*
    * Elevation for the A4 sheet, which is a different problem from an overlay: a white
    * page on a light canvas needs its *edge* defined, and a shadow alone cannot do that
@@ -88,6 +91,7 @@
   --glass-border: rgba(255, 255, 255, 0.14);
   --glass-highlight: rgba(255, 255, 255, 0.09);
   --glass-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
+  --glass-strong: rgba(24, 26, 34, 0.86);
   /*
    * On a #000 canvas a black shadow casts nothing, whatever its alpha, so in dark mode
    * the sheet's edge is the ring and the shadow is only there for the sense of the page

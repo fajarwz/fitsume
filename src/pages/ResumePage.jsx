@@ -169,8 +169,7 @@ export default function ResumePage() {
                 Start from B.J. Habibie
               </Text>
               <Text variant="12-regular" tone="muted">
-                His resume is the most ordinary one here, so it is the easiest to turn into
-                yours. Open it, rename him, and delete what is not you.
+                Open it and make it yours.
               </Text>
             </div>
             <Button size="sm" variant="primary" onClick={() => open(starterId)}>

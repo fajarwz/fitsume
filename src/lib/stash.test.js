@@ -349,6 +349,18 @@ describe('sample seeding and restore', () => {
     expect(seedLibrary(library, [sample('s1', 'Ada')])).toBe(library)
   })
 
+  it('seeds the samples with one timestamp, so recency keeps their declared order', () => {
+    const seeded = seedLibrary(createLibrary(), [
+      sample('s1', 'Ada'),
+      sample('s2', 'Grace'),
+      sample('s3', 'Lin'),
+    ])
+    const displayed = sortResumesByRecency(seeded.resumes)
+
+    expect(displayed.map((entry) => entry.id)).toEqual(['s1', 's2', 's3'])
+    expect(new Set(displayed.map((entry) => entry.updatedAt)).size).toBe(1)
+  })
+
   it('seeds samples even when the flag is unset but the library is not empty', () => {
     const library = { ...createLibrary(), activeId: 'r1', resumes: [resume()] }
 

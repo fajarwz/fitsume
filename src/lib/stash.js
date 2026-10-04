@@ -207,7 +207,9 @@ export function missingSamples(library, samples) {
 }
 
 function withSamples(library, samples) {
-  const added = missingSamples(library, samples).map((sample) => createResume(sample))
+  // One shared timestamp, so the recency sort's tie keeps the samples in SAMPLE_ORDER.
+  const at = timestamp()
+  const added = missingSamples(library, samples).map((sample) => createResume({ ...sample, now: at }))
 
   if (added.length === 0 && library.samplesSeeded) return library
 

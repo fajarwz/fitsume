@@ -19,10 +19,6 @@ const THEMES = [
 
 /**
  * Settings: the two things that belong to the browser rather than to a resume.
- *
- * Display mode, because it is a property of this screen and not of any document. And
- * the sample resumes, because they are seeded into the library now: this is where they
- * are brought back if they were deleted, along with what each of them is built from.
  */
 export default function SettingsPage() {
   const { library, actions } = useStashContext()

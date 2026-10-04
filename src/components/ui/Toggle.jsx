@@ -1,23 +1,14 @@
 import Text from './Text.jsx'
 import { CheckIcon } from './icons.jsx'
 
-/** The look a toggled control should share whether it is on or off. */
 const TOGGLE_STYLE = {
-  // Green, not the accent: the accent is the app's one "do the action" button (Export,
-  // New), so a toggle that filled accent read as a primary action instead of a switch.
-  // Green is the token for "on/enabled", so it is immediately not a button and clearly
-  // a toggle that is active.
+  // Green (not the accent) so it reads as "on/enabled, not the app's primary-action button".
   on: 'border-transparent bg-[var(--positive)] text-[var(--positive-foreground)] hover:bg-[var(--positive-hover)]',
   off: 'border-[var(--border)] bg-transparent text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]',
 }
 
 /**
- * A checkbox as a press button rather than a tick box: active turns the whole button
- * the accent colour, and a second click drops the background so it reads plain again.
- *
- * It is a button with `aria-pressed`, not a sliding switch — a switch implies on/off
- * states, but these options (auto-fit, replacement) are choices, and the colour toggle
- * reads as one without the switch's mechanical feel.
+ * A button with aria-pressed, not a sliding switch — these options are one-tap choices.
  */
 export default function Toggle({
   label,

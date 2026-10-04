@@ -4,10 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import MarkdownEditor from './MarkdownEditor.jsx'
 
-/**
- * The editor's own behaviour: the insert tools, Tab indenting, and the keyboard
- * shortcuts. Everything here goes through the DOM the way a person would.
- */
+/* The editor's own behaviour: insert tools, Tab indenting, keyboard shortcuts. */
 const setup = (markdown = '') => {
   const onChange = vi.fn()
 

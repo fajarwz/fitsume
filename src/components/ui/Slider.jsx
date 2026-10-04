@@ -2,7 +2,6 @@ import { useId } from 'react'
 
 import Text from './Text.jsx'
 
-/** Label, control, and the value it is currently at — the settings panel is made of these. */
 export default function Slider({
   label,
   value,

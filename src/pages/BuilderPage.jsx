@@ -18,13 +18,8 @@ import { STARTER_MARKDOWN } from '../lib/starter.js'
 import { useStashContext } from '../state/StashProvider.jsx'
 
 /**
- * The builder: write on the left, see the page on the right, adjust the fit
- * underneath the writing.
- *
- * The fit runs against a debounced copy of the markdown, so typing stays
- * immediate while the measurement catches up a moment later. Which resume is open
- * and what its settings are both come from the library, so there is no second copy
- * of the document to keep in step.
+ * Fit measures a debounced copy of the markdown; the open resume and its
+ * settings come straight from the library, with no second copy to keep in step.
  */
 const TABS = [
   ['write', 'Write'],
@@ -33,12 +28,7 @@ const TABS = [
 ]
 
 /**
- * Zoom multiplies the fit-to-pane scale, so 1 always means "all of it, no
- * scrolling" whatever the window is doing. Session state on purpose: a saved zoom
- * would be a stale zoom the next time you open the app at a different size.
- *
- * Ten percent a step, because that is the scale people read percentages in:
- * 100, 110, 120. Quarter steps gave 125, 175 and 225, which reads like a glitch.
+ * Session-state zoom on purpose: a saved zoom would be stale in a smaller window.
  */
 const ZOOM_MIN = 0.5
 const ZOOM_MAX = 3
@@ -57,8 +47,7 @@ export default function BuilderPage() {
   const previewTarget = useRef(null)
   const stacked = useMediaQuery('(max-width: 1000px)')
 
-  // The address is the source of truth for which resume is open, and the library's
-  // own active id follows it, so the switcher and the URL cannot disagree.
+  // The URL is the source of truth; the library's active id follows it.
   const resume = resumes.find((entry) => entry.id === id) ?? null
   const activeId = resume?.id ?? null
 
@@ -66,8 +55,6 @@ export default function BuilderPage() {
     if (activeId) actions.select(activeId)
   }, [activeId, actions])
 
-  // Escape leaves full screen, alongside the always-visible Exit button in the palette —
-  // a mode that hides everything else should not need the menu to leave it.
   useEffect(() => {
     if (!focus) return undefined
 
@@ -80,8 +67,7 @@ export default function BuilderPage() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [focus])
 
-  // The browser's own Esc exits real fullscreen without telling React, so this keeps the
-  // two in step: when the OS (or anything else) leaves fullscreen, the panels come back.
+  // The browser's own Esc exits real fullscreen without telling React, so sync state here.
   useEffect(() => {
     const onFullscreenChange = () => {
       if (!document.fullscreenElement) setFocus(false)
@@ -100,8 +86,6 @@ export default function BuilderPage() {
       return
     }
 
-    // Hiding the panels happens regardless; the browser fullscreen is a layer on top of
-    // it, so when the API is missing or refused the button still does its useful thing.
     setFocus(true)
     const target = previewTarget.current
 
@@ -115,8 +99,6 @@ export default function BuilderPage() {
   const settled = useDebouncedValue(markdown, 160)
   const fit = useFit(settled, settings)
 
-  // A link to a resume this browser does not have goes home, rather than showing an
-  // editor for a document that does not exist.
   if (!resume) return <Navigate to="/" replace />
 
   const update = (patch) => actions.update(resume.id, patch)
@@ -137,13 +119,8 @@ export default function BuilderPage() {
   )
 
   const preview = (
-    // The actions float on the page (SheetActions) rather than running down its edge;
-    // a rail costs the page the height/width it is short of. flex-1 rather than h-full:
-    // in the stacked layout this is a flex item of a column, and a percentage height
-    // against a flex item does not resolve — which is how the preview collapsed to the
-    // height of the little zoom rail (135px on a phone) and the page fitted itself into
-    // that strip. flex-1 grows in a column and is ignored in a grid cell, where
-    // stretching already fills the row.
+    // flex-1, not h-full: a percentage height against a flex-item column does not
+    // resolve, and the preview would collapse to the zoom rail's height.
     <div
       ref={previewTarget}
       className={
@@ -240,10 +217,6 @@ export default function BuilderPage() {
             </section>
           )}
 
-          {/* The page takes the middle and the full height: the sheet fits the pane
-              in both directions, so the taller this column, the bigger the page —
-              which is why the fit controls sit off to the right instead of under the
-              editor. */}
           <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)] print:border-0 print:bg-transparent">
             {preview}
           </section>

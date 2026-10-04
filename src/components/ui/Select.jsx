@@ -1,17 +1,8 @@
 import { Chevron } from './icons.jsx'
 
 /**
- * The one select in the app, so a dropdown cannot drift apart from a button.
- *
- * It exists because the alternative was invisible damage: the forms plugin styles every
- * `<select>` with a chevron baked into a background image — a hardcoded grey that knows
- * nothing about the theme — plus padding reserved for it, which every caller then had to
- * hand-tune with `pr-9`. Here the native control is stripped bare (`appearance-none`) and
- * the arrow is an element, so it takes the muted colour from the tokens and can sit at the
- * same height as a Button.
- *
- * The sizes match Button's, on purpose: 32px and 40px, so a select and a button in the same
- * row are the same height.
+ * The forms plugin bakes a hardcoded-grey chevron into <select>; strip it (appearance-none,
+ * bg-none) and draw an element that takes the theme, sized to match Button.
  */
 const SIZES = {
   sm: { field: 'h-8 pl-2.5 pr-8 text-xs', icon: 'right-2 h-3.5 w-3.5' },
@@ -24,8 +15,7 @@ export default function Select({ size = 'md', className = '', children, ...rest 
   return (
     <span className={['relative inline-flex items-center', className].join(' ')}>
       <select
-        /* bg-none clears the background-image the forms plugin draws its chevron with;
-           the rest is the same border, radius and background as a Button. */
+        /* bg-none clears the forms plugin's baked-in chevron. */
         className={[
           'w-full appearance-none truncate rounded-md border border-[var(--border)] bg-[var(--card)] bg-none',
           'text-[var(--foreground)] outline-none transition hover:border-[var(--border-strong)]',

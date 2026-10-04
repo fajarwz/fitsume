@@ -1,8 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
-// Self-hosted so the fit is measured against the font the page actually renders,
-// and so the app works offline. No Google Fonts CDN.
+// Self-hosted fonts: fit is measured against the real rendered font and works offline (no CDN).
 import '@fontsource-variable/geist'
 import '@fontsource-variable/geist-mono'
 

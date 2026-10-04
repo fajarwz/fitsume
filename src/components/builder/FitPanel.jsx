@@ -11,15 +11,8 @@ import {
 } from '../../lib/page.js'
 import { SPACING_BOUNDS } from '../../lib/settings.js'
 
-/**
- * The fit controls.
- *
- * Auto-fit is the default and the headline feature, so everything it overrides is
- * disabled while it is on — a slider that silently does nothing is worse than a
- * slider that is visibly unavailable. Turning it off hands the numbers back to the
- * user, and the document grows to as many pages as their numbers need rather than
- * being cut off at the bottom of the first one.
- */
+/* Auto-fit is the default and headline, so the sliders it overrides are disabled while
+   it is on; turning it off hands the numbers back to the user. */
 export default function FitPanel({ settings, fit, onChange }) {
   const set = (patch) => onChange(patch)
   const setSpacing = (key, value) => set({ spacing: { ...settings.spacing, [key]: value } })

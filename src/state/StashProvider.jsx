@@ -3,11 +3,7 @@ import { createContext, useContext, useMemo } from 'react'
 import { useStash } from '../hooks/useStash.js'
 
 /**
- * One library for the whole app.
- *
- * The storage object is resolved once, in App, and handed down: "the browser
- * refused to give us storage" is then a single fact the UI can state plainly,
- * instead of a per-call surprise inside a deep component.
+ * One library for the whole app; storage is resolved once in App so a storage refusal is a single fact.
  */
 const StashContext = createContext(null)
 

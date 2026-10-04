@@ -5,11 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { DEFAULT_RESUME_SETTINGS } from '../../lib/settings.js'
 import FitPanel from './FitPanel.jsx'
 
-/**
- * The fit controls, as a person uses them: the numbers they change have to arrive
- * at the settings object intact, and the readout has to tell the truth about
- * whether the document fits.
- */
+/* The fit controls as a person uses them: numbers arrive intact, readout tells the truth. */
 const setup = ({ settings = {}, fit = {} } = {}) => {
   const onChange = vi.fn()
   const merged = { ...DEFAULT_RESUME_SETTINGS, ...settings }

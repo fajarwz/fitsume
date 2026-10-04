@@ -4,14 +4,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import ResumeSheet from './ResumeSheet.jsx'
 import { PAGE_HEIGHT, PAGE_WIDTH } from '../../lib/page.js'
 
-/**
- * jsdom has no layout, so the pane's client box is stubbed — that box is the only
- * input to the fit, and everything else here is arithmetic.
- *
- * The behaviour being pinned: the page fits the pane in *both* directions (so the
- * whole sheet is visible without scrolling), and zoom multiplies that fit rather
- * than replacing it.
- */
+/* jsdom has no layout, so the pane's client box is stubbed; the behaviour pinned is
+   that the page fits in both directions and zoom multiplies the fit. */
 const PANE = { width: 400, height: 500 }
 
 beforeEach(() => {

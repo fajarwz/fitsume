@@ -4,28 +4,16 @@ import Button from '../ui/Button.jsx'
 import CheatSheet from './CheatSheet.jsx'
 import { useUndo } from '../../hooks/useUndo.js'
 
-/**
- * The markdown editor: a textarea, a small insert toolbar, and undo that behaves.
- *
- * Markdown rather than a rich-text surface on purpose — the fit engine needs the
- * document as text, and a plain textarea keeps the caret, the platform's own
- * spell-check, and the keyboard shortcuts working.
- */
+/* Plain markdown textarea on purpose: the fit engine needs the document as text. */
 const TOOLS = [
   { label: 'H2', title: 'Section heading', prefix: '## ' },
   { label: 'H3', title: 'Item heading', prefix: '### ' },
   { label: '•', title: 'Bullet', prefix: '- ' },
 ]
 
-/**
- * What the Link button drops in.
- *
- * Placeholder syntax rather than a dialog: `example.com` resolves as a link as soon as it
- * lands, so the thing being inserted shows what it does before it is edited.
- */
+/* Placeholder syntax, not a dialog: it resolves as a live link the moment it lands. */
 const LINK_PLACEHOLDER = '[label](example.com)'
 
-/** Prefixes the lines the selection touches, and un-prefixes them if they all have it. */
 function prefixSelection(textarea, prefix) {
   const { value, selectionStart: start, selectionEnd: end } = textarea
   const lineStart = value.lastIndexOf('\n', start - 1) + 1
@@ -47,7 +35,6 @@ function prefixSelection(textarea, prefix) {
   }
 }
 
-/** Adds or removes two spaces at the start of the lines the selection touches. */
 function indentSelection(textarea, outdent) {
   const { value, selectionStart: start, selectionEnd: end } = textarea
   const lineStart = value.lastIndexOf('\n', start - 1) + 1
@@ -112,15 +99,7 @@ export default function MarkdownEditor({
     onChange(value)
   }
 
-  /**
-   * Drops the link placeholder in at the caret, with the label word selected so the first
-   * thing typed replaces it.
-   *
-   * No dialog and no two-field form: this is a plain text editor, and the syntax is short
-   * enough to write. The placeholder is live the moment it lands — `[label](example.com)`
-   * resolves and renders as a link before anyone edits it, which is the whole
-   * demonstration.
-   */
+  /** Drops the link placeholder at the caret, with the label selected so typing replaces it. */
   const insertPlaceholder = () => {
     const element = textarea.current
 

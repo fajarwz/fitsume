@@ -1,25 +1,6 @@
 /**
- * Text: the type scale, named by the size and weight it sets.
- *
- * The shell had nine sizes in it — 10px, 11px, 12px, 14px, 16px, with fractional line
- * heights like 17.875px and 16.5px — and the most common of them was plain 16px inherited
- * by elements that never said anything at all. Nothing was wrong individually; there was
- * just no scale, so every panel invented its own.
- *
- * So a variant is a size and a weight, spelled out: `14-regular`, `12-medium`,
- * `16-semibold`. Named that way on purpose — a name like "caption" tells you nothing about
- * what you get, and when two of them are next to each other the difference should be
- * readable in the code, not inferred.
- *
- *   <Text variant="12-medium">Auto-fit</Text>
- *   <Text as="h1" variant="18-semibold" className="tracking-tight">Resume</Text>
- *   <Text variant="12-regular" tone="muted">Stored in this browser.</Text>
- *
- * Line heights come with the size, because a size without one is where the fractional
- * numbers came from.
- *
- * The resume itself is not these: the sheet is a document with its own typography, set by
- * the fit engine, and it does not care what the app's UI does.
+ * Type scale: a variant is its size and weight spelled out ("14-regular"), with the line
+ * height riding along so fractional values can't creep back.
  */
 const LINE_HEIGHTS = {
   11: '14px',
@@ -46,7 +27,6 @@ const TONES = {
   negative: 'text-[var(--negative)]',
 }
 
-/** A multiple of the size, for the places prose wants more air than the scale gives. */
 const LEADING = {
   tight: 1.25,
   relaxed: 1.6,
@@ -79,9 +59,7 @@ export default function Text({
         lineHeight: multiplier ? `${multiplier}em` : LINE_HEIGHTS[sizePx],
         fontWeight: weightPx,
       }}
-      /* Inline styles for the three axes that must not drift, and Tailwind for the rest
-         (tone, family, the caller's own classes), so a caller can still override a colour
-         without fighting specificity. */
+      /* Inline for the axes that must not drift; Tailwind for the rest so callers can still override. */
       className={[
         TONES[tone] ?? TONES.default,
         mono ? 'font-mono' : '',

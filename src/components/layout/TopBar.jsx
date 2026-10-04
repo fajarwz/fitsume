@@ -8,18 +8,7 @@ import NavMenu from './NavMenu.jsx'
 import { useMediaQuery } from '../../hooks/useMediaQuery.js'
 import { useStashContext } from '../../state/StashProvider.jsx'
 
-/**
- * The bar across the top: where you are, which resume is open, and the handful of
- * actions that apply to it. Everything else is in the panels below, so this stays
- * one line.
- *
- * It navigates on its own: the switcher is a link to another resume rather than a
- * piece of hidden app state, so pages do not each have to wire the same handler.
- *
- * On a narrow screen the same contents go behind a hamburger and slide in from the right
- * (NavMenu). At a phone width a bar of buttons wraps onto three lines and takes the height
- * the preview needs, which is the one thing this layout cannot spare.
- */
+/** The bar navigates on its own: the switcher is a link, not hidden app state, so pages don't each wire the same handler. */
 const STACKED = '(max-width: 1000px)'
 
 export default function TopBar({ resume = null, onNew, onExport, secondary = null }) {
@@ -62,8 +51,7 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
                 value={resume?.id ?? ''}
                 onChange={(event) => navigate(event.target.value === '' ? '/' : `/resume/${event.target.value}`)}
               >
-                {/* Only a placeholder for when nothing is open — never a destination to
-                    pick from, so a resume can't be deselected into a broken /resume/ route. */}
+                {/* Placeholder, not a destination — can't be deselected into a broken /resume/ route. */}
                 {!resume ? <option value="">No resume open</option> : null}
                 {resumes.map((entry) => (
                   <option key={entry.id} value={entry.id}>

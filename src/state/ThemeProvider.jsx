@@ -4,17 +4,8 @@ import { DEFAULT_THEME, isTheme, resolveTheme } from '../lib/theme.js'
 import { useMediaQuery } from '../hooks/useMediaQuery.js'
 
 /**
- * Theme for the app shell.
- *
- * Kept out of the library on purpose: the chosen theme is a preference about the
- * editor, not part of any resume, and it should survive deleting every resume.
- *
- * The system preference comes from useMediaQuery, so the browser stays the owner of
- * that value rather than an effect copying it into state. The only effect here
- * writes to the DOM, which is what effects are for.
- *
- * The resolved theme lands on `data-theme` on <html> — the only place the CSS
- * looks — so a theme change is one attribute, not a re-render of every component.
+ * Kept out of the library: the theme is an editor preference that must survive deleting
+ * every resume (THEME_KEY must stay stable).
  */
 const THEME_KEY = 'fitsume.theme'
 

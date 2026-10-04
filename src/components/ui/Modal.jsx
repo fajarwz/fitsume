@@ -4,11 +4,7 @@ import Button from './Button.jsx'
 import Text from './Text.jsx'
 
 /**
- * A plain overlay rather than <dialog>: jsdom cannot open a native modal, so the
- * confirmation path would be untestable, and this has no browser-quirk surface.
- *
- * Closing is explicit — the Cancel button, or Escape — rather than a click on the
- * backdrop, so there is no invisible click target and no keyboard-trap-shaped hole.
+ * Plain overlay rather than <dialog> (jsdom can't open one); Escape/Cancel only, no backdrop click.
  */
 export default function Modal({
   open,

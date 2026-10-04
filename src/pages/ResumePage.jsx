@@ -24,12 +24,8 @@ import {
 import { useStashContext } from '../state/StashProvider.jsx'
 
 /**
- * The library screen: everything that lives in this browser, and the two ways to
- * get it out of here.
- *
- * storage is per-browser and a user can clear it without meaning to, so the backup
- * file is the real safety net — which is why restore asks whether to merge or
- * replace, and merge is the default.
+ * Storage can be cleared without meaning to, so the backup file is the real
+ * safety net — why restore defaults to merge and asks about replace.
  */
 export default function ResumePage() {
   const { resumes, activeId, library, actions, status, persistent, saveResult } = useStashContext()
@@ -41,9 +37,7 @@ export default function ResumePage() {
   const markdownInput = useRef(null)
   const backupInput = useRef(null)
 
-  // Selection lives here, not in the list, so the bulk controls can sit on the title
-  // line: a bar that appears between the title and the list would shove the list down
-  // every time someone ticks a row, and that hop is worse than the bar is worth.
+  // Selection lives here, not in the list, so the bulk controls sit on the title line.
   const selectedIds = useMemo(
     () => resumes.filter((resume) => selected.has(resume.id)).map((resume) => resume.id),
     [resumes, selected],
@@ -137,9 +131,7 @@ export default function ResumePage() {
       />
 
       <main className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4">
-        {/* A fixed-height slot for the heading: whether it shows the title or the
-            bulk controls, it claims the same vertical room, so the list below never
-            hops when a selection begins or ends. */}
+        {/* Fixed-height heading slot so the list never hops when a selection starts/ends. */}
         <PageHeader>
           {selectedIds.length > 0 ? (
             <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">

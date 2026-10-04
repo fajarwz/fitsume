@@ -3,25 +3,9 @@ import { useState } from 'react'
 import Button from '../ui/Button.jsx'
 import { CloseIcon, MoreIcon } from '../ui/icons.jsx'
 
-/**
- * The actions that apply to the page you are looking at, collected as one floating
- * control over the preview instead of spread between a rail on the edge and the top
- * bar.
- *
- * Export is always visible because it is the one you go to the preview for. The rest
- * live behind the dots: zoom, full screen, and a copy of the markdown. They are the
- * PDF-viewer pattern — controls float on the sheet rather than stealing its height —
- * and it is why this pane can give the whole window to the page.
- *
- * The menu is text, not icons, on purpose: a tooltip does not exist on a touch screen,
- * so an icon-only list would make mobile users guess what each button does — and a
- * dropdown has no reason to trade that away, since a vertical list costs the same
- * whether the labels are words or pictures. The only exceptions are the − and +
- * zoom buttons, which are a convention self-explanatory without a label.
- *
- * "New" is deliberately not here. It is not about the page on screen; it starts a
- * different resume, so it stays in the top bar where creation belongs.
- */
+/* Preview actions floating over the sheet (PDF-viewer style). Export is always visible,
+   the rest live behind the dots; menu labels are text, not icons, because tooltips do
+   not exist on touch screens. "New" stays in the top bar, not here. */
 export default function SheetActions({
   onExport,
   onZoomIn,
@@ -38,9 +22,7 @@ export default function SheetActions({
   const close = () => setOpen(false)
   const atFit = zoom === 1
 
-  // One-shot actions close the box when they run. Zoom is the exception: it is
-  // incremental, and several taps in a row are the usual way it is used, so the menu
-  // stays open until the toggle or a click outside lets it go.
+  // One-shot actions close the box; zoom stays open so a run of taps stays together.
   const item = (label, onClick, opts = {}) => (
     <Button
       size="sm"
@@ -60,9 +42,8 @@ export default function SheetActions({
 
   return (
     <>
-      {/* A tap anywhere else closes the dots box. A sibling at z-10, behind the palette
-          at z-20: with it rendered *inside* the palette its fixed full-screen box painted
-          over the menu and swallowed every click, so nothing in the dots worked. */}
+      {/* Click-away sibling at z-10, below the z-20 palette: rendered inside the palette
+          it painted over the menu and swallowed every click. */}
       {open ? (
         <button
           aria-hidden="true"
@@ -73,10 +54,8 @@ export default function SheetActions({
       ) : null}
 
       <div data-no-print className="absolute right-5 top-4 z-20 flex items-center gap-1.5">
-        {/* Full screen wants an obvious way out, not a control hidden in the dots: the
-            exit is the whole point of that mode, so it gets the primary colour and Export
-            steps down to secondary until the page is on its own again. Escape exits too
-            (wired in the builder). */}
+        {/* Exit is the point of full screen, so it gets primary and Export steps down;
+            Escape also exits (wired in the builder). */}
         {full ? (
           <Button size="sm" variant="primary" onClick={onFull} title="Exit full screen (Esc)" className="shadow-md">
             Exit full
@@ -110,10 +89,8 @@ export default function SheetActions({
               data-no-print
               role="menu"
             >
-              {/* One zoom cluster instead of a stack of rows: − and + are understood
-                  without a tooltip, and the middle button both reads the zoom and snaps
-                  it back to fit. Every control here keeps the menu open, so a run of
-                  zoom taps stays together. */}
+              {/* One cluster: -/+ are self-explanatory, the middle reads and snaps zoom,
+                  and all of them keep the menu open. */}
               <div className="flex items-center gap-1 py-1">
                 <Button
                   size="sm"

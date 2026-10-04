@@ -6,20 +6,7 @@ import Text from '../ui/Text.jsx'
 import { MoreIcon } from '../ui/icons.jsx'
 import { isSampleResume } from '../../lib/samples.js'
 
-/**
- * The library list: rename, open, and — behind a three-dot menu — copy, take away,
- * delete. Selection is owned by the page, which shows the bulk controls on the
- * title line; the list just reports which rows are in or out.
- *
- * Every row keeps one visible control, Open: it is what a row is for, so it stays
- * where a tap expects it. Duplicate, the .md export and Delete hide behind the
- * More button, which is how a row goes from a toolbar back to a row. Which resume
- * was last open is shown by the row itself — a marker down its left edge — rather
- * than by turning the Open button into text.
- *
- * Deleting asks first, and says what is going, because there is no server copy to
- * restore from: the only backup is a file the user downloaded themselves.
- */
+/** One visible control per row (Open); the rest hide behind More. Delete asks first — there is no server copy, only a user-downloaded backup. */
 export default function ResumeList({
   resumes,
   activeId,
@@ -36,7 +23,6 @@ export default function ResumeList({
 
   const closeMenu = () => setOpenMenuId(null)
 
-  // The popover closes on Escape, like the modal it shares the screen with.
   useEffect(() => {
     if (openMenuId === null) return undefined
 
@@ -128,8 +114,6 @@ export default function ResumeList({
 
               {menuOpen ? (
                 <>
-                  {/* A scrim the width of the page: the first tap anywhere outside the
-                      menu closes it, rather than doing whatever that point is for. */}
                   <div className="fixed inset-0 z-10" onClick={closeMenu} aria-hidden="true" />
                   <div
                     role="menu"

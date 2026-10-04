@@ -4,12 +4,8 @@ import { describe, expect, it, vi } from 'vitest'
 
 import SheetActions from './SheetActions.jsx'
 
-/**
- * The preview actions, as a person uses them: export is reachable without opening the
- * dots, and every entry inside the dots has to actually fire its action — the invisible
- * click-away box used to paint over the menu and swallow every click, which is the bug
- * these tests pin.
- */
+/* The preview actions as a person uses them; pins the bug where the invisible click-away
+   box painted over the menu and swallowed every click. */
 const setup = (props = {}) => {
   const actions = {
     onExport: vi.fn(),

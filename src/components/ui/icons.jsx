@@ -1,9 +1,5 @@
 /**
- * The two icons the shell draws, in one place, so a chevron is one shape at one weight.
- *
- * They are elements rather than background images because then they can take their colour
- * from `currentColor`, which means the theme, and because an element can be positioned
- * against its field instead of padding being reserved for it by hand.
+ * Elements, not background images, so they take the theme via currentColor.
  */
 export function Chevron({ className = '' }) {
   return (
@@ -45,7 +41,6 @@ export function MenuIcon({ className = '' }) {
   )
 }
 
-/** A check mark, for signalling a toggle is on. */
 export function CheckIcon({ className = '' }) {
   return (
     <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" className={className}>
@@ -60,7 +55,6 @@ export function CheckIcon({ className = '' }) {
   )
 }
 
-/** Three dots: the actions that are one tap further away. */
 export function MoreIcon({ className = '' }) {
   return (
     <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" className={className}>

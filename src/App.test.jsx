@@ -5,15 +5,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App.jsx'
 
 /**
- * The app, end to end, in a browser-shaped environment.
- *
- * These are the tests that would have caught the original's headline bug: the
- * exported PDF being named after the first sample the app ever loaded. They also
- * cover the two things the app must never do — greet a new user with someone
- * else's resume, or lose their work on a refresh.
- *
- * The real measurement engine runs here, so the fit is genuinely exercised; the
- * canvas comes from the optional `canvas` dependency.
+ * End-to-end app tests. The fit engine runs for real here, so the optional
+ * `canvas` dependency must be installed for them to pass.
  */
 const editor = () => screen.getByLabelText(/resume markdown/i)
 

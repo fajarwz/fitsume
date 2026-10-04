@@ -5,23 +5,9 @@ import { POSITIONED_TYPE } from '../../lib/layout.js'
 import { HAIRLINE, PAGE_HEIGHT, PAGE_WIDTH } from '../../lib/page.js'
 
 /**
- * The A4 sheets, fitted to the space they are given.
- *
- * Every line is absolutely positioned at the coordinates lib/layout.js produced, and
- * the text is set to `white-space: pre` so the browser cannot re-wrap what the fit
- * engine already broke: the preview has to be the same document the measurement
- * describes, or the app lies about fitting.
- *
- * Each sheet is always 620x877 CSS px. On screen it is scaled down to fit the pane in
- * *both* directions, so a whole page is visible without scrolling, and `zoom`
- * multiplies that fit: at 1 the page fills the pane, past 1 the pane scrolls instead,
- * which is what zooming is for. The print path scales the same elements to real A4
- * width, so there is one document, not a preview copy and a print copy.
- *
- * How many sheets there are is not this component's business: lib/paginate.js decides,
- * and a document that fits one page simply arrives as one page. When there is more than
- * one, they stack down the pane with a count under each, because a page you cannot see
- * the end of is how the old single-sheet version lost its second half.
+ * A4 sheets fitted to their space. Each line is absolutely positioned and `white-space:
+ * pre`, so the preview is the same document the fit engine measured; the same elements
+ * print at real A4 width. Page count is lib/paginate.js's business.
  */
 const COLOR = {
   ink: 'var(--ink)',
@@ -29,18 +15,8 @@ const COLOR = {
   inkFaint: 'var(--ink-faint)',
 }
 
-/**
- * Slack left at the default scale.
- *
- * Fitting the pane *exactly* is what makes a scrollbar appear: the box is measured
- * in fractional pixels, the scale is a float, and the browser rounds the scaled page
- * up by a hair — which is enough for `overflow: auto` to decide there is something
- * to scroll. So a few percent of headroom means the whole page is always visible.
- *
- * It also pays for the shadow. The pane clips at its own edges, so a page that fills
- * it to the last pixel has nowhere left to cast into, and the shadow disappears into
- * the crop. This is the space that keeps the page looking like paper on a surface.
- */
+/* Headroom: exact fit rounds up a hair and a scrollbar appears; the slack also keeps
+   the page shadow from being clipped by the pane's edge. */
 const FIT_SLACK = 0.92
 
 /** Below this, the box is not a real pane (a hidden tab measures zero). */
@@ -76,9 +52,6 @@ export default function ResumeSheet({ pages, padding, stackRef, zoom = 1, onWhee
       const usableHeight =
         height > MIN_USABLE_HEIGHT ? height : Math.max(240, window.innerHeight - 240)
 
-      // Both axes, or the page is taller than the pane and the user scrolls. With
-      // several pages this still holds page by page: one page fills the pane, and the
-      // pane scrolls to the next.
       setFit(Math.min((width - padX) / PAGE_WIDTH, (usableHeight - padY) / PAGE_HEIGHT) * FIT_SLACK)
     }
 
@@ -173,10 +146,8 @@ export default function ResumeSheet({ pages, padding, stackRef, zoom = 1, onWhee
                           color: COLOR[item.color] ?? COLOR.ink,
                         }}
                       >
-                        {/* A line with an address in it is rendered as runs instead of
-                            one string, so the address is clickable. The text is the same
-                            characters the fit engine measured, which is what keeps the
-                            rendered line and the fitted line the same line. */}
+                        {/* Addresses render as runs so they are clickable; the text is what the fit engine
+                            measured, keeping rendered line == fitted line. */}
                         {item.segments
                           ? item.segments.map((segment, segmentIndex) =>
                               segment.href ? (

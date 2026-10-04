@@ -1,9 +1,4 @@
-/**
- * The app frame: a top bar and whatever the page puts underneath it.
- *
- * The only structural decision here is that the shell scrolls and the page does
- * not, so a long resume cannot make the header wander off.
- */
+/** The shell scrolls and the page does not, so a long resume cannot push the header off. */
 export default function AppShell({ topBar, children }) {
   return (
     <div className="flex h-full min-h-screen flex-col bg-[var(--background)] text-[var(--foreground)]">

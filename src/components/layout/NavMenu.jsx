@@ -7,22 +7,7 @@ import Text from '../ui/Text.jsx'
 import { CloseIcon, MenuIcon } from '../ui/icons.jsx'
 import NavLinks from './NavLinks.jsx'
 
-/**
- * Everything the bar holds, behind a hamburger, for a narrow screen.
- *
- * At a phone width the bar wraps and eats the height the page needs, so below the stacked
- * breakpoint the nav, the resume switcher and every action move into a panel that slides in
- * from the right. It is the same set of controls rather than a reduced one: what changes is
- * where they live, plus the fact that the panel can be dismissed by tapping the page behind
- * it or pressing Escape.
- *
- * The panel stays mounted and is parked off-screen instead of being added and removed, so
- * opening it is a transition rather than a first paint. `inert` is what keeps the copy
- * sitting outside the viewport out of the tab order and away from a screen reader.
- *
- * Marked `data-no-print` — along with the scrim — because it is furniture, and because a
- * drawer that happened to be open when you pressed Export must not print onto the resume.
- */
+/** Narrow-screen drawer: same controls as the bar, kept mounted and parked off-screen so it slides rather than repaints. */
 const PANEL =
   'fixed inset-y-0 right-0 z-40 flex w-72 max-w-[85vw] flex-col gap-3 overflow-y-auto border-l border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow)] outline-none transition-transform duration-200 ease-out'
 
@@ -43,7 +28,6 @@ export default function NavMenu({
     trigger.current?.focus()
   }
 
-  // Escape closes it, and the page behind does not scroll while it is over the page.
   useEffect(() => {
     if (!open) return undefined
 
@@ -66,8 +50,7 @@ export default function NavMenu({
   const switchResume = (event) => {
     const id = event.target.value
 
-    // "No resume open" (the empty option) means the library, not `/resume/` — an empty
-    // param matches nothing and lands on the 404 page.
+    // "No resume open" means the library, not /resume/ — an empty param matches nothing and 404s.
     navigate(id === '' ? '/' : `/resume/${id}`)
     close()
   }
@@ -135,8 +118,7 @@ export default function NavMenu({
               value={resume?.id ?? ''}
               onChange={switchResume}
             >
-              {/* A placeholder for when nothing is open, not a pickable destination — so a
-                  resume can't be "unselected" into a broken /resume/ route. */}
+              {/* Placeholder, not a pickable destination — can't be unselected into a broken /resume/ route. */}
               {!resume ? <option value="">No resume open</option> : null}
               {resumes.map((entry) => (
                 <option key={entry.id} value={entry.id}>
@@ -160,8 +142,7 @@ export default function NavMenu({
         ) : null}
 
         {secondary ? (
-          /* Whatever the page passes is rendered at the drawer's row size, so a page cannot
-             make the column inconsistent by handing over a small button. */
+          // Constrain secondary controls to the drawer's row size.
           <div className="flex flex-col [&_button]:h-10 [&_button]:w-full" onClickCapture={close}>
             {secondary}
           </div>

@@ -1,18 +1,8 @@
 import Text from '../ui/Text.jsx'
 
-/**
- * The markdown dialect, written down.
- *
- * It is a `<details>` because it is reference material, not a panel: it should be one
- * line until someone needs it, and the native element gives that for free — including
- * keyboard support and find-in-page. What it does *not* give for free is a summary that
- * looks like the rest of the app, so the default triangle is hidden and replaced with a
- * chevron that turns over when the thing opens.
- *
- * The two rows that are easy to miss are the ones that make a resume header come out
- * right: the line after the name is the role, and the line after that is the contact
- * line. So the contact row carries an example rather than a description.
- */
+/* A <details> because it's reference material, one line until opened. The default
+   triangle is hidden and replaced with an app-styled chevron; the contact row carries
+   an example because its placement is easy to miss. */
 export default function CheatSheet() {
   return (
     <details className="group rounded-md border border-[var(--border)] bg-[var(--muted)] transition-colors open:bg-[var(--card)]">

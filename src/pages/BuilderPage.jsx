@@ -90,12 +90,26 @@ export default function BuilderPage() {
   )
 
   const preview = (
-    <div className="flex h-full min-h-0 w-full gap-2">
+    // flex-1 rather than h-full: in the stacked layout this is a flex item of a column,
+    // and a percentage height against a flex item does not resolve — which is how the
+    // preview collapsed to the height of the little zoom rail (135px on a phone) and the
+    // page fitted itself into that strip. flex-1 grows in a column and is ignored in a
+    // grid cell, where stretching already fills the row.
+    <div
+      className={
+        stacked ? 'flex min-h-0 flex-1 w-full flex-col gap-2' : 'flex min-h-0 flex-1 w-full gap-2'
+      }
+    >
       {/* The controls run down the left edge rather than across the top: a toolbar costs
-          the page its height, and height is the axis this page is short of. */}
+          the page its height, and height is the axis this page is short of. On a phone it
+          is the opposite — the width is what is short — so there the rail lies flat. */}
       <div
         data-no-print
-        className="flex w-16 shrink-0 flex-col gap-1 text-[10px] text-[var(--muted-foreground)] p-3"
+        className={
+          stacked
+            ? 'flex w-full shrink-0 flex-row items-center gap-2 text-[10px] text-[var(--muted-foreground)]'
+            : 'flex w-16 shrink-0 flex-col gap-1 p-3 text-[10px] text-[var(--muted-foreground)]'
+        }
       >
         {stacked ? null : (
           <Button
@@ -111,7 +125,7 @@ export default function BuilderPage() {
           </Button>
         )}
 
-        <div className="mt-2 flex flex-col gap-1">
+        <div className={stacked ? 'flex flex-row items-center gap-1' : 'mt-2 flex flex-col gap-1'}>
           <Button
             variant="ghost"
             onClick={() => setZoom((current) => clampZoom(current + ZOOM_STEP))}
@@ -141,7 +155,7 @@ export default function BuilderPage() {
         </div>
       </div>
 
-      <div className="min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 flex-col">
         <ResumeSheet pages={fit.pages} padding={settings.padding} stackRef={sheet} zoom={zoom} />
       </div>
     </div>

@@ -61,6 +61,13 @@ export default function ResumeSheet({ pages, padding, stackRef, zoom = 1 }) {
       // last good fit alone is better than resetting to something wrong.
       if (!width) return
 
+      // The padding around the stack is not page. Sizing the page to the padded width
+      // makes it overflow the pane it is supposed to fit inside, which is what a phone
+      // hit first: the fit was fine, the box it was given was not.
+      const style = stackRef?.current ? window.getComputedStyle(stackRef.current) : null
+      const padX = style ? parseFloat(style.paddingLeft) + parseFloat(style.paddingRight) : 0
+      const padY = style ? parseFloat(style.paddingTop) + parseFloat(style.paddingBottom) : 0
+
       // A pane with width but no height is a layout the measurement cannot trust, so
       // fall back to the window it is carved out of rather than rendering the page
       // oversized.
@@ -70,7 +77,7 @@ export default function ResumeSheet({ pages, padding, stackRef, zoom = 1 }) {
       // Both axes, or the page is taller than the pane and the user scrolls. With
       // several pages this still holds page by page: one page fills the pane, and the
       // pane scrolls to the next.
-      setFit(Math.min(width / PAGE_WIDTH, usableHeight / PAGE_HEIGHT) * FIT_SLACK)
+      setFit(Math.min((width - padX) / PAGE_WIDTH, (usableHeight - padY) / PAGE_HEIGHT) * FIT_SLACK)
     }
 
     measure()
@@ -82,13 +89,16 @@ export default function ResumeSheet({ pages, padding, stackRef, zoom = 1 }) {
     observer.observe(element)
 
     return () => observer.disconnect()
-  }, [])
+  }, [stackRef])
 
   const scale = fit * zoom
   const many = pages.length > 1
 
   return (
-    <div ref={frame} className="relative h-full w-full">
+    // flex-1 and not h-full: the parent is a flex column, and a percentage height against
+    // a flex-sized box does not resolve — that is how this box measured 0 tall on a small
+    // phone, with the pane inside it collapsing and the fit left guessing.
+    <div ref={frame} className="relative min-h-0 w-full flex-1">
       {/* The box that gets measured is this outer element, and its size comes from the
           layout above. The scroll layer is inside it and absolutely positioned, so a
           scrollbar appearing when zoomed in cannot change what was measured — that
@@ -102,7 +112,7 @@ export default function ResumeSheet({ pages, padding, stackRef, zoom = 1 }) {
         <div
           ref={stackRef}
           data-sheet-stack
-          className="flex flex-col items-center gap-4 p-6"
+          className="flex flex-col items-center gap-4 p-4 sm:p-6"
           style={{ margin: 'auto' }}
         >
           {pages.map((page, index) => (

@@ -14,12 +14,13 @@ import {
   findResume,
   loadLibrary,
   migrateLibrary,
-  removeResume,
   removeManyResume,
+  removeResume,
   renameResume,
   resolveStorage,
   saveLibrary,
   setActiveResume,
+  sortResumesByRecency,
   updateResume,
   validateLibrary,
 } from './stash.js'
@@ -216,6 +217,28 @@ describe('removeManyResume', () => {
     const library = libraryWith(resume())
 
     expect(removeManyResume(library, [])).toEqual(library)
+  })
+})
+
+describe('sortResumesByRecency', () => {
+  it('lists most recently updated first, leaving the array alone', () => {
+    const input = [
+      { id: 'a', updatedAt: '2026-03-01T00:00:00.000Z' },
+      { id: 'b', updatedAt: '2026-03-03T00:00:00.000Z' },
+      { id: 'c', updatedAt: '2026-03-02T00:00:00.000Z' },
+    ]
+
+    expect(sortResumesByRecency(input).map((entry) => entry.id)).toEqual(['b', 'c', 'a'])
+    expect(input.map((entry) => entry.id)).toEqual(['a', 'b', 'c'])
+  })
+
+  it('keeps resumes without a date last', () => {
+    const input = [
+      { id: 'a', updatedAt: '2026-03-02T00:00:00.000Z' },
+      { id: 'b' },
+    ]
+
+    expect(sortResumesByRecency(input).map((entry) => entry.id)).toEqual(['a', 'b'])
   })
 })
 

@@ -13,6 +13,7 @@ import {
   saveLibrary,
   seedLibrary,
   setActiveResume,
+  sortResumesByRecency,
   updateResume,
 } from '../lib/stash.js'
 import { sampleResumes } from '../lib/samples.js'
@@ -107,7 +108,7 @@ export function useStash(storage) {
 
   return {
     library,
-    resumes: library.resumes,
+    resumes: sortResumesByRecency(library.resumes),
     activeId: library.activeId,
     active,
     status,

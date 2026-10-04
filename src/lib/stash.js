@@ -98,6 +98,19 @@ export function findResume(library, id) {
   return library.resumes.find((resume) => resume.id === id) ?? null
 }
 
+/**
+ * Display order for every surface that lists resumes — the top-bar switcher and the
+ * library page alike — so the two never disagree. Most recently updated first: the
+ * resume someone is actually working on is the one they want at the top. Storage
+ * order is left alone, though: what the backup file holds is not the same question
+ * as what the list shows.
+ */
+export function sortResumesByRecency(resumes) {
+  return [...resumes].sort(
+    (a, b) => new Date(b.updatedAt ?? 0).getTime() - new Date(a.updatedAt ?? 0).getTime(),
+  )
+}
+
 export function activeResume(library) {
   return findResume(library, library.activeId)
 }

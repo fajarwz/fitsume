@@ -1,0 +1,17 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Client-side routing (BrowserRouter): a direct hit on /resume/:id must serve the
+# shell, or a refresh turns into a 404.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Built asset filenames are content-hashed, so they never collide and never need
+# revalidation.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

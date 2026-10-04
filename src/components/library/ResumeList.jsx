@@ -108,7 +108,7 @@ export default function ResumeList({
                 aria-haspopup="menu"
                 aria-expanded={menuOpen}
                 onClick={() => (menuOpen ? closeMenu() : setOpenMenuId(resume.id))}
-                className="border border-[var(--border)] bg-[var(--card)] shadow-md"
+                className="border border-[var(--border)] bg-[var(--card)]"
               >
                 {menuOpen ? <CloseIcon className="h-4 w-4" /> : <MoreIcon className="h-4 w-4" />}
               </Button>

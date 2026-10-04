@@ -21,6 +21,7 @@ import {
   parseLibraryJson,
   resumeFromMarkdown,
 } from '../lib/files.js'
+import { getSample, hasOnlySampleResumes, sampleResumeId } from '../lib/samples.js'
 import { useStashContext } from '../state/StashProvider.jsx'
 
 /**
@@ -43,6 +44,10 @@ export default function ResumePage() {
     [resumes, selected],
   )
   const allSelected = resumes.length > 0 && selectedIds.length === resumes.length
+  const onlySamples = hasOnlySampleResumes(resumes)
+  const habibieId = sampleResumeId(getSample('bj-habibie'))
+  const starterId =
+    (onlySamples && resumes.find((resume) => resume.id === habibieId)?.id) ?? resumes[0]?.id
 
   const toggleSelection = (id) =>
     setSelected((current) => {
@@ -156,6 +161,23 @@ export default function ResumePage() {
             />
           )}
         </PageHeader>
+
+        {onlySamples ? (
+          <section className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[var(--border)] bg-[var(--glass)] p-3 backdrop-blur-xl">
+            <div className="min-w-0">
+              <Text as="h2" variant="13-semibold" className="tracking-tight">
+                Start from B.J. Habibie
+              </Text>
+              <Text variant="12-regular" tone="muted">
+                His resume is the most ordinary one here, so it is the easiest to turn into
+                yours. Open it, rename him, and delete what is not you.
+              </Text>
+            </div>
+            <Button size="sm" variant="primary" onClick={() => open(starterId)}>
+              Edit B.J. Habibie
+            </Button>
+          </section>
+        ) : null}
 
         {!persistent ? (
           <Text

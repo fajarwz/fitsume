@@ -67,6 +67,15 @@ export function isSampleResume(resume) {
   return typeof resume?.id === 'string' && resume.id.startsWith(SAMPLE_RESUME_PREFIX)
 }
 
+/**
+ * The onboarding state: the library holds nothing but the seeded samples, so the
+ * visitor has not made anything of their own yet. Once the first non-sample resume
+ * lands, the invitation to start from a sample is no longer shown.
+ */
+export function hasOnlySampleResumes(resumes) {
+  return resumes.length > 0 && resumes.every(isSampleResume)
+}
+
 const SAMPLE_LIBRARY = [
   {
     id: 'al-khwarizmi',

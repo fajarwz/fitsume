@@ -7,6 +7,7 @@ import {
   SAMPLE_ORDER,
   SAMPLE_RESUME_PREFIX,
   getSample,
+  hasOnlySampleResumes,
   isSampleResume,
   sampleResumeId,
   sampleResumes,
@@ -117,5 +118,16 @@ describe('samples', () => {
       // Restore can tell a row began life as a sample.
       expect(isSampleResume(resume)).toBe(true)
     }
+  })
+
+  it('knows when the library holds nothing but the seeded samples', () => {
+    const [habibie, ...others] = sampleResumes()
+
+    expect(hasOnlySampleResumes(sampleResumes())).toBe(true)
+    expect(hasOnlySampleResumes([habibie])).toBe(true)
+    expect(hasOnlySampleResumes([...others, { id: 'mine', markdown: '# Me' }])).toBe(false)
+    expect(hasOnlySampleResumes([{ id: 'mine', markdown: '# Me' }])).toBe(false)
+    // An empty library is a blank slate, not the seeded-samples onboarding state.
+    expect(hasOnlySampleResumes([])).toBe(false)
   })
 })

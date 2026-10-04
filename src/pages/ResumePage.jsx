@@ -5,6 +5,7 @@ import ResumeList from '../components/library/ResumeList.jsx'
 import TopBar from '../components/layout/TopBar.jsx'
 import Button from '../components/ui/Button.jsx'
 import Modal from '../components/ui/Modal.jsx'
+import PageHeader from '../components/ui/PageHeader.jsx'
 import PageTitle from '../components/ui/PageTitle.jsx'
 import Text from '../components/ui/Text.jsx'
 import Toggle from '../components/ui/Toggle.jsx'
@@ -139,7 +140,7 @@ export default function ResumePage() {
         {/* A fixed-height slot for the heading: whether it shows the title or the
             bulk controls, it claims the same vertical room, so the list below never
             hops when a selection begins or ends. */}
-        <div className="min-h-[3.5rem]">
+        <PageHeader>
           {selectedIds.length > 0 ? (
             <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
               <Text as="h1" variant="18-semibold" className="tracking-tight">
@@ -162,7 +163,7 @@ export default function ResumePage() {
               subtitle="All of this is in your browser. Nothing is uploaded, and there is no account — so a backup file is the only copy that survives clearing your browser data."
             />
           )}
-        </div>
+        </PageHeader>
 
         {!persistent ? (
           <Text

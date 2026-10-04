@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 
 import TopBar from '../components/layout/TopBar.jsx'
 import Button from '../components/ui/Button.jsx'
+import PageHeader from '../components/ui/PageHeader.jsx'
 import PageTitle from '../components/ui/PageTitle.jsx'
 import Text from '../components/ui/Text.jsx'
 import { SAMPLES, sampleResumes } from '../lib/samples.js'
@@ -42,10 +43,12 @@ export default function SettingsPage() {
       />
 
       <main className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4">
-        <PageTitle
-          title="Settings"
-          subtitle="Stored in this browser. There is no account, and nothing is uploaded."
-        />
+        <PageHeader>
+          <PageTitle
+            title="Settings"
+            subtitle="Stored in this browser. There is no account, and nothing is uploaded."
+          />
+        </PageHeader>
 
         <section className="flex flex-col gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] p-3">
           <Text as="h2" variant="12-semibold">

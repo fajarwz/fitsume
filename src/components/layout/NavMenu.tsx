@@ -19,7 +19,6 @@ export interface NavMenuProps {
   resumes?: Resume[]
   resume?: Resume | null
   onNew?: () => void
-  onExport?: () => void
   secondary?: ReactNode
 }
 
@@ -27,7 +26,6 @@ export default function NavMenu({
   resumes = [],
   resume = null,
   onNew,
-  onExport,
   secondary = null,
 }: NavMenuProps) {
   const [open, setOpen] = useState(false)
@@ -175,20 +173,6 @@ export default function NavMenu({
               >
                 {secondary}
               </div>
-            ) : null}
-
-            {onExport ? (
-              <Button
-                variant="primary"
-                disabled={!resume}
-                className="mt-auto w-full"
-                onClick={() => {
-                  close()
-                  onExport()
-                }}
-              >
-                Export PDF
-              </Button>
             ) : null}
           </div>
         </>,

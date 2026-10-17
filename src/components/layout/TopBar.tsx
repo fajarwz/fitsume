@@ -7,7 +7,7 @@ import Select from '../ui/Select.tsx'
 import Text from '../ui/Text.tsx'
 import NavLinks from './NavLinks.tsx'
 import NavMenu from './NavMenu.tsx'
-import { GitHubIcon, PlusIcon, PrinterIcon } from '../ui/icons.tsx'
+import { GitHubIcon, PlusIcon } from '../ui/icons.tsx'
 import { useMediaQuery } from '../../hooks/useMediaQuery.ts'
 import { useStashContext } from '../../state/StashProvider.tsx'
 import type { Resume } from '../../lib/stash.ts'
@@ -18,11 +18,10 @@ const STACKED = '(max-width: 1000px)'
 export interface TopBarProps {
   resume?: Resume | null
   onNew?: () => void
-  onExport?: () => void
   secondary?: ReactNode
 }
 
-export default function TopBar({ resume = null, onNew, onExport, secondary = null }: TopBarProps) {
+export default function TopBar({ resume = null, onNew, secondary = null }: TopBarProps) {
   const { resumes, persistent } = useStashContext()
   const navigate = useNavigate()
   const stacked = useMediaQuery(STACKED)
@@ -45,13 +44,7 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
       </Text>
 
       {stacked ? (
-        <NavMenu
-          resumes={resumes}
-          resume={resume}
-          onNew={onNew}
-          onExport={onExport}
-          secondary={secondary}
-        />
+        <NavMenu resumes={resumes} resume={resume} onNew={onNew} secondary={secondary} />
       ) : (
         <>
           <nav className="flex items-center gap-1">
@@ -101,12 +94,6 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
             >
               <GitHubIcon className="h-4 w-4" />
             </a>
-            {onExport ? (
-              <Button size="sm" variant="primary" onClick={onExport} disabled={!resume}>
-                <PrinterIcon className="h-4 w-4" />
-                Export PDF
-              </Button>
-            ) : null}
           </div>
         </>
       )}

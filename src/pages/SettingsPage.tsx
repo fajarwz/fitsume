@@ -1,10 +1,12 @@
 import { useNavigate } from 'react-router-dom'
+import type { ComponentType } from 'react'
 
 import TopBar from '../components/layout/TopBar.tsx'
 import Button from '../components/ui/Button.tsx'
 import PageHeader from '../components/ui/PageHeader.tsx'
 import PageTitle from '../components/ui/PageTitle.tsx'
 import Text from '../components/ui/Text.tsx'
+import { MonitorIcon, MoonIcon, RestoreIcon, SunIcon } from '../components/ui/icons.tsx'
 import { SAMPLES, sampleResumes } from '../lib/samples.ts'
 import { missingSamples } from '../lib/stash.ts'
 import { STARTER_MARKDOWN } from '../lib/starter.ts'
@@ -12,10 +14,10 @@ import { useStashContext } from '../state/StashProvider.tsx'
 import { useTheme } from '../state/ThemeProvider.tsx'
 import type { ThemePreference } from '../lib/theme.ts'
 
-const THEMES: Array<[ThemePreference, string]> = [
-  ['light', 'Light'],
-  ['dark', 'Dark'],
-  ['system', 'System'],
+const THEMES: Array<[ThemePreference, string, ComponentType<{ className?: string }>]> = [
+  ['light', 'Light', SunIcon],
+  ['dark', 'Dark', MoonIcon],
+  ['system', 'System', MonitorIcon],
 ]
 
 /**
@@ -55,17 +57,23 @@ export default function SettingsPage() {
             System follows your operating system, and switches with it.
           </Text>
           <div className="flex flex-wrap gap-1">
-            {THEMES.map(([id, label]) => (
-              <Button
-                key={id}
-                size="sm"
-                variant={theme === id ? 'primary' : 'ghost'}
-                aria-pressed={theme === id}
-                onClick={() => setTheme(id)}
-              >
-                {label}
-              </Button>
-            ))}
+            {THEMES.map(([id, label, Icon]) => {
+              const pressed = theme === id
+
+              return (
+                <Button
+                  key={id}
+                  size="sm"
+                  variant={pressed ? 'primary' : 'ghost'}
+                  aria-pressed={pressed}
+                  onClick={() => setTheme(id)}
+                >
+                  {/* Keyed on the theme, so the icon is remounted and replays its turn. */}
+                  <Icon key={theme} className={`h-4 w-4 ${pressed ? 'theme-pop' : ''}`} />
+                  {label}
+                </Button>
+              )
+            })}
           </div>
         </section>
 
@@ -93,6 +101,7 @@ export default function SettingsPage() {
               onClick={() => actions.restoreSamples()}
               disabled={missing.length === 0}
             >
+              <RestoreIcon className="h-4 w-4" />
               {missing.length === 0
                 ? 'All restored'
                 : `Restore ${missing.length} sample resume${missing.length === 1 ? '' : 's'}`}

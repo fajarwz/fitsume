@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
 
 import Text from '../ui/Text.tsx'
+import { LayersIcon } from '../ui/icons.tsx'
 import { POSITIONED_TYPE } from '../../lib/layout.ts'
 import type { PositionedItem } from '../../lib/layout.ts'
 import { HAIRLINE, PAGE_HEIGHT, PAGE_WIDTH } from '../../lib/page.ts'
@@ -191,9 +192,12 @@ export default function ResumeSheet({
               </div>
 
               {many ? (
-                <Text as="span" data-no-print variant="11-regular" tone="muted" tabular>
-                  {index + 1} / {pages.length}
-                </Text>
+                <span data-no-print className="flex items-center gap-1">
+                  <LayersIcon className="h-3 w-3 text-[var(--muted-foreground)]" />
+                  <Text as="span" variant="11-regular" tone="muted" tabular>
+                    {index + 1} / {pages.length}
+                  </Text>
+                </span>
               ) : null}
             </div>
           ))}

@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 
 import Button from './Button.tsx'
 import Text from './Text.tsx'
+import { CloseIcon } from './icons.tsx'
+import type { ReactNode } from 'react'
 
 /**
  * Plain overlay rather than <dialog> (jsdom can't open one); Escape/Cancel only, no backdrop click.
@@ -11,6 +13,8 @@ export interface ModalProps {
   title: string
   description?: string
   confirmLabel?: string
+  /** The mark inside the confirm button. */
+  confirmIcon?: ReactNode
   onConfirm?: () => void
   onCancel?: () => void
 }
@@ -20,6 +24,7 @@ export default function Modal({
   title,
   description,
   confirmLabel = 'Confirm',
+  confirmIcon,
   onConfirm,
   onCancel,
 }: ModalProps) {
@@ -55,9 +60,11 @@ export default function Modal({
         ) : null}
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="ghost" size="sm" onClick={onCancel}>
+            <CloseIcon className="h-3.5 w-3.5" />
             Cancel
           </Button>
           <Button variant="primary" size="sm" onClick={onConfirm}>
+            {confirmIcon}
             {confirmLabel}
           </Button>
         </div>

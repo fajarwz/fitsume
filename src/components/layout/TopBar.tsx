@@ -7,7 +7,7 @@ import Select from '../ui/Select.tsx'
 import Text from '../ui/Text.tsx'
 import NavLinks from './NavLinks.tsx'
 import NavMenu from './NavMenu.tsx'
-import { GitHubIcon } from '../ui/icons.tsx'
+import { GitHubIcon, PlusIcon, PrinterIcon } from '../ui/icons.tsx'
 import { useMediaQuery } from '../../hooks/useMediaQuery.ts'
 import { useStashContext } from '../../state/StashProvider.tsx'
 import type { Resume } from '../../lib/stash.ts'
@@ -32,7 +32,18 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
       data-no-print
       className="relative z-30 flex min-h-16 flex-wrap items-center gap-3 border-b border-[var(--glass-border)] bg-[var(--glass)] px-4 py-2 backdrop-blur-xl"
     >
-      <Text as={Link} to="/" variant="14-semibold" className="mr-2 tracking-tight">
+      <Text
+        as={Link}
+        to="/"
+        variant="14-semibold"
+        className="mr-2 flex items-center gap-2 tracking-tight"
+      >
+        <span
+          aria-hidden="true"
+          className="flex h-5 w-5 items-center justify-center rounded-[5px] bg-[var(--accent)] text-[11px] font-semibold text-[var(--accent-foreground)]"
+        >
+          F
+        </span>
         Fitsume
       </Text>
 
@@ -77,6 +88,7 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
 
           {onNew ? (
             <Button size="sm" onClick={onNew}>
+              <PlusIcon className="h-4 w-4" />
               New
             </Button>
           ) : null}
@@ -94,6 +106,7 @@ export default function TopBar({ resume = null, onNew, onExport, secondary = nul
             </a>
             {onExport ? (
               <Button size="sm" variant="primary" onClick={onExport} disabled={!resume}>
+                <PrinterIcon className="h-4 w-4" />
                 Export PDF
               </Button>
             ) : null}

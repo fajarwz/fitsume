@@ -10,6 +10,14 @@ import PageHeader from '../components/ui/PageHeader.tsx'
 import PageTitle from '../components/ui/PageTitle.tsx'
 import Text from '../components/ui/Text.tsx'
 import Toggle from '../components/ui/Toggle.tsx'
+import {
+  ArchiveIcon,
+  FileUpIcon,
+  PlusIcon,
+  RestoreIcon,
+  SparkIcon,
+  TrashIcon,
+} from '../components/ui/icons.tsx'
 import { STARTER_MARKDOWN } from '../lib/starter.ts'
 import {
   MERGE_MODES,
@@ -133,6 +141,7 @@ export default function ResumePage() {
         onNew={() => open(actions.create({ name: 'New resume', markdown: STARTER_MARKDOWN }).id)}
         secondary={
           <Button size="sm" variant="secondary" onClick={backup}>
+            <ArchiveIcon className="h-4 w-4" />
             Back up resumes
           </Button>
         }
@@ -153,6 +162,7 @@ export default function ResumePage() {
                   {allSelected ? 'Clear selection' : 'Select all'}
                 </Button>
                 <Button size="sm" variant="danger" onClick={() => setConfirmingMany(true)}>
+                  <TrashIcon className="h-4 w-4" />
                   Delete selected
                 </Button>
               </div>
@@ -176,6 +186,7 @@ export default function ResumePage() {
               </Text>
             </div>
             <Button size="sm" variant="primary" onClick={() => open(starterId)}>
+              <SparkIcon className="h-4 w-4" />
               Edit B.J. Habibie
             </Button>
           </section>
@@ -246,9 +257,11 @@ export default function ResumePage() {
             </Text>
             <div className="flex flex-wrap gap-2">
               <Button size="sm" variant="primary" onClick={startBlank}>
+                <PlusIcon className="h-4 w-4" />
                 New resume
               </Button>
               <Button size="sm" onClick={() => navigate('/settings')}>
+                <RestoreIcon className="h-4 w-4" />
                 Restore sample resumes
               </Button>
             </div>
@@ -278,6 +291,7 @@ export default function ResumePage() {
             title={`Delete ${selectedIds.length} resume${selectedIds.length === 1 ? '' : 's'}?`}
             description="This is irreversible."
             confirmLabel="Delete"
+            confirmIcon={<TrashIcon className="h-3.5 w-3.5" />}
             onCancel={() => setConfirmingMany(false)}
             onConfirm={() => {
               actions.removeMany(selectedIds)
@@ -293,6 +307,7 @@ export default function ResumePage() {
           </Text>
 
           <Button size="sm" onClick={() => markdownInput.current?.click()}>
+            <FileUpIcon className="h-4 w-4" />
             Import .md
           </Button>
           <input
@@ -304,6 +319,7 @@ export default function ResumePage() {
           />
 
           <Button size="sm" onClick={() => backupInput.current?.click()}>
+            <RestoreIcon className="h-4 w-4" />
             Restore backup
           </Button>
           <input

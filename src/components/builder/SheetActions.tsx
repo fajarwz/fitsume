@@ -1,7 +1,8 @@
 import { useState } from 'react'
+import type { ReactNode } from 'react'
 
 import Button from '../ui/Button.tsx'
-import { CloseIcon, MoreIcon } from '../ui/icons.tsx'
+import { CloseIcon, CompressIcon, ExpandIcon, FileDownIcon, MoreIcon, PrinterIcon } from '../ui/icons.tsx'
 import type { ButtonProps } from '../ui/Button.tsx'
 
 const noop = () => {}
@@ -38,7 +39,12 @@ export default function SheetActions({
   const atFit = zoom === 1
 
   // One-shot actions close the box; zoom stays open so a run of taps stays together.
-  const item = (label: string, onClick: () => void, opts: Partial<ButtonProps> = {}) => (
+  const item = (
+    label: string,
+    onClick: () => void,
+    opts: Partial<ButtonProps> = {},
+    icon: ReactNode = null,
+  ) => (
     <Button
       size="sm"
       variant="ghost"
@@ -49,6 +55,7 @@ export default function SheetActions({
       }}
       {...opts}
     >
+      {icon}
       {label}
     </Button>
   )
@@ -73,6 +80,7 @@ export default function SheetActions({
             Escape also exits (wired in the builder). */}
         {full ? (
           <Button size="sm" variant="primary" onClick={onFull ?? undefined} title="Exit full screen (Esc)" className="shadow-md">
+            <CompressIcon className="h-4 w-4" />
             Exit full
           </Button>
         ) : null}
@@ -82,6 +90,7 @@ export default function SheetActions({
           onClick={onExport}
           className="shadow-md"
         >
+          <PrinterIcon className="h-4 w-4" />
           Export PDF
         </Button>
 
@@ -140,11 +149,19 @@ export default function SheetActions({
               </div>
 
               {showFull
-                ? item(full ? 'Exit full' : 'Full screen', onFull ?? noop, {
-                    'aria-pressed': full,
-                  })
+                ? item(
+                    full ? 'Exit full' : 'Full screen',
+                    onFull ?? noop,
+                    { 'aria-pressed': full },
+                    <ExpandIcon className="h-4 w-4" />,
+                  )
                 : null}
-              {item('Download .md', onDownloadMarkdown, { title: 'Download .md (Ctrl+S)' })}
+              {item(
+                'Download .md',
+                onDownloadMarkdown,
+                { title: 'Download .md (Ctrl+S)' },
+                <FileDownIcon className="h-4 w-4" />,
+              )}
             </div>
           ) : null}
         </div>

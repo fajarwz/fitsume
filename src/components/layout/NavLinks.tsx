@@ -1,11 +1,15 @@
 import { NavLink, useLocation } from 'react-router-dom'
+import type { ComponentType } from 'react'
 
 import { buttonClasses } from '../ui/Button.tsx'
+import { DocumentIcon, SlidersIcon } from '../ui/icons.tsx'
 
 /** Shared by the bar and the drawer so a route is only added once; borrows the Button's ghost classes to match the buttons beside it. */
-export const NAV: ReadonlyArray<readonly [string, string]> = [
-  ['/', 'Resume'],
-  ['/settings', 'Settings'],
+export const NAV: ReadonlyArray<
+  readonly [string, string, ComponentType<{ className?: string }>]
+> = [
+  ['/', 'Resume', DocumentIcon],
+  ['/settings', 'Settings', SlidersIcon],
 ]
 
 const ACTIVE = '!bg-[var(--accent)] !text-[var(--accent-foreground)]'
@@ -24,7 +28,7 @@ export default function NavLinks({ block = false, onNavigate = null }: NavLinksP
 
   return (
     <>
-      {NAV.map(([to, label]) => (
+      {NAV.map(([to, label, Icon]) => (
         <NavLink
           key={to}
           to={to}
@@ -41,6 +45,7 @@ export default function NavLinks({ block = false, onNavigate = null }: NavLinksP
               .join(' '),
           })}
         >
+          <Icon className="h-4 w-4 shrink-0" />
           {label}
         </NavLink>
       ))}

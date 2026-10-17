@@ -66,7 +66,7 @@ describe('MarkdownEditor', () => {
     const user = userEvent.setup()
     const { onChange } = setup('Shipped the thing')
 
-    await user.click(screen.getByRole('button', { name: '•' }))
+    await user.click(screen.getByRole('button', { name: 'Bullet' }))
 
     expect(lastValue(onChange)).toBe('- Shipped the thing')
   })

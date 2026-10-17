@@ -1,5 +1,6 @@
 import Text from './Text.tsx'
 import { CheckIcon } from './icons.tsx'
+import type { ReactNode } from 'react'
 
 const TOGGLE_STYLE: Record<'on' | 'off', string> = {
   // Green (not the accent) so it reads as "on/enabled, not the app's primary-action button".
@@ -15,6 +16,8 @@ export interface ToggleProps {
   checked: boolean
   disabled?: boolean
   hint?: string
+  /** The mark when it is on; a tick by default. */
+  icon?: ReactNode
   onChange: (value: boolean) => void
   className?: string
 }
@@ -24,6 +27,7 @@ export default function Toggle({
   checked,
   disabled = false,
   hint,
+  icon,
   onChange,
   className = '',
 }: ToggleProps) {
@@ -38,7 +42,7 @@ export default function Toggle({
           checked ? TOGGLE_STYLE.on : TOGGLE_STYLE.off
         } ${className}`}
       >
-        {checked ? <CheckIcon className="h-3.5 w-3.5" /> : null}
+        {checked ? (icon ?? <CheckIcon className="h-3.5 w-3.5" />) : null}
         {label}
       </button>
       {hint ? (

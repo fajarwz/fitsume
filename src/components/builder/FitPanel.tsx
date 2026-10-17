@@ -1,6 +1,7 @@
 import Slider from '../ui/Slider.tsx'
 import Text from '../ui/Text.tsx'
 import Toggle from '../ui/Toggle.tsx'
+import { CheckIcon, SparkIcon, WarningIcon } from '../ui/icons.tsx'
 import {
   FONT_SIZE_MAX,
   FONT_SIZE_MIN,
@@ -40,6 +41,7 @@ export default function FitPanel({ settings, fit, onChange }: FitPanelProps) {
         checked={auto}
         onChange={(value) => set({ autoFit: value })}
         hint="Finds the largest font size and line spacing that still fits."
+        icon={<SparkIcon className="h-3.5 w-3.5" />}
         className="w-full"
       />
 
@@ -120,6 +122,8 @@ function Rollup({ fit, settings }: { fit: FitPanelFit; settings: ResumeSettings 
         tone="muted"
         className="rounded-md bg-[var(--muted)] p-2"
       >
+        {/* Inline, not a flex row: flex would break the sentence into boxes with gaps. */}
+        <CheckIcon className="mr-1.5 inline-block h-3.5 w-3.5 align-[-2px]" />
         Fitted at{' '}
         <Text as="span" variant="12-regular" mono tabular>
           {fit.fontSize.toFixed(1)}px
@@ -144,6 +148,7 @@ function Rollup({ fit, settings }: { fit: FitPanelFit; settings: ResumeSettings 
         tone="muted"
         className="rounded-md bg-[var(--muted)] p-2"
       >
+        <WarningIcon className="mr-1.5 inline-block h-3.5 w-3.5 align-[-2px] text-[var(--negative)]" />
         <Text as="span" variant="12-regular" mono tabular>
           {pages} pages
         </Text>{' '}
@@ -159,6 +164,7 @@ function Rollup({ fit, settings }: { fit: FitPanelFit; settings: ResumeSettings 
       tone="muted"
       className="rounded-md bg-[var(--muted)] p-2"
     >
+      <CheckIcon className="mr-1.5 inline-block h-3.5 w-3.5 align-[-2px]" />
       One page at {settings.baseFontSize}px, with room to spare — auto-fit would use the space.
     </Text>
   )

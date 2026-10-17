@@ -1,15 +1,26 @@
 import { useEffect, useRef } from 'react'
-import type { KeyboardEvent, ReactNode } from 'react'
+import type { ComponentType, KeyboardEvent, ReactNode } from 'react'
 
 import Button from '../ui/Button.tsx'
 import CheatSheet from './CheatSheet.tsx'
+import { LinkIcon, ListIcon, RedoIcon, RuleIcon, UndoIcon } from '../ui/icons.tsx'
 import { useUndo } from '../../hooks/useUndo.ts'
 
-/* Plain markdown textarea on purpose: the fit engine needs the document as text. */
-const TOOLS: Array<{ label: string; title: string; prefix: string }> = [
+/* Plain markdown textarea on purpose: the fit engine needs the document as text. H2 and H3
+   keep their letters; the rest of the toolbar is drawn. */
+interface Tool {
+  label: string
+  title: string
+  prefix: string
+  Icon?: ComponentType<{ className?: string }>
+  /** Drawn instead of labelled; the label becomes the aria-label. */
+  iconOnly?: boolean
+}
+
+const TOOLS: Tool[] = [
   { label: 'H2', title: 'Section heading', prefix: '## ' },
   { label: 'H3', title: 'Item heading', prefix: '### ' },
-  { label: '•', title: 'Bullet', prefix: '- ' },
+  { label: 'Bullet', title: 'Bullet', prefix: '- ', Icon: ListIcon, iconOnly: true },
 ]
 
 /* Placeholder syntax, not a dialog: it resolves as a live link the moment it lands. */
@@ -215,15 +226,20 @@ export default function MarkdownEditor({
             size="sm"
             variant="ghost"
             title={tool.title}
+            aria-label={tool.iconOnly ? tool.title : undefined}
+            className={tool.iconOnly ? 'px-2' : undefined}
             onClick={() => edit((element) => prefixSelection(element, tool.prefix))}
           >
-            {tool.label}
+            {tool.Icon ? <tool.Icon className="h-4 w-4" /> : null}
+            {tool.iconOnly ? null : tool.label}
           </Button>
         ))}
         <Button
           size="sm"
           variant="ghost"
           title="Horizontal rule"
+          aria-label="Horizontal rule"
+          className="px-2"
           onClick={() =>
             edit((element) => {
               const at = element.selectionStart
@@ -233,7 +249,7 @@ export default function MarkdownEditor({
             })
           }
         >
-          —
+          <RuleIcon className="h-4 w-4" />
         </Button>
         <Button
           size="sm"
@@ -241,6 +257,7 @@ export default function MarkdownEditor({
           title={`Link the selected text, or insert ${LINK_PLACEHOLDER}`}
           onClick={insertLink}
         >
+          <LinkIcon className="h-4 w-4" />
           Link
         </Button>
 
@@ -248,20 +265,24 @@ export default function MarkdownEditor({
           <Button
             size="sm"
             variant="ghost"
+            className="px-2"
             onClick={undo}
             disabled={!canUndo}
+            aria-label="Undo"
             title="Undo (Ctrl+Z)"
           >
-            Undo
+            <UndoIcon className="h-4 w-4" />
           </Button>
           <Button
             size="sm"
             variant="ghost"
+            className="px-2"
             onClick={redo}
             disabled={!canRedo}
+            aria-label="Redo"
             title="Redo (Ctrl+Shift+Z)"
           >
-            Redo
+            <RedoIcon className="h-4 w-4" />
           </Button>
         </div>
       </div>

@@ -112,7 +112,7 @@ describe('layoutBlocks', () => {
       'ink',
       'inkMuted',
       'inkFaint',
-      'ink',
+      'inkMuted',
     ])
   })
 

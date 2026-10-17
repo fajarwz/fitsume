@@ -16,19 +16,26 @@ describe('parseMarkdown', () => {
   it('styles the three-line header: title, subtitle, then faint metadata', () => {
     const [title, subtitle, meta] = parseMarkdown(HEADER) as TextBlock[]
 
-    expect(title).toMatchObject({ text: 'Rizky Pratama', fontScale: 1.5, bold: true })
+    expect(title).toMatchObject({
+      text: 'Rizky Pratama',
+      fontScale: 1.5,
+      bold: true,
+      kind: 'title',
+    })
     expect(subtitle).toMatchObject({
       text: 'Senior Software Engineer',
       fontScale: 1,
       bold: false,
       marginBottom: 6,
       color: 'inkMuted',
+      kind: 'subtitle',
     })
     expect(meta).toMatchObject({
       text: 'Jakarta · rizky@example.com',
       fontScale: 0.8,
       color: 'inkFaint',
       marginBottom: 16,
+      kind: 'meta',
     })
   })
 
@@ -82,10 +89,31 @@ describe('parseMarkdown', () => {
 
     expect(blocks[0]).toMatchObject({
       text: 'Just a summary paragraph.',
-      color: 'ink',
+      color: 'inkMuted',
       marginBottom: 6,
+      kind: 'body',
     })
     expect(blocks[0].spaceBefore).toBeUndefined()
+  })
+
+  it('keeps every plain line of a paragraph body text, however many there are', () => {
+    // Body and subtitle now share a colour, so a parser that identified them by looking
+    // would turn the second line of any paragraph into the faint contact metadata.
+    const blocks = parseMarkdown('One plain line.\nAnother plain line.') as TextBlock[]
+
+    expect(blocks.map((block) => block.kind)).toEqual(['body', 'body'])
+    expect(blocks[1].marginBottom).toBe(6)
+    expect(blocks[1].fontScale).toBe(1)
+  })
+
+  it('paints a paragraph and a bullet in the same ink', () => {
+    // The summary, the description under a degree and a bare SKILLS line are body text;
+    // the experience details are bullets. They are one weight of reading, not two.
+    const [paragraph] = parseMarkdown('A summary paragraph.') as TextBlock[]
+    const [bullet] = parseMarkdown('- a detail of the job') as TextBlock[]
+
+    expect(paragraph.color).toBe(bullet.color)
+    expect(paragraph.color).toBe('inkMuted')
   })
 
   it('ignores blank lines', () => {
@@ -96,13 +124,14 @@ describe('parseMarkdown', () => {
     const blocks = parseMarkdown('#NotAHeading\n##AlsoNot') as TextBlock[]
 
     expect(blocks[0].fontScale).toBe(1)
-    expect(blocks[0].color).toBe('ink')
+    expect(blocks[0].color).toBe('inkMuted')
   })
 
   it('keeps a body line after a bullet as body text, not metadata', () => {
     const blocks = parseMarkdown('- a bullet\nplain paragraph') as TextBlock[]
 
-    expect(blocks[1].color).toBe('ink')
+    expect(blocks[1].kind).toBe('body')
+    expect(blocks[1].color).toBe('inkMuted')
     expect(blocks[1].marginBottom).toBe(6)
   })
 

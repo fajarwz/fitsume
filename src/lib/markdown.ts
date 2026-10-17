@@ -14,6 +14,11 @@ import { hrefFor } from './links.ts'
  * They are preserved exactly, because the samples and every fit result depend on
  * them, and the tests pin each one. Note the two metadata styles are distinct:
  * the one under a job title is tighter than the one under the header.
+ *
+ * A line's style is decided here, once, and carried on the block as its `kind`.
+ * Nothing downstream asks what a block *looks* like: colours are shared on purpose
+ * (the summary and a bullet read in the same ink), and a style inferred from its own
+ * colour would silently rewrite the dialect the day two of them matched.
  */
 
 export interface BlockLabel {
@@ -22,8 +27,22 @@ export interface BlockLabel {
   start: number
 }
 
+/**
+ * What a line is, structurally — the parser's own mark, set where the style is chosen.
+ */
+export type BlockKind =
+  | 'title'
+  | 'subtitle'
+  | 'meta'
+  | 'itemMeta'
+  | 'section'
+  | 'item'
+  | 'bullet'
+  | 'body'
+
 export interface TextBlock {
   type: 'text'
+  kind: BlockKind
   text: string
   fontScale: number
   bold: boolean
@@ -42,6 +61,7 @@ export interface RuleBlock {
 export type Block = TextBlock | RuleBlock
 
 interface BlockStyle {
+  kind: BlockKind
   fontScale: number
   bold: boolean
   marginBottom: number
@@ -51,17 +71,26 @@ interface BlockStyle {
 }
 
 const STYLES: Record<string, BlockStyle> = {
-  title: { fontScale: 1.5, bold: true, marginBottom: 4, color: 'ink', keepWithNext: true },
+  title: {
+    kind: 'title',
+    fontScale: 1.5,
+    bold: true,
+    marginBottom: 4,
+    color: 'ink',
+    keepWithNext: true,
+  },
   subtitle: {
+    kind: 'subtitle',
     fontScale: 1,
     bold: false,
     marginBottom: 6,
     color: 'inkMuted',
     keepWithNext: true,
   },
-  meta: { fontScale: 0.8, bold: false, marginBottom: 16, color: 'inkFaint' },
-  itemMeta: { fontScale: 0.8, bold: false, marginBottom: 6, color: 'inkFaint' },
+  meta: { kind: 'meta', fontScale: 0.8, bold: false, marginBottom: 16, color: 'inkFaint' },
+  itemMeta: { kind: 'itemMeta', fontScale: 0.8, bold: false, marginBottom: 6, color: 'inkFaint' },
   section: {
+    kind: 'section',
     fontScale: 0.85,
     bold: true,
     marginBottom: 3,
@@ -70,6 +99,7 @@ const STYLES: Record<string, BlockStyle> = {
     keepWithNext: true,
   },
   item: {
+    kind: 'item',
     fontScale: 1,
     bold: true,
     marginBottom: 2,
@@ -77,15 +107,23 @@ const STYLES: Record<string, BlockStyle> = {
     spaceBefore: 'item',
     keepWithNext: true,
   },
+  // The same item again, minus its own gap: the section heading above it already
+  // carries one, and paying for both would leave a hole under every first job.
   itemAfterSection: {
+    kind: 'item',
     fontScale: 1,
     bold: true,
     marginBottom: 2,
     color: 'ink',
     keepWithNext: true,
   },
-  bullet: { fontScale: 1, bold: false, marginBottom: 3, color: 'inkMuted' },
-  body: { fontScale: 1, bold: false, marginBottom: 6, color: 'ink' },
+  bullet: { kind: 'bullet', fontScale: 1, bold: false, marginBottom: 3, color: 'inkMuted' },
+  // Plain prose: the summary under the header, the description under a degree, the
+  // line after a section that is all one sentence. Deliberately the same ink as a
+  // bullet — a resume's own sentences sit at one weight, and only the headings and
+  // the metadata lines step out of it. `ink` here instead made a summary as black as
+  // the job titles around it.
+  body: { kind: 'body', fontScale: 1, bold: false, marginBottom: 6, color: 'inkMuted' },
 }
 
 const BULLET_PREFIX = '- '
@@ -96,9 +134,6 @@ export const BLOCK_TYPE = {
   text: 'text',
   rule: 'rule',
 } as const
-
-/** Titles are level-1; nothing else uses this scale. */
-const TITLE_SCALE = STYLES.title.fontScale
 
 /**
  * `[Label](https://address)` becomes the label, with the address kept aside.
@@ -136,6 +171,7 @@ function textBlock(text: string, style: BlockStyle): TextBlock {
 
   const block: TextBlock = {
     type: BLOCK_TYPE.text,
+    kind: style.kind,
     text: resolved,
     fontScale: style.fontScale,
     bold: Boolean(style.bold),
@@ -152,38 +188,15 @@ function textBlock(text: string, style: BlockStyle): TextBlock {
   return block
 }
 
-function wasTitle(block: Block | undefined): boolean {
-  return block !== undefined && block.type === BLOCK_TYPE.text && block.fontScale === TITLE_SCALE
-}
-
-function wasSubtitle(block: Block | undefined): boolean {
-  return (
-    block !== undefined &&
-    block.type === BLOCK_TYPE.text &&
-    block.bold === false &&
-    block.color === STYLES.subtitle.color &&
-    block.fontScale === STYLES.subtitle.fontScale &&
-    block.marginBottom === STYLES.subtitle.marginBottom
-  )
-}
-
-function wasItemHeading(block: Block | undefined): boolean {
-  return (
-    block !== undefined &&
-    block.type === BLOCK_TYPE.text &&
-    block.bold === true &&
-    block.fontScale === STYLES.item.fontScale &&
-    block.marginBottom === STYLES.item.marginBottom
-  )
-}
-
-function isSectionHeading(block: Block | undefined): boolean {
-  return (
-    block !== undefined &&
-    block.type === BLOCK_TYPE.text &&
-    block.bold === true &&
-    block.fontScale === STYLES.section.fontScale
-  )
+/**
+ * Whether a block is text of a given kind.
+ *
+ * The block type is checked as well as the kind, because a rule block has no kind and
+ * a rule never introduces anything: `kind` is the only thing these predicates read, so
+ * a style's colour, size and margins are free to change without rewriting the dialect.
+ */
+function hasKind(block: Block | undefined, kind: BlockKind): boolean {
+  return block !== undefined && block.type === BLOCK_TYPE.text && block.kind === kind
 }
 
 /**
@@ -208,7 +221,8 @@ export function parseMarkdown(markdown: unknown): Block[] {
     // Longest prefix first: `### ` also starts with `#`, so order matters here.
     if (line.startsWith('### ')) {
       const previous = blocks[blocks.length - 1]
-      const style = isSectionHeading(previous) ? STYLES.itemAfterSection : STYLES.item
+      // The first item under a section already has the section's gap above it.
+      const style = hasKind(previous, 'section') ? STYLES.itemAfterSection : STYLES.item
       blocks.push(textBlock(line.slice(4), style))
       continue
     }
@@ -230,11 +244,14 @@ export function parseMarkdown(markdown: unknown): Block[] {
 
     const previous = blocks[blocks.length - 1]
 
-    if (wasItemHeading(previous)) {
+    // The three header rules: the line under the name is the role, the line under that
+    // is the contact line, and the line under a job title is its dates. Kind, not look,
+    // is what makes each of them identifiable.
+    if (hasKind(previous, 'item')) {
       blocks.push(textBlock(line, STYLES.itemMeta))
-    } else if (wasTitle(previous)) {
+    } else if (hasKind(previous, 'title')) {
       blocks.push(textBlock(line, STYLES.subtitle))
-    } else if (wasSubtitle(previous)) {
+    } else if (hasKind(previous, 'subtitle')) {
       blocks.push(textBlock(line, STYLES.meta))
     } else {
       blocks.push(textBlock(line, STYLES.body))

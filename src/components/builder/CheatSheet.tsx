@@ -28,7 +28,11 @@ export default function CheatSheet() {
         </svg>
       </Text>
 
-      <div className="border-t border-[var(--border)] px-3 py-2.5">
+      {/* Capped and scrollable: the cheat sheet is reference material, and the editor
+          underneath it is the thing being worked in. It never gets to push the field off
+          the screen — and once the wheel reaches the end of this list, overscroll-contain
+          stops it scrolling the pane behind it too. */}
+      <div className="max-h-[min(50vh,20rem)] overflow-y-auto overscroll-contain border-t border-[var(--border)] px-3 py-2.5">
         <dl className="grid grid-cols-[auto_1fr] items-baseline gap-x-4 gap-y-2">
           <Text as="dt" variant="12-regular" mono>
             # Name
@@ -84,32 +88,35 @@ export default function CheatSheet() {
           <Text as="dd" variant="12-regular" tone="muted">
             A rule under the header
           </Text>
-        </dl>
 
-        <Text
-          variant="11-regular"
-          tone="muted"
-          leading="relaxed"
-          className="mt-3 border-t border-[var(--border)] pt-2"
-        >
-          Blank lines are ignored, so space things out however you like. Shortcuts:{' '}
-          <Text as="span" variant="11-regular" mono>
+          <Text as="dt" variant="12-regular" mono>
             Ctrl+Z
-          </Text>{' '}
-          undo,{' '}
-          <Text as="span" variant="11-regular" mono>
+          </Text>
+          <Text as="dd" variant="12-regular" tone="muted">
+            Undo
+          </Text>
+
+          <Text as="dt" variant="12-regular" mono>
             Ctrl+S
-          </Text>{' '}
-          download .md,{' '}
-          <Text as="span" variant="11-regular" mono>
+          </Text>
+          <Text as="dd" variant="12-regular" tone="muted">
+            Download .md
+          </Text>
+
+          <Text as="dt" variant="12-regular" mono>
             Ctrl+P
-          </Text>{' '}
-          export PDF,{' '}
-          <Text as="span" variant="11-regular" mono>
+          </Text>
+          <Text as="dd" variant="12-regular" tone="muted">
+            Export PDF
+          </Text>
+
+          <Text as="dt" variant="12-regular" mono>
             Tab
-          </Text>{' '}
-          indent.
-        </Text>
+          </Text>
+          <Text as="dd" variant="12-regular" tone="muted">
+            Indent
+          </Text>
+        </dl>
       </div>
     </details>
   )

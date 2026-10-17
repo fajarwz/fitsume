@@ -3,7 +3,15 @@ import { useEffect, useState } from 'react'
 import Button from '../ui/Button.tsx'
 import Modal from '../ui/Modal.tsx'
 import Text from '../ui/Text.tsx'
-import { CloseIcon, MoreIcon } from '../ui/icons.tsx'
+import {
+  ArrowIcon,
+  CloseIcon,
+  CopyIcon,
+  DocumentIcon,
+  FileDownIcon,
+  MoreIcon,
+  TrashIcon,
+} from '../ui/icons.tsx'
 import { isSampleResume } from '../../lib/samples.ts'
 import type { Resume } from '../../lib/stash.ts'
 
@@ -50,13 +58,12 @@ export default function ResumeList({
 
   if (resumes.length === 0) {
     return (
-      <Text
-        variant="12-regular"
-        tone="muted"
-        className="rounded-md border border-dashed border-[var(--border)] p-4"
-      >
-        Nothing here yet.
-      </Text>
+      <div className="flex items-center gap-2 rounded-md border border-dashed border-[var(--border)] p-4">
+        <DocumentIcon className="h-4 w-4 shrink-0 text-[var(--muted-foreground)]" />
+        <Text variant="12-regular" tone="muted">
+          Nothing here yet.
+        </Text>
+      </div>
     )
   }
 
@@ -72,59 +79,70 @@ export default function ResumeList({
             <li
               key={resume.id}
               aria-current={isActive ? 'true' : undefined}
-              className={`relative flex flex-wrap items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--glass)] p-3 backdrop-blur-xl ${
-                isActive ? 'border-l-2 border-l-[var(--accent)]' : ''
-              } ${menuOpen ? 'z-20' : ''}`}
+              className={`relative ${menuOpen ? 'z-20' : ''}`}
             >
-              <input
-                type="checkbox"
-                aria-label={`Select ${resume.name}`}
-                checked={isChecked}
-                onChange={() => onToggle(resume.id)}
-                className="h-4 w-4 accent-[var(--accent)]"
-              />
-
-              <label className="sr-only" htmlFor={`name-${resume.id}`}>
-                Resume name
-              </label>
-              <input
-                id={`name-${resume.id}`}
-                value={resume.name}
-                onChange={(event) => onRename(resume.id, event.target.value)}
-                className="h-8 min-w-0 flex-1 rounded-md border border-transparent bg-transparent px-2 text-sm font-medium hover:border-[var(--border)] focus:border-[var(--border)] md:min-w-[10rem]"
-              />
-
-              {isSampleResume(resume) ? (
-                <Text
-                  as="span"
-                  variant="11-regular"
-                  tone="muted"
-                  className="rounded-full border border-[var(--border)] px-1.5 py-0.5"
-                  title="One of the seeded sample resumes. Delete it like any other."
-                >
-                  sample
-                </Text>
-              ) : null}
-
-              <Text as="span" variant="11-regular" tone="muted">
-                {resume.updatedAt?.slice(0, 10) ?? ''}
-              </Text>
-
-              <Button size="sm" onClick={() => onOpen(resume.id)} aria-label={`Open ${resume.name}`}>
-                Open
-              </Button>
-
-              <Button
-                size="sm"
-                variant="ghost"
-                aria-label={`Actions for ${resume.name}`}
-                aria-haspopup="menu"
-                aria-expanded={menuOpen}
-                onClick={() => (menuOpen ? closeMenu() : setOpenMenuId(resume.id))}
-                className="border border-[var(--border)] bg-[var(--card)]"
+              {/* The card is the inner box, so the menu below is outside the blur and can
+                  blur the list it covers. */}
+              <div
+                className={`flex flex-wrap items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--glass)] p-3 backdrop-blur-xl ${
+                  isActive ? 'border-l-2 border-l-[var(--accent)]' : ''
+                }`}
               >
-                {menuOpen ? <CloseIcon className="h-4 w-4" /> : <MoreIcon className="h-4 w-4" />}
-              </Button>
+                <input
+                  type="checkbox"
+                  aria-label={`Select ${resume.name}`}
+                  checked={isChecked}
+                  onChange={() => onToggle(resume.id)}
+                  className="h-4 w-4 accent-[var(--accent)]"
+                />
+
+                <label className="sr-only" htmlFor={`name-${resume.id}`}>
+                  Resume name
+                </label>
+                <input
+                  id={`name-${resume.id}`}
+                  value={resume.name}
+                  onChange={(event) => onRename(resume.id, event.target.value)}
+                  className="h-8 min-w-0 flex-1 rounded-md border border-transparent bg-transparent px-2 text-sm font-medium hover:border-[var(--border)] focus:border-[var(--border)] md:min-w-[10rem]"
+                />
+
+                {isSampleResume(resume) ? (
+                  <Text
+                    as="span"
+                    variant="11-regular"
+                    tone="muted"
+                    className="rounded-full border border-[var(--border)] px-1.5 py-0.5"
+                    title="One of the seeded sample resumes. Delete it like any other."
+                  >
+                    sample
+                  </Text>
+                ) : null}
+
+                <Text as="span" variant="11-regular" tone="muted">
+                  {resume.updatedAt?.slice(0, 10) ?? ''}
+                </Text>
+
+                <Button
+                  size="sm"
+                  onClick={() => onOpen(resume.id)}
+                  aria-label={`Open ${resume.name}`}
+                >
+                  <ArrowIcon className="h-4 w-4" />
+                  Open
+                </Button>
+
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  aria-label={`Actions for ${resume.name}`}
+                  aria-haspopup="menu"
+                  aria-expanded={menuOpen}
+                  onClick={() => (menuOpen ? closeMenu() : setOpenMenuId(resume.id))}
+                  className="border border-[var(--border)] bg-[var(--card)]"
+                >
+                  {menuOpen ? <CloseIcon className="h-4 w-4" /> : <MoreIcon className="h-4 w-4" />}
+                </Button>
+              </div>
 
               {menuOpen ? (
                 <>
@@ -142,6 +160,7 @@ export default function ResumeList({
                       }}
                       className="flex items-center justify-start gap-2 rounded px-2 py-1.5 text-left text-xs font-medium text-[var(--foreground)] hover:bg-[var(--muted)]"
                     >
+                      <CopyIcon className="h-3.5 w-3.5 shrink-0" />
                       Duplicate
                     </button>
                     <button
@@ -153,6 +172,7 @@ export default function ResumeList({
                       }}
                       className="flex items-center justify-start gap-2 rounded px-2 py-1.5 text-left text-xs font-medium text-[var(--foreground)] hover:bg-[var(--muted)]"
                     >
+                      <FileDownIcon className="h-3.5 w-3.5 shrink-0" />
                       Export .md
                     </button>
                     <button
@@ -164,6 +184,7 @@ export default function ResumeList({
                       }}
                       className="flex items-center justify-start gap-2 rounded px-2 py-1.5 text-left text-xs font-medium text-[var(--negative)] hover:bg-[var(--muted)]"
                     >
+                      <TrashIcon className="h-3.5 w-3.5 shrink-0" />
                       Delete
                     </button>
                   </div>
@@ -179,6 +200,7 @@ export default function ResumeList({
         title={`Delete "${pendingDelete?.name ?? ''}"?`}
         description="This is irreversible."
         confirmLabel="Delete"
+        confirmIcon={<TrashIcon className="h-3.5 w-3.5" />}
         onCancel={() => setPendingDelete(null)}
         onConfirm={() => {
           if (pendingDelete) onDelete(pendingDelete.id)

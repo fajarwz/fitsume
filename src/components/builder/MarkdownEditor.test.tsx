@@ -45,10 +45,15 @@ const selectedIn = (area: HTMLTextAreaElement) =>
   area.value.slice(area.selectionStart, area.selectionEnd)
 
 describe('MarkdownEditor', () => {
-  it('explains the dialect instead of leaving it to be guessed', () => {
+  it('explains the dialect instead of leaving it to be guessed', async () => {
+    const user = userEvent.setup()
+
     setup()
 
+    // The sheet is reference material, so its rows only exist once it is opened.
     expect(screen.getByText(/markdown cheat sheet/i)).toBeInTheDocument()
+
+    await user.click(screen.getByText(/markdown cheat sheet/i))
     expect(screen.getByText(/the line under it is its dates/i)).toBeInTheDocument()
   })
 

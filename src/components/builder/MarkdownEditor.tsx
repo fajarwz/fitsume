@@ -13,7 +13,9 @@ const TOOLS: Array<{ label: string; title: string; prefix: string }> = [
 ]
 
 /* Placeholder syntax, not a dialog: it resolves as a live link the moment it lands. */
-const LINK_PLACEHOLDER = '[label](example.com)'
+const LINK_ADDRESS = 'example.com'
+const LINK_LABEL = 'label'
+const LINK_PLACEHOLDER = `[${LINK_LABEL}](${LINK_ADDRESS})`
 
 interface SelectionEdit {
   value: string
@@ -53,6 +55,15 @@ function indentSelection(textarea: HTMLTextAreaElement, outdent: boolean): Selec
     value: `${value.slice(0, lineStart)}${next}${value.slice(lineEnd)}`,
     caret: lineStart + next.length,
   }
+}
+
+/**
+ * The label of a link is one line of source, so a selection that spans lines is joined
+ * into one. A newline left inside the brackets makes no link at all: the parser reads
+ * the document line by line, so the brackets would simply print as typed.
+ */
+function labelFrom(selected: string): string {
+  return selected.replace(/\s+/g, ' ').trim()
 }
 
 export interface MarkdownEditorProps {
@@ -114,16 +125,41 @@ export default function MarkdownEditor({
     onChange(value)
   }
 
-  /** Drops the link placeholder at the caret, with the label selected so typing replaces it. */
-  const insertPlaceholder = () => {
+  /**
+   * The Link button, both directions in one.
+   *
+   * With text selected, that text is the label and the address placeholder is what
+   * stays selected, because the address is the part still left to write. With nothing
+   * selected it falls back to `[label](example.com)` and selects the label instead.
+   *
+   * The field takes focus back either way: the click that got here landed on a button,
+   * which took the caret with it, and the insert is only useful if the next keystroke
+   * goes into the document.
+   */
+  const insertLink = () => {
     const element = textarea.current
 
     if (!element) return
 
     const { selectionStart: start, selectionEnd: end, value } = element
+    const label = labelFrom(value.slice(start, end))
 
-    pendingSelection.current = [start + 1, start + 1 + 'label'.length]
-    onChange(`${value.slice(0, start)}${LINK_PLACEHOLDER}${value.slice(end)}`)
+    if (label === '') {
+      pendingSelection.current = [start + 1, start + 1 + LINK_LABEL.length]
+      onChange(`${value.slice(0, start)}${LINK_PLACEHOLDER}${value.slice(end)}`)
+      element.focus()
+
+      return
+    }
+
+    const inserted = `[${label}](${LINK_ADDRESS})`
+    // The last `](` is the one this insert just added, which is where the address
+    // starts even if the label itself contains a bracket.
+    const address = start + inserted.lastIndexOf('](') + 2
+
+    pendingSelection.current = [address, address + LINK_ADDRESS.length]
+    onChange(`${value.slice(0, start)}${inserted}${value.slice(end)}`)
+    element.focus()
   }
 
   const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -202,8 +238,8 @@ export default function MarkdownEditor({
         <Button
           size="sm"
           variant="ghost"
-          title={`Insert a link placeholder: ${LINK_PLACEHOLDER}`}
-          onClick={insertPlaceholder}
+          title={`Link the selected text, or insert ${LINK_PLACEHOLDER}`}
+          onClick={insertLink}
         >
           Link
         </Button>

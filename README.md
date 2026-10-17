@@ -69,11 +69,12 @@ rules and links.
 
 **Email and web addresses are links.** Write one and it is clickable, in the preview and
 in the exported PDF — `you@example.com`, `https://yoursite.com`, and a bare domain like
-`github.com/you`. To show a label instead of the address, write `[GitHub](github.com/you)`;
-the **Link** button in the editor toolbar drops in `[label](example.com)` as a placeholder
-to type over, and it renders as a real link while you do. A label that the line breaker
-splits in two loses only its click, never its text, which is also why a one-word label is
-the safe choice.
+`github.com/you`. To show a label instead of the address, write `[GitHub](github.com/you)`,
+or select the words you want shown and press the **Link** button: the selection becomes
+the label, and the address placeholder is left selected to type over. With nothing
+selected the button drops in `[label](example.com)` instead, and either way it renders as
+a real link while you type it. A label that the line breaker splits in two loses only its
+click, never its text, which is also why a one-word label is the safe choice.
 
 ## How the fit works
 

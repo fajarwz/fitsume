@@ -49,7 +49,8 @@ export default function CheatSheet() {
             [Label](url)
           </Text>
           <Text as="dd" variant="12-regular" tone="muted">
-            A link that shows the label instead of the address; the Link button drops in{' '}
+            A link that shows the label instead of the address. The Link button wraps whatever you
+            have selected, or drops in{' '}
             <Text as="span" variant="12-regular" mono>
               [label](example.com)
             </Text>{' '}

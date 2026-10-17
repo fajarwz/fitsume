@@ -1,9 +1,10 @@
 /*
  * Print rules.
  *
- * The export path (lib/pdf.js) drives the important parts imperatively — it
- * saves and restores everything it touches, because the printed page has to
- * match the preview exactly. Keep this file to rules that are always safe.
+ * The printed document is PrintSheet: real A4 boxes mounted outside the app shell and hidden
+ * on screen. So the whole job here is to show that one tree and hide everything else. Nothing
+ * about the app's layout, chrome or theme can reach the export, which it could while the
+ * export had to restage the preview in place.
  */
 
 @page {
@@ -15,42 +16,27 @@
   html,
   body {
     height: auto;
-    background: #ffffff;
+    /* !important because the dark theme paints its mesh on `[data-theme='dark'] body`, which
+       outranks a plain `body` selector — without this the gradient prints around the page. */
+    background: #ffffff !important;
   }
 
-  /* The preview's gutter and pane padding are screen affordances. In print the sheet
-     carries its own margins, and the wrapper around each sheet decides the page break. */
-  [data-sheet-stack] {
-    padding: 0 !important;
-    margin: 0 !important;
-    gap: 0 !important;
+  /* The app shell, and every other child of <body>: screen furniture, never the document. */
+  body > :not([data-print-root]) {
+    display: none !important;
   }
 
-  [data-print-sheet] {
-    box-shadow: none !important;
+  [data-print-root] {
+    display: block !important;
   }
 
-  /* The elevation wrapper casts the page's on-screen ring and shadow; in the exported
-     sheet none of that should survive — a `0 0 0 1px` ring would otherwise print as a
-     hairline clipped to the top and left of the page. Killed here, by attribute, so it
-     no longer depends on the JS flatten step in lib/pdf.js. */
-  [data-page-wrap] {
-    box-shadow: none !important;
-    outline: none;
-  }
-
-  /* Every sheet but the last is a printed page of its own. */
-  [data-page-break='after'] {
+  /* Every page but the last is a printed page of its own. */
+  [data-print-page][data-page-break='after'] {
     break-after: page;
   }
 
   * {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
-  }
-
-  /* Anything that is chrome, never part of the printed sheet, can opt out. */
-  [data-no-print] {
-    display: none !important;
   }
 }

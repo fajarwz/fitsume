@@ -2,7 +2,14 @@ import { useState } from 'react'
 import type { ReactNode } from 'react'
 
 import Button from '../ui/Button.tsx'
-import { CloseIcon, CompressIcon, ExpandIcon, FileDownIcon, MoreIcon, PrinterIcon } from '../ui/icons.tsx'
+import {
+  CloseIcon,
+  CompressIcon,
+  ExpandIcon,
+  FileDownIcon,
+  MoreIcon,
+  PrinterIcon,
+} from '../ui/icons.tsx'
 import type { ButtonProps } from '../ui/Button.tsx'
 
 const noop = () => {}
@@ -75,11 +82,17 @@ export default function SheetActions({
         />
       ) : null}
 
-      <div data-no-print className="absolute right-5 top-4 z-20 flex items-center gap-1.5">
+      <div className="absolute right-5 top-4 z-20 flex items-center gap-1.5">
         {/* Exit is the point of full screen, so it gets primary and Export steps down;
             Escape also exits (wired in the builder). */}
         {full ? (
-          <Button size="sm" variant="primary" onClick={onFull ?? undefined} title="Exit full screen (Esc)" className="shadow-md">
+          <Button
+            size="sm"
+            variant="primary"
+            onClick={onFull ?? undefined}
+            title="Exit full screen (Esc)"
+            className="shadow-md"
+          >
             <CompressIcon className="h-4 w-4" />
             Exit full
           </Button>
@@ -110,7 +123,6 @@ export default function SheetActions({
           {open ? (
             <div
               className="absolute right-0 top-full mt-1.5 flex min-w-[11rem] flex-col gap-0.5 rounded-md border border-[var(--border-strong)] bg-[var(--card)] p-1 shadow-lg"
-              data-no-print
               role="menu"
             >
               {/* One cluster: -/+ are self-explanatory, the middle reads and snaps zoom,

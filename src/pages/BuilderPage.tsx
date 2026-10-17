@@ -3,6 +3,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom'
 
 import FitPanel from '../components/builder/FitPanel.tsx'
 import MarkdownEditor from '../components/builder/MarkdownEditor.tsx'
+import PrintSheet from '../components/builder/PrintSheet.tsx'
 import ResumeSheet from '../components/builder/ResumeSheet.tsx'
 import type { ResumeSheetPage } from '../components/builder/ResumeSheet.tsx'
 import SheetActions from '../components/builder/SheetActions.tsx'
@@ -36,7 +37,8 @@ const ZOOM_MIN = 0.5
 const ZOOM_MAX = 3
 const ZOOM_STEP = 0.1
 
-const clampZoom = (value: number) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(value * 100) / 100))
+const clampZoom = (value: number) =>
+  Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(value * 100) / 100))
 
 type SettingsPatch = {
   name?: string
@@ -111,7 +113,7 @@ export default function BuilderPage() {
 
   const update = (patch: SettingsPatch) => actions.update(resume.id, patch)
 
-  const exportPdf = () => exportToPdf({ container: sheet.current, markdown })
+  const exportPdf = () => exportToPdf({ markdown })
 
   const downloadMarkdown = () =>
     downloadText({ filename: markdownFilename(resume.name), text: exportResumeMarkdown(resume) })
@@ -180,6 +182,8 @@ export default function BuilderPage() {
 
   return (
     <div className="flex min-h-screen flex-col text-[var(--foreground)]">
+      <PrintSheet pages={fit.pages as ResumeSheetPage[]} padding={settings.padding} />
+
       <TopBar
         resume={resume}
         onNew={() =>
@@ -191,7 +195,7 @@ export default function BuilderPage() {
 
       {stacked ? (
         <div className="flex min-h-0 flex-1 flex-col gap-3 p-3">
-          <div className="flex gap-1 print:hidden" role="tablist" aria-label="Editor, preview or fit">
+          <div className="flex gap-1" role="tablist" aria-label="Editor, preview or fit">
             {TABS.map(([id, label]) => (
               <Button
                 key={id}
@@ -205,7 +209,7 @@ export default function BuilderPage() {
               </Button>
             ))}
           </div>
-          <section className="flex min-h-0 flex-1 flex-col rounded-lg border border-[var(--border)] bg-[var(--glass)] p-3 backdrop-blur-xl print:border-0 print:bg-transparent print:p-0">
+          <section className="flex min-h-0 flex-1 flex-col rounded-lg border border-[var(--border)] bg-[var(--glass)] p-3 backdrop-blur-xl">
             <div className={tab === 'write' ? 'contents' : 'hidden'}>{editor}</div>
             <div className={tab === 'preview' ? 'flex min-h-0 flex-1 flex-col' : 'hidden'}>
               {preview}
@@ -222,23 +226,17 @@ export default function BuilderPage() {
           }
         >
           {focus ? null : (
-            <section
-              data-no-print
-              className="flex min-h-0 flex-col rounded-lg border border-[var(--border)] bg-[var(--glass)] p-3 backdrop-blur-xl"
-            >
+            <section className="flex min-h-0 flex-col rounded-lg border border-[var(--border)] bg-[var(--glass)] p-3 backdrop-blur-xl">
               {editor}
             </section>
           )}
 
-          <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)] print:border-0 print:bg-transparent">
+          <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)]">
             {preview}
           </section>
 
           {focus ? null : (
-            <section
-              data-no-print
-              className="flex min-h-0 flex-col gap-3 overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--glass)] p-3 backdrop-blur-xl"
-            >
+            <section className="flex min-h-0 flex-col gap-3 overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--glass)] p-3 backdrop-blur-xl">
               <Text as="h2" variant="12-semibold">
                 Auto-fit
               </Text>

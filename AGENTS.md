@@ -84,5 +84,10 @@ Two rules, enforced by ESLint — both will fail CI if broken:
 - **The markdown dialect is small and rules-based**, not CommonMark-Complete.
   Read `src/lib/markdown.ts` and the dialect section of `README.md` before
   touching the parser.
+- **Printing is its own tree, not the app.** `PrintSheet` mounts real A4 boxes on
+  `<body>`; `print.css` shows that tree and hides every other child of `<body>`.
+  So never hide the app for print (`print:` variants, `data-no-print`) and never
+  restage the preview before `window.print()` — anything the shell does on screen,
+  a theme background included, would end up on the page.
 - Samples are seeded once per library (`samplesSeeded` flag). Deleting a sample
   must not bring all of them back on reload; `restore` must never duplicate.

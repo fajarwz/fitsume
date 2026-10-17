@@ -1,23 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
 
+import SheetPage from './SheetPage.tsx'
 import Text from '../ui/Text.tsx'
 import { LayersIcon } from '../ui/icons.tsx'
-import { POSITIONED_TYPE } from '../../lib/layout.ts'
 import type { PositionedItem } from '../../lib/layout.ts'
-import { HAIRLINE, PAGE_HEIGHT, PAGE_WIDTH } from '../../lib/page.ts'
+import { PAGE_HEIGHT, PAGE_WIDTH } from '../../lib/page.ts'
 
 /**
  * A4 sheets fitted to their space. Each line is absolutely positioned and `white-space:
  * pre`, so the preview is the same document the fit engine measured; the same elements
  * print at real A4 width. Page count is lib/paginate.js's business.
  */
-const COLOR: Record<string, string> = {
-  ink: 'var(--ink)',
-  inkMuted: 'var(--ink-muted)',
-  inkFaint: 'var(--ink-faint)',
-}
-
 /* Headroom: exact fit rounds up a hair and a scrollbar appears; the slack also keeps
    the page shadow from being clipped by the pane's edge. */
 const FIT_SLACK = 0.92
@@ -135,64 +129,16 @@ export default function ResumeSheet({
                   }}
                 >
                   <div
-                    data-no-print
                     className="pointer-events-none absolute border border-dashed"
                     style={{ inset: padding, borderColor: 'var(--ink-rule)' }}
                   />
 
-                  {page.items.map((item, itemIndex) =>
-                    item.type === POSITIONED_TYPE.rule ? (
-                      <div
-                        key={itemIndex}
-                        style={{
-                          position: 'absolute',
-                          left: padding,
-                          top: item.y,
-                          width: PAGE_WIDTH - padding * 2,
-                          height: HAIRLINE,
-                          background: 'var(--ink-rule)',
-                        }}
-                      />
-                    ) : (
-                      <div
-                        key={itemIndex}
-                        style={{
-                          position: 'absolute',
-                          left: item.x,
-                          top: item.y,
-                          font: item.font,
-                          lineHeight: `${item.lineHeight}px`,
-                          whiteSpace: 'pre',
-                          color: COLOR[item.color] ?? COLOR.ink,
-                        }}
-                      >
-                        {/* Addresses render as runs so they are clickable; the text is what the fit engine
-                            measured, keeping rendered line == fitted line. */}
-                        {item.segments
-                          ? item.segments.map((segment, segmentIndex) =>
-                              segment.href ? (
-                                <a
-                                  key={segmentIndex}
-                                  href={segment.href}
-                                  target="_blank"
-                                  rel="noreferrer noopener"
-                                  className="text-inherit underline decoration-[var(--ink-faint)] underline-offset-2"
-                                >
-                                  {segment.text}
-                                </a>
-                              ) : (
-                                <span key={segmentIndex}>{segment.text}</span>
-                              ),
-                            )
-                          : item.text}
-                      </div>
-                    ),
-                  )}
+                  <SheetPage items={page.items} padding={padding} />
                 </div>
               </div>
 
               {many ? (
-                <span data-no-print className="flex items-center gap-1">
+                <span className="flex items-center gap-1">
                   <LayersIcon className="h-3 w-3 text-[var(--muted-foreground)]" />
                   <Text as="span" variant="11-regular" tone="muted" tabular>
                     {index + 1} / {pages.length}

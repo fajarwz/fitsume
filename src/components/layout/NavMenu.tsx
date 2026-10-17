@@ -85,7 +85,6 @@ export default function NavMenu({
       {createPortal(
         <>
           <div
-            data-no-print
             aria-hidden="true"
             onClick={close}
             className={[
@@ -97,7 +96,6 @@ export default function NavMenu({
           <div
             ref={panel}
             id="topbar-menu"
-            data-no-print
             role="dialog"
             aria-modal="true"
             aria-label="Menu"

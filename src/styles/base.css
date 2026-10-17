@@ -64,6 +64,12 @@ body {
     var(--glass-shadow);
 }
 
+/* The printed document, mounted on <body> by PrintSheet. It exists on every render and is
+   shown by print.css alone, so printing never has to rearrange the app. */
+[data-print-root] {
+  display: none;
+}
+
 [data-theme='dark'] body {
   background-image:
     radial-gradient(1000px 620px at 10% -8%, rgba(59, 130, 246, 0.22), transparent 60%),

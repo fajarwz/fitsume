@@ -1,10 +1,8 @@
 # <img src="public/favicon.svg" alt="" width="28" height="28" style="vertical-align: -6px; display: inline-block" /> Fitsume
 
-![visitors](https://img.shields.io/badge/dynamic/json?url=https://fitsume.goatcounter.com/counter/.json&query=count&label=Visits&color=blue)
+[![CI](https://github.com/fajarwz/fitsume/actions/workflows/ci.yml/badge.svg)](https://github.com/fajarwz/fitsume/actions/workflows/ci.yml) [![MIT](https://img.shields.io/badge/license-MIT-16a34a.svg)](LICENSE) ![visitors](https://img.shields.io/badge/dynamic/json?url=https://fitsume.goatcounter.com/counter/.json&query=count&label=Visits&color=blue) [![Web](https://img.shields.io/badge/web-fitsume.fajarwz.com-0b0f14.svg)](https://fitsume.fajarwz.com)
 
 Write a resume in Markdown. Fitsume automatically finds the largest font size and line spacing that fit everything on exactly one A4 page.
-
-**Live at [fitsume.fajarwz.com](https://fitsume.fajarwz.com).**
 
 ## Demo
 

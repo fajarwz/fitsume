@@ -8,7 +8,7 @@ Write a resume in Markdown. Fitsume automatically finds the largest font size an
 
 ## Demo
 
-<video src="demo/demo.mp4" width="100%" controls></video>
+https://github.com/user-attachments/assets/0c992f2e-e8ae-4bb7-b14a-030dc5dab55d
 
 ## Features
 

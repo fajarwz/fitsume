@@ -1,203 +1,172 @@
 # <img src="public/favicon.svg" alt="" width="28" height="28" style="vertical-align: -6px; display: inline-block" /> Fitsume
 
-Write a resume in markdown. The preview finds the largest font size and line
-spacing that still fits everything on exactly one A4 page.
+![visitors](https://img.shields.io/badge/dynamic/json?url=https://fitsume.goatcounter.com/counter/.json&query=count&label=Visits&color=blue)
+
+Write a resume in Markdown. Fitsume automatically finds the largest font size and line spacing that fit everything on exactly one A4 page.
 
 **Live at [fitsume.fajarwz.com](https://fitsume.fajarwz.com).**
 
-![visitors](https://img.shields.io/badge/dynamic/json?url=https://fitsume.goatcounter.com/counter/.json&query=count&label=Visits&color=blue)
+## Demo
 
-- **Auto-fit** — a two-pass binary search: biggest font size first, then the widest
-  line spacing that still fits
-- **No layout thrashing** — text is measured without touching the DOM, so the
-  preview does not flicker or shift as you type
-- **Markdown editor** — `#`, `##`, `###`, `-`, `---`, links, and the two conventions that
-  make a resume header read the way it should
-- **Resume library** — as many named resumes as you like, each with its own
-  typography settings
-- **Print to PDF** — the browser's own print pipeline, sized for A4, named after
-  the resume on screen
-- **No server, no account, nothing uploaded** — your resumes live in your browser,
-  and one file backs all of them up
-- **Works offline** — the font is bundled, so the fit is measured against the font
-  that actually renders
+<video src="demo/demo.mp4" width="100%" controls></video>
 
-**Working on this repo?** Read [`AGENTS.md`](./AGENTS.md) first — it documents the
-architecture rules (both enforced by CI) and the non-obvious facts an agent gets
-wrong.
+## Features
 
-## Deployment
+- **Auto-fit** — two-pass binary search finds the largest font size, then the widest line spacing that fits.
+- **Markdown editor** — headings, bullets, rules, links, and resume-specific formatting conventions.
+- **Resume library** — create unlimited named resumes with independent typography settings.
+- **Print to PDF** — A4-sized output using the browser's print pipeline, named after the current resume.
+- **Private by design** — no account or server; resumes stay in your browser.
+- **Offline support** — bundled fonts keep text measurements consistent with the rendered preview.
+- **Backup and restore** — export and restore your entire resume library as JSON.
 
-Hosted on **Netlify** at the custom domain **`fitsume.fajarwz.com`**. Config lives
-in [`netlify.toml`](./netlify.toml): `npm run build` publishes `dist/`, `/*` is
-rewritten to `/index.html` (so direct hits on client-side routes survive a
-refresh), and hashed `/assets/*` are cached `immutable`.
+## How It Works
 
-## The markdown dialect
+Text is measured using canvas glyph metrics rather than repeated DOM layout calculations. Once text is prepared, line breaking and height calculations use arithmetic, allowing the fit engine to search efficiently without flickering the preview.
 
-Five rules. The two that are easy to miss are what make a header come out right:
-the line after your name is your role, and the line after that is the faint contact
-line. The line under a `### ` job title is its dates.
+Prepared text is cached to avoid redundant measurements. On a dense sample of 34 blocks and 2,324 characters, profiling showed:
 
-```markdown
-# Your Name
+| Metric | Before | After |
+|---|---:|---:|
+| Text preparations | 7,590 | 396 |
+| Runtime | 51.4 ms | 6.2 ms |
 
-Your Role
-City · you@example.com · github.com/you
----
-
-A short summary.
-
-## EXPERIENCE
-
-### Job Title — Company
-
-2020 — Present
-
-- What you did, and what it changed
-
-## EDUCATION
-
-### Degree — University
-
-Details
-```
-
-Blank lines are ignored, so space the source out however you like. There is a
-cheat sheet in the editor, and a toolbar for section headings, job titles, bullets,
-rules and links.
-
-**Email and web addresses are links.** Write one and it is clickable, in the preview and
-in the exported PDF — `you@example.com`, `https://yoursite.com`, and a bare domain like
-`github.com/you`. To show a label instead of the address, write `[GitHub](github.com/you)`,
-or select the words you want shown and press the **Link** button: the selection becomes
-the label, and the address placeholder is left selected to type over. With nothing
-selected the button drops in `[label](example.com)` instead, and either way it renders as
-a real link while you type it. A label that the line breaker splits in two loses only its
-click, never its text, which is also why a one-word label is the safe choice.
-
-## How the fit works
-
-Measuring text normally means `getBoundingClientRect()` or `offsetHeight`, each of
-which forces the browser to re-lay-out the document. A binary search that runs
-hundreds of measurements per frame is not possible that way.
-
-So the text is prepared once per string with a canvas — normalise, segment, read
-glyph advances — and after that, line breaking and height are arithmetic. The fit
-search then does two passes: the largest font size at the tightest line spacing,
-then the widest line spacing at that size. Prepared text is cached, so a repeat
-measurement is a lookup rather than a re-measure.
-
-That cache is measured, not assumed. On the densest sample (34 blocks, 2,324
-characters), one fit run went from **7,590 text preparations to 396**, and from
-**51.4 ms to 6.2 ms** — with the real engine, on a real canvas. Run it yourself:
+Run the benchmark yourself:
 
 ```bash
 npx vitest run scripts/profile-measurement.test.ts
 ```
 
-The measurement engine only appears in one file (`src/lib/textMetrics.ts`).
-Everything else in `lib/` takes the metrics it is given, which is why the fit engine
-can be tested exhaustively without a canvas.
+The measurement engine lives in `src/lib/textMetrics.ts`. The rest of the core library uses the metrics it receives, keeping the fitting logic testable independently of the canvas.
 
-## Your data
+## Markdown Syntax
 
-Everything is stored in your browser's `localStorage`. There is no server, no
-account, and no upload. That has two consequences worth knowing:
+Fitsume supports a small Markdown dialect tailored for resumes.
 
-- **A backup file is the only copy that survives clearing browser data.** The
-  library screen writes the whole library to a `.json` file, and restoring it
-  merges by default — restoring the same backup twice cannot overwrite the resume
-  you have been editing since.
-- **If your browser refuses storage** (private mode, a hardened profile), the app
-  still works, but only for the session, and it says so rather than pretending to
-  save.
+```markdown
+**# Your Name**
 
-Each resume can also be exported as a `.md` file, which is what the import does.
+Your Role
+City · you@example.com · github.com/you
+**---**
+
+A short summary.
+
+**## EXPERIENCE**
+
+**### Job Title — Company**
+
+2020 — Present
+
+- What you did, and what it changed
+
+**## EDUCATION**
+
+**### Degree — University**
+
+Details
+```
+
+The conventions are:
+
+- `#` introduces your name.
+- The following line is your role; the next is your contact information.
+- `##` introduces a section.
+- `###` introduces a job title or degree; the following line contains its dates or details.
+- `---` creates a horizontal rule.
+
+Blank lines are ignored. The editor also includes a cheat sheet and formatting toolbar.
+
+Email addresses and web addresses are clickable in the preview and exported PDF. Bare domains such as `github.com/you` are supported, as are Markdown links with custom labels.
+
+## Your Data
+
+Resumes are stored in browser `localStorage`. Nothing is uploaded to a server, and no account is required.
+
+- Export your library to a JSON backup and restore it later.
+- Restore merges with existing resumes by default.
+- If browser storage is unavailable, the app can operate for the current session without persistent saving.
+- Individual resumes can be imported and exported as Markdown files.
+
+**Keep a backup:** clearing browser data can erase locally stored resumes.
 
 ## Development
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173
+npm run dev
 ```
+
+The development server runs at `http://localhost:5173`.
 
 ## Checks
 
 ```bash
-npm run verify     # lint + tests with coverage + production build
+npm run verify
 ```
 
-`verify` is the same gate CI runs, so a failure should never be discovered for the
-first time on CI.
+This runs linting, tests with coverage, and the production build. It is also the verification gate used by CI.
 
-## How the code is arranged
+## Architecture
 
-```
+```text
 src/
-  lib/         pure: markdown, measurement, fit search, layout, storage, files
-  hooks/       React glue over lib
-  components/  ui primitives, layout, builder, library, samples
-  pages/       route-level screens
-  state/       providers
+  lib/         Pure logic: markdown, measurement, fit search, layout, storage, files
+  hooks/       React hooks over the core library
+  components/  UI primitives, layout, builder, library, samples
+  pages/       Route-level screens
+  state/       Providers
 ```
 
-Two rules keep it that way, and ESLint enforces both:
+Two architectural rules are enforced by ESLint:
 
-1. **`lib/` never imports React**, a hook, a component, or a page. It is pure
-   functions and data, which is what makes it testable without a DOM.
-2. **A page is never imported by a component.** Pages compose; components do not
-   reach upward.
+1. `lib/` must not import React, hooks, components, or pages.
+2. Components must not import pages; pages compose components instead.
 
-## Tests
+The core library is designed to remain independently testable.
 
-- **`lib/`** is covered exhaustively: the parser's block styles, the fit search's
-  bounds and fallbacks, the measurement cache, storage round-trips, corruption,
-  migration, quota failures, and file import/export.
-- **Components** are tested through the DOM as a person would use them.
-- **The app end to end**: it renders, types a resume, waits for the fit, reloads
-  and checks the work survived, and asserts the export is named after the resume on
-  screen.
-- **Every shipped sample** is fitted against the real measurement engine, and the
-  geometry that gets _rendered_ is checked against the page — so the preview cannot
-  silently disagree with the fit that produced it.
-- Coverage thresholds apply to `lib/` only, on purpose: component tests exist to
-  catch behaviour regressions, not to chase a number.
+## Testing
 
-`canvas` is an **optional** dependency. It gives jsdom a real font engine, so the
-tests that need true glyph metrics actually run; without it they skip themselves
-rather than failing, which keeps installs working on a machine with no prebuilt
-binary.
+- **Core library:** parser behavior, fit-search bounds and fallbacks, measurement caching, storage, migrations, and file import/export.
+- **Components:** interaction tests using the DOM and Testing Library.
+- **End to end:** resume editing, fit completion, persistence after reload, and PDF export naming.
+- **Samples:** each shipped sample is checked against the real measurement engine, including rendered page geometry.
+
+Coverage thresholds apply to `lib/`, where deterministic unit coverage is most useful.
+
+The optional `canvas` dependency provides real font metrics in jsdom for tests that need them. Those tests skip when the dependency is unavailable.
 
 ## Stack
 
-- **React 19**
-- **TypeScript** (strict)
-- **Vite**
-- **Tailwind CSS**
-- **[pretext](https://github.com/chenglou/pretext)** — DOM-free text measurement
-- **Vitest + Testing Library** — testing
-- **ESLint + Prettier** — linting and formatting
+- React 19
+- TypeScript (strict)
+- Vite
+- Tailwind CSS
+- [pretext](https://github.com/chenglou/pretext) — DOM-free text measurement
+- Vitest and Testing Library
+- ESLint and Prettier
 
-Geist Sans and Geist Mono are bundled via `@fontsource-variable/geist` and
-`@fontsource-variable/geist-mono`.
+Geist Sans and Geist Mono are bundled through `@fontsource-variable/geist` and `@fontsource-variable/geist-mono`.
 
 ## Design
 
-The shell follows Vercel's system: a `#fafafa` page, hairline `#eaeaea` borders,
-near-black text, one near-black primary button, one blue for links and focus, all set
-in Geist. Every colour lives in `src/styles/tokens.css`, so the whole look is a token
-swap rather than an edit across twenty components.
+Fitsume uses a restrained, Vercel-inspired interface: a light background, subtle borders, near-black text, and blue links and focus states. Design tokens are centralized in `src/styles/tokens.css`.
 
-The A4 sheet is deliberately excluded from that: it stays paper-white with ink-black
-text in both themes, because it is a document that prints. A dark-grey resume is a
-broken resume, not a dark mode.
+The resume itself always uses a white page and black text, regardless of the interface theme, to preserve print fidelity.
 
-The values were taken from the public account of Vercel's design system
-([design-bites](https://github.com/educlopez/design-bites), MIT) rather than vendored
-into this repo as a spec document.
+The design was informed by [design-bites](https://github.com/educlopez/design-bites) (MIT).
 
 Fitsume is inspired by [vladartym/always-fit-resume](https://github.com/vladartym/always-fit-resume).
+
+## Deployment
+
+Hosted on Netlify at [fitsume.fajarwz.com](https://fitsume.fajarwz.com).
+
+Deployment configuration lives in `netlify.toml`. The production build publishes `dist/`, client-side routes fall back to `/index.html`, and hashed assets use immutable caching.
+
+## Working on This Repository?
+
+Read [`AGENTS.md`](./AGENTS.md) before making changes. It documents the architecture constraints and non-obvious implementation details that contributors and AI coding agents need to follow.
 
 ## License
 
